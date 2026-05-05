@@ -2,20 +2,30 @@
 
 > B.Tech Final Year Project — A multi-agent AI system for medical diagnosis using agentic AI orchestration, deep learning, and RAG.
 
+## 🎨 New: Next.js Frontend
+
+The project now features a **modern Next.js 16 + React 19 frontend** with:
+- 🎨 Modern healthcare-themed UI (teal palette #0F766E)
+- 📱 Fully mobile responsive with sidebar navigation
+- 🌓 Dark mode toggle (next-themes)
+- ✨ Framer Motion scroll animations
+- 📊 Recharts data visualizations
+- ♿ WCAG 2.2 accessible (passed a11y audit)
+
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        Streamlit Frontend                           │
-│  ┌───────────────────────────────────────────────────────────────┐  │
-│  │  Diagnosis │ Vision │ Chat │ History │ About                  │  │
-│  │  Text Input │ Voice │ Demo Mode │ Report Export               │  │
-│  └───────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────┬──────────────────────────────────────┘
+┌───────────────────────────────────────────────────────┐
+│                    Next.js Frontend (NEW)                  │
+│  ┌───────────────────────────────────────────────┐  │
+│  │  Diagnosis │ Vision │ Chat │ History │ About    │  │
+│  │  NLP Input │ X-Ray  │ Q&A  │Records │System   │  │
+│  └───────────────────────────────────────────────┘  │
+└──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                     Orchestrator Agent (LangGraph)                  │
+┌───────────────────────────────────────────────────────┐
+│                     Orchestrator Agent (LangGraph)        │
 │                                                                     │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │
 │  │ NLP Agent│  │Vision    │  │RAG Agent │  │Prediction Agent  │   │
@@ -43,11 +53,13 @@
 | **Deep Learning** | PyTorch, ResNet-50 (vision), BioBERT (NLP) |
 | **RAG** | LlamaIndex, FAISS (10 medical knowledge documents) |
 | **ML Models** | scikit-learn GradientBoosting (4 disease models), rule-based fallback |
-| **Frontend** | Streamlit (Diagnosis, Vision, Chat, History, About pages) |
+| **Frontend** | Next.js 16 + React 19 + TypeScript + Tailwind CSS |
+| **Animations** | Framer Motion (scroll-triggered, staggered) |
+| **Charts** | Recharts (confidence visualization) |
 | **Voice** | OpenAI Whisper API (speech-to-text) |
 | **API** | FastAPI (REST endpoints for diagnosis, chat, image analysis) |
 | **Report Export** | reportlab (PDF), csv (CSV), plain text |
-| **Testing** | pytest (100 tests, 92+ passing) |
+| **Testing** | pytest (100 tests, 92+ passing), Jest + React Testing Library |
 
 ## Quick Start
 
