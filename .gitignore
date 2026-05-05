@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.env
+*.egg-info/
+dist/
+build/
+
+# Models & Data
+models/
+data/
+logs/
+
+
+# Secrets & Credentials
+*.key
+*.pem
+*.p12
+*.cert
+secrets/
+credentials.json
+service-account.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Docker
+*.pid
+
+# Node & Frontend
+node_modules/
+.next/
+out/
+build/
+frontend/node_modules/
+frontend/.next/
+.git_backup/
+.git_backup/

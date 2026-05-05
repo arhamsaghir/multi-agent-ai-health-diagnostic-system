@@ -1,0 +1,183 @@
+"""FastAPI application entry point."""
+
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import JSONResponse
+from loguru import logger
+import sys
+import os
+from pathlib import Path
+
+from config import settings
+
+# Configure logging
+logger.remove()
+logger.add(
+    sys.stderr,
+    level=settings.log_level.upper(),
+    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>",
+)
+os.makedirs("logs", exist_ok=True)
+logger.add("logs/app_{time:YYYY-MM-DD}.log", rotation="1 day", retention="30 days")
+
+app = FastAPI(
+    title="Multi-Agent AI Health Diagnostic System",
+    description="B.Tech Final Year Project — AI-powered medical diagnosis using multi-agent orchestration",
+    version="0.1.0",
+)
+
+# CORS — restricted to localhost for development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8501",
+        "http://127.0.0.1:8501",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+)
+
+
+# API Key Authentication Middleware (development mode)
+@app.middleware("http")
+async def verify_api_key(request: Request, call_next):
+    """Validate API key for non-public endpoints."""
+    # Public endpoints that don't require authentication
+    public_paths = ["/health", "/docs", "/openapi.json", "/redoc"]
+    if any(request.url.path.startswith(p) for p in public_paths):
+        return await call_next(request)
+    
+    # Check API key in development mode
+    if settings.app_env == "development" and not os.environ.get("ENFORCE_API_KEY"):
+        return await call_next(request)
+    
+    api_key = request.headers.get("X-API-Key")
+    if not api_key or api_key != settings.secret_key:
+        return JSONResponse(
+            status_code=401,
+            content={"error": "Unauthorized. Provide X-API-Key header."}
+        )
+    
+    return await call_next(request)
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Validate environment, check API keys, verify model files."""
+    logger.info("=" * 60)
+    logger.info("Starting Multi-Agent AI Health Diagnostic System v0.1.0")
+    logger.info(f"Environment: {settings.app_env}")
+    logger.info(f"Python: {sys.version.split()[0]}")
+    logger.info("=" * 60)
+    
+    # Check API keys
+    if not settings.openrouter_api_key and not os.environ.get("OPENROUTER_API_KEY"):
+        logger.warning("OPENROUTER_API_KEY not set — LLM synthesis features will fail")
+    else:
+        logger.info("OpenRouter API key: configured")
+    
+    if not settings.openai_api_key and not os.environ.get("OPENAI_API_KEY"):
+        logger.warning("OPENAI_API_KEY not set — Voice transcription will be unavailable")
+    else:
+        logger.info("OpenAI API key: configured (Whisper)")
+    
+    if not settings.google_api_key and not os.environ.get("GOOGLE_API_KEY"):
+        logger.warning("GOOGLE_API_KEY not set — Gemini synthesis will fail")
+    else:
+        logger.info("Google API key: configured (Gemini)")
+    
+    # Verify model files
+    model_checks = [
+        (settings.vision_model_path, "Vision model"),
+        (settings.prediction_model_path.replace(".pkl", "_metadata.json"), "Prediction model metadata"),
+        (settings.vector_store_dir + "/medical_knowledge.faiss", "FAISS vector store"),
+    ]
+    
+    for path, desc in model_checks:
+        if os.path.exists(path):
+            size = os.path.getsize(path)
+            logger.info(f"Model file verified: {desc} ({size:,} bytes)")
+        else:
+            logger.warning(f"Model file missing: {desc} ({path})")
+    
+    # Verify directories
+    required_dirs = ["data", "models", "logs", "frontend"]
+    for d in required_dirs:
+        if os.path.exists(d):
+            logger.debug(f"Directory exists: {d}/")
+        else:
+            logger.warning(f"Directory missing: {d}/")
+            os.makedirs(d, exist_ok=True)
+    
+    # Verify database directory
+    db_path = settings.database_url.replace("sqlite:///", "")
+    db_dir = os.path.dirname(db_path)
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
+    
+    logger.info("=" * 60)
+    logger.info("Startup validation complete — system ready")
+    logger.info("=" * 60)
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Log system shutdown event for audit and debugging."""
+    logger.info("Shutting down system")
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint with detailed status."""
+    import time
+    start = time.time()
+    
+    status = {
+        "status": "healthy",
+        "environment": settings.app_env,
+        "version": "0.1.0",
+        "agents": {
+            "orchestrator": "active",
+            "vision": "active",
+            "nlp": "active",
+            "rag": "active",
+            "prediction": "active",
+            "voice": "active",
+            "synthesis": "active",
+        },
+    }
+    
+    # Check model file availability
+    model_status = {}
+    if os.path.exists(settings.vision_model_path):
+        model_status["vision"] = "loaded"
+    else:
+        model_status["vision"] = "missing"
+    
+    pred_metadata = settings.prediction_model_path.replace(".pkl", "_metadata.json")
+    if os.path.exists(pred_metadata):
+        model_status["prediction"] = "loaded"
+    else:
+        model_status["prediction"] = "missing"
+    
+    faiss_path = settings.vector_store_dir + "/medical_knowledge.faiss"
+    if os.path.exists(faiss_path):
+        model_status["rag"] = "loaded"
+    else:
+        model_status["rag"] = "missing"
+    
+    status["models"] = model_status
+    status["response_time_ms"] = round((time.time() - start) * 1000, 2)
+    
+    return status
+
+
+# Import routes
+from src.api.routes import diagnosis, chat, vision
+app.include_router(diagnosis.router, prefix="/api")
+app.include_router(chat.router, prefix="/api")
+app.include_router(vision.router, prefix="/api")
