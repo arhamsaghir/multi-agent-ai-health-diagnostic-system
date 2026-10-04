@@ -32,9 +32,12 @@ service-account.json
 *.swo
 *~
 
-# OS
+# OS & Database
 .DS_Store
 Thumbs.db
+*.db
+*.sqlite
+*.sqlite3
 
 # Testing
 .coverage

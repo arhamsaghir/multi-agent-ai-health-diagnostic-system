@@ -3,7 +3,7 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from pydantic import BaseModel
 
-router = APIRouter(prefix="/api/vision", tags=["vision"])
+router = APIRouter(prefix="/vision", tags=["vision"])
 
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".tiff", ".tif"}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB

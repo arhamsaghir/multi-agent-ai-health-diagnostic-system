@@ -49,6 +49,7 @@ class DiagnosisRequest(BaseModel):
 
 class DiagnosisResponse(BaseModel):
     """Response from diagnostic analysis."""
+    session_id: Optional[str] = Field(None, description="Persisted session identifier")
     diagnosis: list[dict] = Field(default_factory=list, description="List of possible conditions")
     explanation: str = Field("", description="Medical explanation of findings")
     patient_explanation: str = Field("", description="Patient-friendly explanation")
@@ -109,7 +110,40 @@ async def analyze_symptoms(request: DiagnosisRequest):
             synthesis = translator.translate_diagnosis(synthesis, original_lang)
             logger.info(f"Translated diagnosis results to {original_lang}")
 
+        # Persist session and diagnosis to SQLite repository
+        session_id = None
+        try:
+            import uuid
+            from src.data.database.repository import DiagnosisRepository
+
+            session_id = str(uuid.uuid4())
+            repo = DiagnosisRepository()
+            symptoms = result.get("symptoms", [])
+            repo.save_session(
+                session_id=session_id,
+                user_input=request.text,
+                symptoms=symptoms,
+                patient_history=request.patient_history,
+                image_path=request.image_path,
+            )
+
+            # Persist individual detected conditions
+            diagnoses_list = synthesis.get("diagnosis", [])
+            for diag in diagnoses_list:
+                condition_name = diag.get("name") or diag.get("condition") or "Undetermined"
+                conf = float(diag.get("confidence") or 0.0)
+                sev = str(diag.get("severity") or synthesis.get("severity") or "low")
+                repo.save_diagnosis(session_id, condition=condition_name, confidence=conf, severity=sev)
+
+            if request.patient_history:
+                repo.save_patient_record(session_id, request.patient_history)
+
+            logger.info(f"Persisted diagnostic session: {session_id}")
+        except Exception as db_err:
+            logger.warning(f"Could not persist diagnosis session to database: {db_err}")
+
         return DiagnosisResponse(
+            session_id=session_id,
             diagnosis=synthesis.get("diagnosis", []),
             explanation=synthesis.get("explanation", ""),
             patient_explanation=synthesis.get("patient_explanation", ""),

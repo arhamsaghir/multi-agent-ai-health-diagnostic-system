@@ -15,11 +15,9 @@ export default function DiagnosisPage() {
     setIsLoading(true);
     setResults(null);
 
-    // Simulate realistic processing time
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
     try {
-      const diagnosisResults = await diagnose(text, history, true);
+      // Connect to live FastAPI multi-agent backend (/api/diagnosis/analyze)
+      const diagnosisResults = await diagnose(text, history, false);
       setResults(diagnosisResults);
     } catch (error) {
       console.error("Diagnosis error:", error);

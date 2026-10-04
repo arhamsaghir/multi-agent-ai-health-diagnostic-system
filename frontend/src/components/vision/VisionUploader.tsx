@@ -2,39 +2,28 @@
 
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Upload, 
-  Scan, 
-  AlertCircle, 
-  CheckCircle, 
+import {
+  Upload,
+  Scan,
+  AlertCircle,
+  CheckCircle,
   XCircle,
   Activity,
   FileImage,
   Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import { analyzeImage, type VisionResult } from "@/lib/api";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
-  Cell 
+  Cell
 } from "recharts";
-
-interface AnalysisResult {
-  disease: string;
-  confidence: number;
-}
-
-interface VisionResult {
-  predictions: AnalysisResult[];
-  primary_finding: string;
-  severity: "critical" | "high" | "moderate" | "low";
-  recommendation: string;
-}
 
 const demoResults: Record<string, VisionResult> = {
   pneumonia: {
@@ -71,14 +60,19 @@ const demoResults: Record<string, VisionResult> = {
 
 export function VisionUploader() {
   const [image, setImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<VisionResult | null>(null);
   const [selectedDemo, setSelectedDemo] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
+      setSelectedFile(file);
+      setSelectedDemo(null);
+      setErrorMessage(null);
       const reader = new FileReader();
       reader.onload = () => {
         setImage(reader.result as string);
@@ -91,6 +85,9 @@ export function VisionUploader() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
+      setSelectedDemo(null);
+      setErrorMessage(null);
       const reader = new FileReader();
       reader.onload = () => {
         setImage(reader.result as string);
@@ -103,16 +100,46 @@ export function VisionUploader() {
   const runAnalysis = async (demoKey?: string) => {
     setIsAnalyzing(true);
     setResult(null);
+    setErrorMessage(null);
 
-    // Simulate processing time
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // If explicit demo case requested
+    if (demoKey && demoResults[demoKey]) {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      setResult(demoResults[demoKey]);
+      setIsAnalyzing(false);
+      return;
+    }
 
-    const demoResult = demoKey ? demoResults[demoKey] : demoResults.pneumonia;
-    setResult(demoResult);
+    // If user uploaded an actual file, invoke real backend model
+    if (selectedFile) {
+      try {
+        const liveResult = await analyzeImage(selectedFile);
+        setResult(liveResult);
+      } catch (err: any) {
+        console.error("Backend vision analysis error:", err);
+        setErrorMessage(
+          err.message || "Failed to reach AI vision model. Showing reference demo findings."
+        );
+        // Fallback to demo so user still sees the UI flow
+        setResult(demoResults.pneumonia);
+      } finally {
+        setIsAnalyzing(false);
+      }
+      return;
+    }
+
+    // Default fallback
+    setResult(demoResults.pneumonia);
     setIsAnalyzing(false);
   };
 
   const clearAll = () => {
+    setImage(null);
+    setSelectedFile(null);
+    setResult(null);
+    setSelectedDemo(null);
+    setErrorMessage(null);
+  };
     setImage(null);
     setResult(null);
     setSelectedDemo(null);
@@ -260,6 +287,13 @@ export function VisionUploader() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
         >
+          {errorMessage && (
+            <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-sm flex items-center gap-3">
+              <AlertCircle size={20} className="shrink-0 text-amber-600 dark:text-amber-400" />
+              <p>{errorMessage}</p>
+            </div>
+          )}
+
           {/* Main Result Card */}
           <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
             <div className="flex items-start justify-between gap-4 mb-4">

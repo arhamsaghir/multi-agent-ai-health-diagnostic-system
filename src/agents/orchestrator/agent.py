@@ -120,35 +120,35 @@ class OrchestratorAgent(BaseAgent):
     async def _run_sequential(self, state: DiagnosticState) -> dict:
         """Run agents sequentially to manage memory usage."""
         # Route decision
-        route_result = self._node_route_decision(state.dict())
+        route_result = self._node_route_decision(state)
         state.tasks_to_run = route_result.get("tasks_to_run", [])
 
         # Run each agent sequentially
         for task in state.tasks_to_run:
             if task == "symptoms":
-                result = await self._node_nlp_analysis(state.dict())
+                result = await self._node_nlp_analysis(state)
                 state.nlp_result = result.get("nlp_result")
                 state.symptoms = result.get("symptoms", [])
                 if result.get("errors"):
                     state.errors.extend(result["errors"])
             elif task == "image":
-                result = await self._node_vision_analysis(state.dict())
+                result = await self._node_vision_analysis(state)
                 state.vision_result = result.get("vision_result")
                 if result.get("errors"):
                     state.errors.extend(result["errors"])
             elif task == "knowledge":
-                result = await self._node_rag_retrieval(state.dict())
+                result = await self._node_rag_retrieval(state)
                 state.rag_result = result.get("rag_result")
                 if result.get("errors"):
                     state.errors.extend(result["errors"])
             elif task == "risk":
-                result = await self._node_prediction(state.dict())
+                result = await self._node_prediction(state)
                 state.prediction_result = result.get("prediction_result")
                 if result.get("errors"):
                     state.errors.extend(result["errors"])
 
         # Synthesis (always runs last)
-        result = await self._node_synthesis(state.dict())
+        result = await self._node_synthesis(state)
         state.synthesis_result = result.get("synthesis_result")
         state.confidence_score = result.get("confidence_score", 0.0)
         state.severity = result.get("severity", "unknown")
