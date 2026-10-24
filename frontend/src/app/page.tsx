@@ -104,32 +104,32 @@ const capabilities = [
 
 export default function Home() {
   return (
-    <div className="max-w-6xl mx-auto space-y-12 pb-12">
+    <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 pb-12">
       {/* Hero Section */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl p-8 lg:p-12 bg-gradient-to-br from-primary-900 via-primary-800 to-slate-900 text-white shadow-xl"
+        className="relative overflow-hidden rounded-3xl p-6 sm:p-8 lg:p-12 bg-gradient-to-br from-primary-900 via-primary-800 to-slate-900 text-white shadow-xl"
       >
-        <div className="relative z-10 max-w-3xl space-y-6">
+        <div className="relative z-10 max-w-3xl space-y-4 sm:space-y-6">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wide uppercase">
             <Activity size={14} className="text-emerald-400 animate-pulse" />
             <span>Autonomous Multi-Agent AI System</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
             Comprehensive Clinical Intelligence & Diagnostics
           </h1>
 
-          <p className="text-base sm:text-lg text-primary-100/90 leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-primary-100/90 leading-relaxed">
             A cooperative multi-agent healthcare platform combining NLP symptom extraction,
             ResNet-50 medical imaging, FAISS vector search, and XGBoost clinical risk assessment.
           </p>
 
-          <div className="flex flex-wrap gap-4 pt-2">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
             <Link
               href="/diagnosis"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-white text-primary-900 hover:bg-primary-50 rounded-xl font-bold shadow-lg transition-all transform hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 bg-white text-primary-900 hover:bg-primary-50 rounded-xl font-bold shadow-lg transition-all transform hover:-translate-y-0.5 text-sm sm:text-base"
             >
               <Stethoscope size={18} />
               <span>Start Symptom Check</span>
@@ -138,7 +138,7 @@ export default function Home() {
 
             <Link
               href="/vision"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-primary-700/60 hover:bg-primary-700 border border-white/20 text-white rounded-xl font-semibold backdrop-blur-md transition-all"
+              className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 bg-primary-700/60 hover:bg-primary-700 border border-white/20 text-white rounded-xl font-semibold backdrop-blur-md transition-all text-sm sm:text-base"
             >
               <Scan size={18} />
               <span>Analyze X-Ray Scan</span>
@@ -146,7 +146,7 @@ export default function Home() {
 
             <Link
               href="/chat"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-slate-800/80 hover:bg-slate-800 border border-white/10 text-white rounded-xl font-semibold backdrop-blur-md transition-all"
+              className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 bg-slate-800/80 hover:bg-slate-800 border border-white/10 text-white rounded-xl font-semibold backdrop-blur-md transition-all text-sm sm:text-base"
             >
               <MessageSquare size={18} />
               <span>Clinical Assistant</span>
@@ -169,7 +169,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {capabilities.map((cap, idx) => {
             const Icon = cap.icon;
             return (
@@ -178,7 +178,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.08 }}
-                className="group p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:border-primary-400 dark:hover:border-primary-600 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                className="group p-5 sm:p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:border-primary-400 dark:hover:border-primary-600 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">

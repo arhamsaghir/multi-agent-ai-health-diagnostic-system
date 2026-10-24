@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { sendChatMessage } from "@/lib/api";
+import { usePersona } from "@/lib/persona";
 
 interface Message {
   id: string;
@@ -32,6 +33,7 @@ const quickQuestions = [
 ];
 
 export function MedicalChat() {
+  const { persona } = usePersona();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -134,7 +136,9 @@ export function MedicalChat() {
             Medical Q&A Assistant
           </h1>
           <p className="text-sm text-neutral-500">
-            AI-powered health information
+            {persona === "clinician"
+              ? "Clinical terminology, with source context when available"
+              : "Plain-language health information"}
           </p>
         </div>
       </div>

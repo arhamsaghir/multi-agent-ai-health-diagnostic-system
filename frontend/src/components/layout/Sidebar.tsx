@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import { PersonaToggle } from "@/components/ui/PersonaToggle";
 
 const navigation = [
   { name: "Diagnosis", href: "/diagnosis", icon: Stethoscope },
@@ -35,21 +36,49 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile menu button */}
-      <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white dark:bg-neutral-800 shadow-lg"
-        onClick={() => setMobileOpen(!mobileOpen)}
-        aria-label="Toggle menu"
-      >
-        {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      {/* Mobile top header bar */}
+      <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800 shadow-sm">
+        <div className="flex items-center gap-3">
+          <button
+            className="p-2 -ml-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-sm">
+              <Thermometer size={16} />
+            </div>
+            <div>
+              <span className="font-bold text-sm text-neutral-900 dark:text-white leading-none block">
+                Health AI
+              </span>
+              <span className="text-[10px] text-neutral-500 dark:text-neutral-400 leading-none">
+                Diagnostic System
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <PersonaToggle compact />
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            aria-label="Toggle dark mode"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+        </div>
+      </header>
 
       {/* Sidebar */}
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-40 flex flex-col bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 transition-all duration-300",
           collapsed ? "w-16" : "w-64",
-          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          mobileOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Logo */}
@@ -118,8 +147,11 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Theme Toggle */}
-        <div className="px-3 py-4 border-t border-neutral-200 dark:border-neutral-800">
+        {/* View mode + theme */}
+        <div className="px-3 py-4 border-t border-neutral-200 dark:border-neutral-800 space-y-2">
+          {!collapsed && (
+            <PersonaToggle className="w-full justify-between" />
+          )}
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"

@@ -140,10 +140,6 @@ export function VisionUploader() {
     setSelectedDemo(null);
     setErrorMessage(null);
   };
-    setImage(null);
-    setResult(null);
-    setSelectedDemo(null);
-  };
 
   const severityConfig = {
     critical: { color: "#DC2626", bg: "#FEF2F2", label: "Critical" },
@@ -310,9 +306,9 @@ export function VisionUploader() {
               </div>
               <span
                 className="px-3 py-1.5 rounded-full text-sm font-semibold capitalize"
-                style={{ 
+                style={{
                   backgroundColor: severityConfig[result.severity].bg,
-                  color: severityConfig[result.severity].color 
+                  color: severityConfig[result.severity].color
                 }}
               >
                 {severityConfig[result.severity].label}
@@ -323,6 +319,61 @@ export function VisionUploader() {
               {result.recommendation}
             </p>
           </div>
+
+          {/* Grad-CAM Explainability Card */}
+          {result.heatmap && (
+            <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Scan className="text-teal-600 dark:text-teal-400" size={20} />
+                    <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
+                      Grad-CAM Saliency & Visual Attention
+                    </h3>
+                  </div>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                    Target Feature: <span className="font-semibold text-neutral-800 dark:text-neutral-200">{result.heatmap_class || result.primary_finding}</span> ({Math.round((result.heatmap_confidence || 0) * 100)}% activation)
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                  ResNet layer4 Gradient Attention
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Source Radiograph
+                  </span>
+                  <div className="relative rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-950 aspect-square flex items-center justify-center">
+                    {image && (
+                      <img
+                        src={image}
+                        alt="Source Scan"
+                        className="w-full h-full object-contain"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Grad-CAM Saliency Overlay (45% Jet Colormap)
+                  </span>
+                  <div className="relative rounded-xl overflow-hidden border border-teal-500/30 bg-neutral-950 aspect-square flex items-center justify-center">
+                    <img
+                      src={result.heatmap}
+                      alt="Grad-CAM Saliency Map"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                Warm colors (red/yellow) indicate anatomical regions of maximal gradient activation driving the model's pathology prediction.
+              </p>
+            </div>
+          )}
 
           {/* Confidence Chart */}
           <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
