@@ -4,8 +4,10 @@ Embeds clinical guidelines using sentence-transformers and stores them
 in FAISS for fast semantic retrieval by the RAG Agent.
 """
 
+import json
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -129,14 +131,46 @@ MEDICAL_KNOWLEDGE = [
 ]
 
 
+def load_curated_corpus() -> list[dict]:
+    """Load the provenance-bearing Phase 2 corpus when available."""
+    corpus_path = Path(__file__).resolve().parents[1] / "data/knowledge/guidelines/corpus.json"
+    if not corpus_path.exists():
+        return MEDICAL_KNOWLEDGE
+
+    records = json.loads(corpus_path.read_text())
+    documents = []
+    for record in records:
+        if not record.get("content") or not record.get("source") or not record.get("source_url"):
+            raise ValueError(f"Corpus record missing provenance: {record.get('id', '<unknown>')}")
+        documents.append({
+            "text": record["content"],
+            "source": record["source"],
+            "metadata": {
+                "source": record["source"],
+                "source_url": record["source_url"],
+                "category": record.get("category", "general"),
+                "last_reviewed": record.get("last_reviewed", ""),
+                "provenance": record.get("provenance", ""),
+            },
+        })
+    return documents
+
+
 def ingest_medical_knowledge():
-    """Embed and store medical knowledge documents in FAISS."""
+    """Embed and store the curated medical knowledge corpus in FAISS."""
     logger.info("Starting medical knowledge ingestion...")
 
+    documents = load_curated_corpus()
     rag = RAGAgent()
-    rag.ingest_documents(MEDICAL_KNOWLEDGE)
+    # A single replaceable corpus avoids duplicate accumulation on reruns.
+    rag.faiss_index = None
+    rag.documents = []
+    rag.metadata = []
+    batch_size = 64
+    for start in range(0, len(documents), batch_size):
+        rag.ingest_documents(documents[start:start + batch_size])
 
-    logger.info(f"Ingested {len(MEDICAL_KNOWLEDGE)} medical knowledge documents")
+    logger.info(f"Ingested {len(documents)} medical knowledge documents")
     logger.info(f"Vector store location: {settings.vector_store_dir}")
 
     # Verify by doing a test retrieval
