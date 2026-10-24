@@ -24,6 +24,21 @@ def get_orchestrator() -> OrchestratorAgent:
     return _orchestrator
 
 
+def _ensure_explanation_flavors(synthesis: dict) -> dict:
+    """Fill in any missing explanation flavor so dual-mode UI always has both.
+
+    The Patient/Clinician persona switch renders ``patient_explanation`` and
+    ``explanation`` respectively; when the LLM omits one, it is composed from
+    the structured diagnosis entries via RuleBasedSynthesizer.
+    """
+    try:
+        from src.agents.rule_based_synthesis import RuleBasedSynthesizer
+        return RuleBasedSynthesizer().compose_explanations(synthesis)
+    except Exception as e:
+        logger.debug(f"Explanation fallback composition skipped: {e}")
+        return synthesis
+
+
 class DiagnosisRequest(BaseModel):
     """Request body for diagnostic analysis."""
     text: str = Field(..., description="Symptom description in natural language")
@@ -60,6 +75,7 @@ class DiagnosisResponse(BaseModel):
     red_flags: list[str] = Field(default_factory=list)
     confidence: dict = Field(default_factory=dict)
     disclaimer: str = ""
+    triage: Optional[dict] = Field(None, description="DEMAT entropy and differential probability state")
 
 
 @router.post("/analyze", response_model=DiagnosisResponse)
@@ -76,88 +92,118 @@ async def analyze_symptoms(request: DiagnosisRequest):
     7. Translates results back to input language if needed
     """
     try:
-        # Language detection
-        from src.utils.language_detector import detect_language, is_multilingual
-        
-        detected_lang = detect_language(request.text)
-        original_lang = request.language or detected_lang
-        
-        # If input is non-English, translate to English for processing
-        processing_text = request.text
-        if is_multilingual(request.text) and detected_lang != "en":
-            from src.llm.translation import TranslationService
-            translator = TranslationService()
-            processing_text = translator.translate_to_english(request.text, detected_lang)
-            logger.info(f"Translated input from {detected_lang} to English for processing")
-        
-        orchestrator = get_orchestrator()
-
-        input_data = {
-            "text": processing_text,
-            "image_path": request.image_path,
-            "patient_history": request.patient_history,
-        }
-
-        result = await orchestrator.run(input_data)
-
-        # Extract synthesis result
-        synthesis = result.get("synthesis_result", {})
-
-        # Translate results back to original language if needed
-        if original_lang != "en" and original_lang in ["hi", "es", "ar", "fr", "de", "ur", "bn", "ta", "te", "mr", "gu"]:
-            from src.llm.translation import TranslationService
-            translator = TranslationService()
-            synthesis = translator.translate_diagnosis(synthesis, original_lang)
-            logger.info(f"Translated diagnosis results to {original_lang}")
-
-        # Persist session and diagnosis to SQLite repository
-        session_id = None
-        try:
-            import uuid
-            from src.data.database.repository import DiagnosisRepository
-
-            session_id = str(uuid.uuid4())
-            repo = DiagnosisRepository()
-            symptoms = result.get("symptoms", [])
-            repo.save_session(
-                session_id=session_id,
-                user_input=request.text,
-                symptoms=symptoms,
-                patient_history=request.patient_history,
-                image_path=request.image_path,
-            )
-
-            # Persist individual detected conditions
-            diagnoses_list = synthesis.get("diagnosis", [])
-            for diag in diagnoses_list:
-                condition_name = diag.get("name") or diag.get("condition") or "Undetermined"
-                conf = float(diag.get("confidence") or 0.0)
-                sev = str(diag.get("severity") or synthesis.get("severity") or "low")
-                repo.save_diagnosis(session_id, condition=condition_name, confidence=conf, severity=sev)
-
-            if request.patient_history:
-                repo.save_patient_record(session_id, request.patient_history)
-
-            logger.info(f"Persisted diagnostic session: {session_id}")
-        except Exception as db_err:
-            logger.warning(f"Could not persist diagnosis session to database: {db_err}")
-
-        return DiagnosisResponse(
-            session_id=session_id,
-            diagnosis=synthesis.get("diagnosis", []),
-            explanation=synthesis.get("explanation", ""),
-            patient_explanation=synthesis.get("patient_explanation", ""),
-            recommendations=synthesis.get("recommendations", []),
-            severity=synthesis.get("severity", "unknown"),
-            doctor_alert=synthesis.get("doctor_alert", False),
-            differential_diagnoses=synthesis.get("differential_diagnoses", []),
-            red_flags=synthesis.get("red_flags", []),
-            confidence=synthesis.get("confidence", {}),
-            disclaimer=synthesis.get("disclaimer", ""),
-        )
+        return await run_analysis(request)
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Diagnosis analysis failed: {e}")
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+
+async def run_analysis(request: DiagnosisRequest, progress_cb=None) -> DiagnosisResponse:
+    """Core analysis pipeline shared by /analyze and /analyze-stream.
+
+    Extracted as a helper so the SSE route can pass a progress callback
+    through to the orchestrator without duplicating the endpoint logic.
+    """
+    # Language detection
+    from src.utils.language_detector import detect_language, is_multilingual
+
+    detected_lang = detect_language(request.text)
+    original_lang = request.language or detected_lang
+
+    # If input is non-English, translate to English for processing
+    processing_text = request.text
+    if is_multilingual(request.text) and detected_lang != "en":
+        from src.llm.translation import TranslationService
+        translator = TranslationService()
+        processing_text = translator.translate_to_english(request.text, detected_lang)
+        logger.info(f"Translated input from {detected_lang} to English for processing")
+
+    orchestrator = get_orchestrator()
+
+    input_data = {
+        "text": processing_text,
+        "image_path": request.image_path,
+        "patient_history": request.patient_history,
+    }
+
+    result = await orchestrator.run(input_data, progress_cb=progress_cb)
+
+    # Extract synthesis result
+    synthesis = _ensure_explanation_flavors(result.get("synthesis_result", {}))
+
+    # Translate results back to original language if needed
+    if original_lang != "en" and original_lang in ["hi", "es", "ar", "fr", "de", "ur", "bn", "ta", "te", "mr", "gu"]:
+        from src.llm.translation import TranslationService
+        translator = TranslationService()
+        synthesis = translator.translate_diagnosis(synthesis, original_lang)
+        logger.info(f"Translated diagnosis results to {original_lang}")
+
+    # Persist session and diagnosis to SQLite repository
+    session_id = None
+    try:
+        import uuid
+        from src.data.database.repository import DiagnosisRepository
+
+        session_id = str(uuid.uuid4())
+        repo = DiagnosisRepository()
+        symptoms = result.get("symptoms", [])
+        repo.save_session(
+            session_id=session_id,
+            user_input=request.text,
+            symptoms=symptoms,
+            patient_history=request.patient_history,
+            image_path=request.image_path,
+        )
+
+        # Persist individual detected conditions
+        diagnoses_list = synthesis.get("diagnosis", [])
+        if not diagnoses_list and symptoms:
+            primary_condition = synthesis.get("primary_condition") or (
+                symptoms[0] if isinstance(symptoms[0], str) else "Reported Symptoms Assessment"
+            )
+            diagnoses_list = [{
+                "condition": primary_condition,
+                "confidence": float(synthesis.get("confidence", {}).get("overall_confidence", 0.6) if isinstance(synthesis.get("confidence"), dict) else 0.6),
+                "severity": synthesis.get("severity") or "moderate",
+            }]
+
+        for diag in diagnoses_list:
+            condition_name = diag.get("name") or diag.get("condition") or "Undetermined"
+            conf = float(diag.get("confidence") or 0.0)
+            sev = str(diag.get("severity") or synthesis.get("severity") or "low")
+            repo.save_diagnosis(session_id, condition=condition_name, confidence=conf, severity=sev)
+
+        if request.patient_history:
+            repo.save_patient_record(session_id, request.patient_history)
+
+        logger.info(f"Persisted diagnostic session: {session_id}")
+    except Exception as db_err:
+        logger.warning(f"Could not persist diagnosis session to database: {db_err}")
+
+    triage_data = None
+    try:
+        from src.core.demat import demat_engine
+        t_session = demat_engine.start_or_get_session(session_id, request.text, request.patient_history)
+        triage_data = t_session.to_dict()
+    except Exception as e:
+        logger.debug(f"DEMAT session initialization skipped: {e}")
+
+    return DiagnosisResponse(
+        session_id=session_id,
+        diagnosis=synthesis.get("diagnosis", []),
+        explanation=synthesis.get("explanation", ""),
+        patient_explanation=synthesis.get("patient_explanation", ""),
+        recommendations=synthesis.get("recommendations", []),
+        severity=synthesis.get("severity", "unknown"),
+        doctor_alert=synthesis.get("doctor_alert", False),
+        differential_diagnoses=synthesis.get("differential_diagnoses", []),
+        red_flags=synthesis.get("red_flags", []),
+        confidence=synthesis.get("confidence", {}),
+        disclaimer=synthesis.get("disclaimer", ""),
+        triage=triage_data,
+    )
 
 
 class FollowUpRequest(BaseModel):
@@ -165,6 +211,7 @@ class FollowUpRequest(BaseModel):
     text: str = Field(..., description="Initial symptom description")
     patient_history: Optional[dict] = Field(None, description="Patient demographics and history")
     previous_questions: Optional[list[dict]] = Field(None, description="Previously asked questions and answers")
+    session_id: Optional[str] = Field(None, description="Active triage session identifier")
 
 
 class FollowUpResponse(BaseModel):
@@ -172,119 +219,99 @@ class FollowUpResponse(BaseModel):
     questions: list[dict] = Field(default_factory=list, description="List of clarifying questions")
     has_more: bool = False
     session_id: str = ""
+    triage: Optional[dict] = Field(None, description="DEMAT entropy and differential probability state")
 
 
 @router.post("/follow-up", response_model=FollowUpResponse)
 async def generate_follow_up(request: FollowUpRequest):
-    """Generate clarifying follow-up questions to refine diagnosis.
+    """Generate clarifying follow-up questions to refine diagnosis using DEMAT.
 
-    This endpoint:
-    1. Analyzes initial symptoms to identify information gaps
-    2. Generates 2-3 targeted clarifying questions
-    3. Returns questions with expected answer types
+    Information-theoretic active triage:
+    1. Computes Shannon diagnostic entropy H(D) across differential candidates
+    2. Dynamically evaluates Expected Mutual Information I(D; Q)
+    3. Selects inquiries with maximum entropy reduction potential
+    4. Halts when diagnostic entropy satisfies clinical convergence criteria
     """
+    import uuid
     try:
-        from src.llm.openrouter_client import OpenRouterClient
-        import json
-        import uuid
+        from src.core.demat import demat_engine
 
-        client = OpenRouterClient()
-
-        # Build context from patient history
-        patient_ctx = ""
-        if request.patient_history:
-            parts = []
-            if "age" in request.patient_history:
-                parts.append(f"Age: {request.patient_history['age']}")
-            if "gender" in request.patient_history:
-                parts.append(f"Gender: {request.patient_history['gender']}")
-            if "bmi" in request.patient_history:
-                parts.append(f"BMI: {request.patient_history['bmi']}")
-            if "conditions" in request.patient_history:
-                parts.append(f"Existing conditions: {', '.join(request.patient_history['conditions'])}")
-            if "family_history" in request.patient_history:
-                parts.append(f"Family history: {', '.join(request.patient_history['family_history'])}")
-            patient_ctx = "\n".join(parts)
-
-        # Build conversation context from previous Q&A
-        prev_ctx = ""
-        if request.previous_questions:
-            prev_ctx = "Previously asked questions and answers:\n"
-            for qa in request.previous_questions:
-                prev_ctx += f"Q: {qa.get('question', '')}\nA: {qa.get('answer', 'Not answered')}\n"
-
-        prompt = f"""You are a medical diagnostic assistant. Based on the patient's initial symptom description, generate 2-3 clarifying follow-up questions that would help narrow down the diagnosis.
-
-PATIENT CONTEXT:
-{patient_ctx or "Not provided"}
-
-INITIAL SYMPTOMS:
-{request.text}
-
-{prev_ctx}
-
-Generate questions that:
-1. Ask about symptom duration, severity, and timing
-2. Ask about associated symptoms not yet mentioned
-3. Ask about relevant medical history or triggers
-
-Return a JSON array of questions with this structure:
-[
-  {{
-    "question": "How long have you been experiencing this symptom?",
-    "type": "text",
-    "options": null,
-    "category": "duration",
-    "rationale": "Duration helps distinguish acute vs chronic conditions"
-  }}
-]
-
-Question types: "text" (free text), "choice" (multiple choice with options), "yes_no" (yes/no question).
-For "choice" type, include an "options" array with 3-4 options.
-
-Categories: duration, severity, associated_symptoms, triggers, medical_history, lifestyle.
-
-Return valid JSON array only. No markdown, no explanations."""
-
-        system_message = "You are a medical diagnostic assistant that asks clarifying questions. Return valid JSON only."
-
-        raw_response = client.generate_json(
-            prompt=prompt,
-            system_message=system_message,
-            temperature=0.5,
-            max_tokens=1024,
+        session = demat_engine.start_or_get_session(
+            session_id=request.session_id,
+            text=request.text,
+            patient_history=request.patient_history,
         )
 
-        # Handle response - could be a list or a dict with "questions" key
-        if isinstance(raw_response, list):
-            questions = raw_response
-        elif isinstance(raw_response, dict) and "questions" in raw_response:
-            questions = raw_response["questions"]
-        elif isinstance(raw_response, dict) and "error" in raw_response:
-            # Fallback to rule-based questions
-            questions = _generate_rule_based_questions(request.text)
-        else:
-            questions = _generate_rule_based_questions(request.text)
+        # Apply previous questions/answers to update posterior belief
+        if request.previous_questions:
+            for qa in request.previous_questions:
+                qid = qa.get("id") or qa.get("question_id")
+                chosen_ans = qa.get("answer")
+                if qid and chosen_ans and qid not in session.answered_question_ids:
+                    session.belief, session.entropy = demat_engine.update_belief_from_answer(
+                        session.belief, qid, chosen_ans
+                    )
+                    session.answered_question_ids.append(qid)
 
-        # Ensure each question has required fields
-        for q in questions:
-            q.setdefault("type", "text")
-            q.setdefault("options", None)
-            q.setdefault("category", "general")
-            q.setdefault("rationale", "")
+        # Convergence check: entropy below clinical threshold or max rounds reached
+        if session.entropy <= demat_engine.ENTROPY_STOPPING_THRESHOLD or session.round_count >= demat_engine.MAX_TRIAGE_ROUNDS:
+            session.converged = True
+            return FollowUpResponse(
+                questions=[],
+                has_more=False,
+                session_id=session.session_id,
+                triage=session.to_dict(),
+            )
+
+        # Select next questions that maximize Expected Mutual Information
+        selected_candidates = demat_engine.select_next_questions(
+            current_belief=session.belief,
+            excluded_ids=session.asked_question_ids,
+            k=2,
+        )
+
+        # If marginal information gain is below threshold, converge early
+        if not selected_candidates or selected_candidates[0].get("expected_information_gain", 0) < demat_engine.MIN_INFO_GAIN_THRESHOLD:
+            session.converged = True
+            return FollowUpResponse(
+                questions=[],
+                has_more=False,
+                session_id=session.session_id,
+                triage=session.to_dict(),
+            )
+
+        session.round_count += 1
+        formatted_questions = []
+        for q in selected_candidates:
+            session.asked_question_ids.append(q["id"])
+            ig = q.get("expected_information_gain", 0.0)
+            formatted_questions.append({
+                "id": q["id"],
+                "question": q["question"],
+                "type": q["type"],
+                "options": q.get("options", []),
+                "category": q.get("category", "general"),
+                "rationale": f"{q.get('rationale', '')} (Expected information gain: {round(ig, 3)} bits)",
+                "expected_information_gain": ig,
+            })
+
+        has_more = (not session.converged) and (session.round_count < demat_engine.MAX_TRIAGE_ROUNDS)
 
         return FollowUpResponse(
-            questions=questions[:3],  # Max 3 questions
-            has_more=True,
-            session_id=str(uuid.uuid4()),
+            questions=formatted_questions,
+            has_more=has_more,
+            session_id=session.session_id,
+            triage=session.to_dict(),
         )
     except Exception as e:
-        logger.error(f"Follow-up question generation failed: {e}")
-        # Fallback
+        logger.error(f"DEMAT follow-up question generation failed: {e}")
+        # Graceful fallback to rule-based questions
+        fallback_q = _generate_rule_based_questions(request.text)
         return FollowUpResponse(
-            questions=_generate_rule_based_questions(request.text),
+            questions=fallback_q[:2],
             has_more=False,
-            session_id=str(uuid.uuid4()),
+            session_id=request.session_id or str(uuid.uuid4()),
+            triage=None,
         )
 
 
@@ -293,51 +320,90 @@ class RefineDiagnosisRequest(BaseModel):
     text: str = Field(..., description="Initial symptom description")
     patient_history: Optional[dict] = Field(None, description="Patient demographics and history")
     follow_up_answers: list[dict] = Field(default_factory=list, description="Answers to follow-up questions")
+    session_id: Optional[str] = Field(None, description="Active triage session identifier")
 
 
 @router.post("/refine", response_model=DiagnosisResponse)
 async def refine_diagnosis(request: RefineDiagnosisRequest):
-    """Re-run diagnosis incorporating follow-up question answers.
-
-    This endpoint:
-    1. Combines initial symptoms with follow-up answers
-    2. Re-runs the full diagnostic pipeline
-    3. Returns refined diagnosis with higher confidence
-    """
+    """Re-run diagnosis incorporating follow-up question answers and DEMAT posterior."""
     try:
-        orchestrator = get_orchestrator()
-
-        # Combine initial text with follow-up answers for richer context
-        enriched_text = request.text
-        if request.follow_up_answers:
-            answer_context = "\nAdditional context from follow-up:\n"
-            for qa in request.follow_up_answers:
-                answer_context += f"- {qa.get('question', '')}: {qa.get('answer', '')}\n"
-            enriched_text += answer_context
-
-        input_data = {
-            "text": enriched_text,
-            "patient_history": request.patient_history,
-        }
-
-        result = await orchestrator.run(input_data)
-        synthesis = result.get("synthesis_result", {})
-
-        return DiagnosisResponse(
-            diagnosis=synthesis.get("diagnosis", []),
-            explanation=synthesis.get("explanation", ""),
-            patient_explanation=synthesis.get("patient_explanation", ""),
-            recommendations=synthesis.get("recommendations", []),
-            severity=synthesis.get("severity", "unknown"),
-            doctor_alert=synthesis.get("doctor_alert", False),
-            differential_diagnoses=synthesis.get("differential_diagnoses", []),
-            red_flags=synthesis.get("red_flags", []),
-            confidence=synthesis.get("confidence", {}),
-            disclaimer=synthesis.get("disclaimer", ""),
-        )
+        return await run_refinement(request)
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Refined diagnosis failed: {e}")
+        logger.error(f"Diagnosis refinement failed: {e}")
         raise HTTPException(status_code=500, detail=f"Refinement failed: {str(e)}")
+
+
+async def run_refinement(request: RefineDiagnosisRequest, progress_cb=None) -> DiagnosisResponse:
+    """Core refinement pipeline shared by /refine and /refine-stream."""
+    import uuid
+    from src.core.demat import demat_engine
+    orchestrator = get_orchestrator()
+
+    # Update DEMAT session belief if active session provided
+    triage_dict = None
+    if request.session_id:
+        session = demat_engine.get_session(request.session_id)
+        if session and request.follow_up_answers:
+            for qa in request.follow_up_answers:
+                qid = qa.get("id") or qa.get("question_id")
+                ans = qa.get("answer")
+                if qid and ans:
+                    session.belief, session.entropy = demat_engine.update_belief_from_answer(
+                        session.belief, qid, ans
+                    )
+                    if qid not in session.asked_question_ids:
+                        session.asked_question_ids.append(qid)
+            session.converged = True
+            triage_dict = session.to_dict()
+
+    if progress_cb is not None and triage_dict:
+        top = triage_dict.get("top_candidates", [])
+        top_label = f"top: {top[0]['name']} {round(top[0]['probability'] * 100)}%" if top else "converged"
+        progress_cb({
+            "type": "agent",
+            "node": "triage",
+            "agent": "DEMAT Active Triage",
+            "model": "Entropy Minimization",
+            "status": "completed",
+            "elapsed_ms": 0,
+            "summary": f"entropy {triage_dict.get('entropy_bits', '?')} bits · {top_label}",
+        })
+
+    # Enrich context with answers
+    enriched_text = request.text
+    if request.follow_up_answers:
+        enriched_text += "\n\nAdditional clinical details from triage follow-up:\n"
+        for qa in request.follow_up_answers:
+            enriched_text += f"- {qa.get('question', '')}: {qa.get('answer', '')}\n"
+
+    if triage_dict and triage_dict.get("top_candidates"):
+        cands_str = ", ".join([f"{c['name']} ({round(c['probability']*100, 1)}%)" for c in triage_dict["top_candidates"][:3]])
+        enriched_text += f"\nActive Triage Mathematical Prior: {cands_str} (Entropy: {triage_dict.get('entropy_bits')} bits)\n"
+
+    input_data = {
+        "text": enriched_text,
+        "patient_history": request.patient_history,
+    }
+
+    result = await orchestrator.run(input_data, progress_cb=progress_cb)
+    synthesis = _ensure_explanation_flavors(result.get("synthesis_result", {}))
+
+    return DiagnosisResponse(
+        session_id=request.session_id or str(uuid.uuid4()),
+        diagnosis=synthesis.get("diagnosis", []),
+        explanation=synthesis.get("explanation", ""),
+        patient_explanation=synthesis.get("patient_explanation", ""),
+        recommendations=synthesis.get("recommendations", []),
+        severity=synthesis.get("severity", "unknown"),
+        doctor_alert=synthesis.get("doctor_alert", False),
+        differential_diagnoses=synthesis.get("differential_diagnoses", []),
+        red_flags=synthesis.get("red_flags", []),
+        confidence=synthesis.get("confidence", {}),
+        disclaimer=synthesis.get("disclaimer", ""),
+        triage=triage_dict,
+    )
 
 
 def _generate_rule_based_questions(text: str) -> list[dict]:
@@ -460,7 +526,7 @@ async def analyze_with_image(
         }
 
         result = await orchestrator.run(input_data)
-        synthesis = result.get("synthesis_result", {})
+        synthesis = _ensure_explanation_flavors(result.get("synthesis_result", {}))
 
         return {
             "diagnosis": synthesis.get("diagnosis", []),

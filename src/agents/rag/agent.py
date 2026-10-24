@@ -138,10 +138,14 @@ class RAGAgent(BaseAgent):
             if idx < len(self.documents) and idx >= 0:
                 # FAISS returns L2 distance; convert to similarity score
                 similarity = max(0, 1.0 - score / 2.0)
+                metadata = self.metadata[idx] if idx < len(self.metadata) else {}
                 results.append({
                     "content": self.documents[idx],
                     "score": round(similarity, 3),
-                    "source": self.metadata[idx].get("source", "unknown") if idx < len(self.metadata) else "unknown",
+                    "source": metadata.get("source", "unknown"),
+                    "source_url": metadata.get("source_url", ""),
+                    "last_reviewed": metadata.get("last_reviewed", ""),
+                    "category": metadata.get("category", "general"),
                 })
 
         return results
@@ -218,12 +222,13 @@ class RAGAgent(BaseAgent):
         if self.faiss_index is not None:
             existing_count = self.faiss_index.ntotal
             if existing_count > 0:
-                # Merge: create new index with combined size
+                # Re-encode existing documents before rebuilding; zero-padding
+                # old vectors would silently destroy retrieval quality.
+                existing_embeddings = self.embedder.encode_batch(self.documents)
                 combined = np.vstack([
-                    np.zeros((existing_count, self.embedder.DIMENSION), dtype=np.float32),
-                    embeddings
+                    existing_embeddings.astype(np.float32),
+                    embeddings.astype(np.float32),
                 ])
-                # Rebuild index
                 self.faiss_index = faiss.IndexFlatL2(self.embedder.DIMENSION)
                 self.faiss_index.add(combined)
                 self.documents.extend(texts)

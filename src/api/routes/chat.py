@@ -129,6 +129,65 @@ Previous conversation context:"""
             max_tokens=512,
         )
 
+        # Fallback to local clinical advisory if external LLM rate-limited or unavailable
+        if not response_text or response_text.startswith("Error generating response:"):
+            logger.warning(f"LLM generation failed ({response_text[:80]}), falling back to clinical advisory knowledge base")
+            msg_lower = request.message.lower()
+            fallback_knowledge = {
+                "pneumonia": (
+                    "Pneumonia is an infection that inflames the air sacs in one or both lungs. "
+                    "Common symptoms include a productive cough, fever, chills, shortness of breath, "
+                    "and chest pain that worsens with deep breathing or coughing. Please consult a doctor "
+                    "for proper evaluation, including pulse oximetry and chest imaging."
+                ),
+                "diabetes": (
+                    "Diabetes is a metabolic condition characterized by elevated blood glucose levels. "
+                    "Key symptoms include increased thirst (polydipsia), frequent urination (polyuria), "
+                    "unexplained weight loss, and chronic fatigue. A fasting blood glucose test or HbA1c "
+                    "evaluation by a healthcare provider is recommended."
+                ),
+                "chest pain": (
+                    "Chest pain can be an indicator of serious cardiovascular or pulmonary conditions. "
+                    "If you experience chest pressure radiating to the arm, neck, or jaw, combined with "
+                    "shortness of breath or diaphoresis, seek immediate emergency medical attention."
+                ),
+                "fever": (
+                    "A fever is typically a sign that the body is fighting an infection. Maintain hydration, "
+                    "monitor body temperature regularly, and seek medical attention if it exceeds 102°F (39°C), "
+                    "persists beyond 3 days, or is accompanied by severe headache, stiff neck, or difficulty breathing."
+                ),
+                "hypertension": (
+                    "Hypertension (high blood pressure) often develops without noticeable symptoms, but can lead "
+                    "to cardiovascular strain. Regular blood pressure monitoring, reducing dietary sodium, and "
+                    "consulting a physician for routine check-ups are key management steps."
+                ),
+                "cough": (
+                    "A cough may result from viral respiratory infections, allergies, asthma, or bronchitis. "
+                    "Stay well hydrated. If the cough persists over 2 weeks, produces discolored or bloody phlegm, "
+                    "or is accompanied by shortness of breath, please see a healthcare provider."
+                ),
+                "headache": (
+                    "Headaches can stem from tension, dehydration, migraines, or sinus congestion. "
+                    "Rest in a quiet, dark room and ensure adequate hydration. Seek emergency care if you experience "
+                    "a sudden 'thunderclap' severe headache, vision changes, or neck stiffness."
+                ),
+            }
+            matched_text = None
+            for key, info in fallback_knowledge.items():
+                if key in msg_lower:
+                    matched_text = info
+                    break
+
+            if matched_text:
+                response_text = f"{matched_text}\n\n*Note: Clinical guidance provided while external LLM services are temporarily busy. Always consult a healthcare professional for clinical decisions.*"
+            else:
+                response_text = (
+                    "I understand you are asking about health symptoms. While the external language model "
+                    "is momentarily experiencing high traffic, our automated safety protocols advise monitoring "
+                    "your symptoms carefully and contacting a licensed medical professional for personalized evaluation.\n\n"
+                    "*Disclaimer: This AI system is for educational and triaging support and does not replace medical advice.*"
+                )
+
         # Add assistant response to history
         _conversations[conv_id].append({
             "role": "assistant",

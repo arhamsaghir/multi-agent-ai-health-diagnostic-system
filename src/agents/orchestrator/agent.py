@@ -5,7 +5,8 @@ specialist agents (vision, nlp, rag, prediction), aggregates results, and
 passes them to the GenAI synthesis layer.
 """
 
-from typing import Any, Optional
+import time
+from typing import Any, Callable, Optional
 from langgraph.graph import StateGraph, END
 from pydantic import BaseModel, Field
 
@@ -16,6 +17,15 @@ from src.agents.rag.agent import RAGAgent
 from src.agents.prediction.agent import PredictionAgent
 from src.agents.synthesis.agent import GenAIAgent
 from config import settings
+
+# Display metadata attached to lifecycle events for the live execution stepper
+NODE_DISPLAY = {
+    "symptoms": {"agent": "NLP Agent", "model": "BioBERT / Clinical NLP"},
+    "image": {"agent": "Vision Agent", "model": "ResNet / ChestX-ray14"},
+    "knowledge": {"agent": "RAG Agent", "model": "FAISS Vector Store"},
+    "risk": {"agent": "Prediction Agent", "model": "GradientBoosting / XGBoost"},
+    "synthesis": {"agent": "Synthesis Agent", "model": "LLM Synthesis"},
+}
 
 
 class DiagnosticState(BaseModel):
@@ -96,11 +106,13 @@ class OrchestratorAgent(BaseAgent):
 
         return workflow.compile()
 
-    async def run(self, input_data: dict) -> dict:
+    async def run(self, input_data: dict, progress_cb: Optional[Callable[[dict], None]] = None) -> dict:
         """Execute the full diagnostic orchestration pipeline.
 
         Args:
             input_data: Dict with keys like 'text', 'image_path', 'patient_history'.
+            progress_cb: Optional callable receiving lifecycle event dicts
+                (planned, agent started/completed/failed) for live streaming.
 
         Returns:
             Complete diagnostic result with findings, confidence, and alerts.
@@ -114,40 +126,74 @@ class OrchestratorAgent(BaseAgent):
 
         # Run orchestration steps sequentially to avoid memory spikes
         # from concurrent model loading
-        result = await self._run_sequential(state)
+        result = await self._run_sequential(state, progress_cb)
         return result
 
-    async def _run_sequential(self, state: DiagnosticState) -> dict:
+    def _emit(self, progress_cb: Optional[Callable[[dict], None]], node: str, status: str, **extra) -> None:
+        """Publish a lifecycle event for one graph node (no-op without callback)."""
+        if progress_cb is None:
+            return
+        event = {"type": "agent", "node": node, "status": status}
+        event.update(NODE_DISPLAY.get(node, {}))
+        event.update(extra)
+        try:
+            progress_cb(event)
+        except Exception as e:
+            self.log("debug", f"Progress callback failed: {e}")
+
+    async def _run_sequential(
+        self,
+        state: DiagnosticState,
+        progress_cb: Optional[Callable[[dict], None]] = None,
+    ) -> dict:
         """Run agents sequentially to manage memory usage."""
         # Route decision
         route_result = self._node_route_decision(state)
         state.tasks_to_run = route_result.get("tasks_to_run", [])
+        if progress_cb is not None:
+            progress_cb({"type": "planned", "tasks": list(state.tasks_to_run)})
 
         # Run each agent sequentially
         for task in state.tasks_to_run:
-            if task == "symptoms":
-                result = await self._node_nlp_analysis(state)
-                state.nlp_result = result.get("nlp_result")
-                state.symptoms = result.get("symptoms", [])
-                if result.get("errors"):
-                    state.errors.extend(result["errors"])
-            elif task == "image":
-                result = await self._node_vision_analysis(state)
-                state.vision_result = result.get("vision_result")
-                if result.get("errors"):
-                    state.errors.extend(result["errors"])
-            elif task == "knowledge":
-                result = await self._node_rag_retrieval(state)
-                state.rag_result = result.get("rag_result")
-                if result.get("errors"):
-                    state.errors.extend(result["errors"])
-            elif task == "risk":
-                result = await self._node_prediction(state)
-                state.prediction_result = result.get("prediction_result")
-                if result.get("errors"):
-                    state.errors.extend(result["errors"])
+            started = time.perf_counter()
+            self._emit(progress_cb, task, "started")
+            try:
+                if task == "symptoms":
+                    result = await self._node_nlp_analysis(state)
+                    state.nlp_result = result.get("nlp_result")
+                    state.symptoms = result.get("symptoms", [])
+                elif task == "image":
+                    result = await self._node_vision_analysis(state)
+                    state.vision_result = result.get("vision_result")
+                elif task == "knowledge":
+                    result = await self._node_rag_retrieval(state)
+                    state.rag_result = result.get("rag_result")
+                elif task == "risk":
+                    result = await self._node_prediction(state)
+                    state.prediction_result = result.get("prediction_result")
+                else:
+                    continue
+            except Exception as e:
+                elapsed_ms = round((time.perf_counter() - started) * 1000, 1)
+                self.log("error", f"Node {task} raised: {e}")
+                state.errors.append(str(e))
+                self._emit(progress_cb, task, "failed", elapsed_ms=elapsed_ms, summary=str(e)[:160])
+                continue
+
+            if result.get("errors"):
+                state.errors.extend(result["errors"])
+
+            elapsed_ms = round((time.perf_counter() - started) * 1000, 1)
+            failed = bool(result.get("errors"))
+            self._emit(
+                progress_cb, task, "failed" if failed else "completed",
+                elapsed_ms=elapsed_ms,
+                summary=self._node_summary(task, state, result),
+            )
 
         # Synthesis (always runs last)
+        self._emit(progress_cb, "synthesis", "started")
+        synth_started = time.perf_counter()
         result = await self._node_synthesis(state)
         state.synthesis_result = result.get("synthesis_result")
         state.confidence_score = result.get("confidence_score", 0.0)
@@ -155,8 +201,32 @@ class OrchestratorAgent(BaseAgent):
         state.doctor_alert = result.get("doctor_alert", False)
         if result.get("errors"):
             state.errors.extend(result["errors"])
+        synth_ms = round((time.perf_counter() - synth_started) * 1000, 1)
+        synth_failed = bool(result.get("errors"))
+        self._emit(
+            progress_cb, "synthesis", "failed" if synth_failed else "completed",
+            elapsed_ms=synth_ms,
+            summary=f"severity: {state.severity}, confidence: {round((state.confidence_score or 0) * 100)}%",
+        )
 
         return state.dict()
+
+    def _node_summary(self, task: str, state: DiagnosticState, result: dict) -> str:
+        """One-line human-readable outcome for a finished node."""
+        if result.get("errors"):
+            return "completed with fallback data"
+        if task == "symptoms":
+            return f"{len(state.symptoms)} symptom(s) extracted" if state.nlp_result else "no symptoms"
+        if task == "image":
+            findings = (state.vision_result or {}).get("total_detected", 0)
+            return f"{findings} finding(s) detected"
+        if task == "knowledge":
+            docs = len((state.rag_result or {}).get("relevant_docs", []) or [])
+            return f"{docs} source(s) retrieved"
+        if task == "risk":
+            risks = (state.prediction_result or {}).get("risk_scores", {})
+            return f"{len(risks)} risk factor(s) scored" if isinstance(risks, dict) else "risk scored"
+        return "done"
 
     def _node_route_decision(self, state: DiagnosticState) -> dict:
         """Decide which specialist agents to invoke based on available input."""

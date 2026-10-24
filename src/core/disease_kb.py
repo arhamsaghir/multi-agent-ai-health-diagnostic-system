@@ -1,0 +1,206 @@
+"""Clinical Knowledge Base — Disease database and symptom associations.
+
+Centralized reference for conditions, clinical descriptions, ICD-10 codes,
+symptom correlations, and risk factors used across diagnosis routes and
+the DEMAT (Dynamic Entropy-Minimizing Active Triage) engine.
+"""
+
+from typing import Optional, Dict, Any, List
+
+
+DISEASE_DATABASE: Dict[str, Dict[str, Any]] = {
+    "upper respiratory infection": {
+        "name": "Upper Respiratory Infection",
+        "icd10": "J06.9",
+        "description": "Acute infection of the upper airway including nose, sinuses, pharynx, and larynx. Most commonly viral and self-limiting.",
+        "symptoms": ["Runny nose", "Nasal congestion", "Sore throat", "Cough", "Sneezing", "Mild fever", "Headache"],
+        "causes": ["Rhinovirus", "Coronavirus", "Adenovirus", "Respiratory syncytial virus", "Influenza virus"],
+        "risk_factors": ["Close contact with infected individuals", "Weakened immune system", "Smoking", "Allergies", "Seasonal changes"],
+        "treatment": ["Rest and hydration", "Over-the-counter analgesics (acetaminophen, ibuprofen)", "Saline nasal spray", "Decongestants", "Throat lozenges"],
+        "when_to_see_doctor": ["Symptoms lasting more than 10 days", "Fever above 102°F (38.9°C)", "Difficulty breathing", "Severe sore throat with white patches", "Symptoms worsening after initial improvement"],
+        "prognosis": "Excellent. Most cases resolve within 7-10 days without complications.",
+        "prevention": ["Frequent handwashing", "Avoid close contact with sick individuals", "Don't touch face with unwashed hands", "Annual flu vaccination"],
+    },
+    "pneumonia": {
+        "name": "Pneumonia",
+        "icd10": "J18.9",
+        "description": "Acute infection of the pulmonary parenchyma causing inflammation and fluid accumulation in the alveoli.",
+        "symptoms": ["Productive cough", "Fever and chills", "Shortness of breath", "Chest pain when breathing", "Fatigue", "Nausea", "Confusion (elderly)"],
+        "causes": ["Streptococcus pneumoniae", "Haemophilus influenzae", "Mycoplasma pneumoniae", "Viral pathogens", "Fungal organisms"],
+        "risk_factors": ["Age >65 or <2", "Smoking", "Chronic lung disease", "Weakened immune system", "Recent viral infection", "Hospitalization"],
+        "treatment": ["Antibiotics (bacterial)", "Antiviral medications (viral)", "Rest and fluids", "Fever reducers", "Hospitalization for severe cases"],
+        "when_to_see_doctor": ["Difficulty breathing", "Chest pain", "Persistent fever above 102°F", "Coughing up blood", "Confusion or altered mental state"],
+        "prognosis": "Good with prompt treatment. Recovery typically takes 1-3 weeks. Higher risk in elderly and immunocompromised.",
+        "prevention": ["Pneumococcal vaccination", "Annual flu vaccine", "Hand hygiene", "Don't smoke", "Maintain healthy immune system"],
+    },
+    "type 2 diabetes": {
+        "name": "Type 2 Diabetes Mellitus",
+        "icd10": "E11.9",
+        "description": "Chronic metabolic disorder characterized by insulin resistance and relative insulin deficiency, leading to elevated blood glucose levels.",
+        "symptoms": ["Excessive thirst (polydipsia)", "Frequent urination (polyuria)", "Fatigue", "Blurred vision", "Slow wound healing", "Unexplained weight loss", "Tingling in extremities"],
+        "causes": ["Insulin resistance", "Genetic predisposition", "Obesity", "Sedentary lifestyle", "Pancreatic beta-cell dysfunction"],
+        "risk_factors": ["Age >45", "Overweight/obesity", "Family history", "Sedentary lifestyle", "Gestational diabetes history", "Polycystic ovary syndrome", "Certain ethnicities"],
+        "treatment": ["Lifestyle modifications (diet, exercise)", "Metformin (first-line)", "Other oral medications (SGLT2 inhibitors, DPP-4 inhibitors)", "Insulin therapy if needed", "Regular blood glucose monitoring"],
+        "when_to_see_doctor": ["Excessive thirst and urination", "Unexplained weight loss", "Blurred vision", "Slow-healing sores", "Frequent infections"],
+        "prognosis": "Manageable with proper treatment. Poor control leads to complications: neuropathy, retinopathy, nephropathy, cardiovascular disease.",
+        "prevention": ["Maintain healthy weight", "Regular physical activity", "Balanced diet", "Regular screening if high risk"],
+    },
+    "cardiovascular disease": {
+        "name": "Cardiovascular Disease",
+        "icd10": "I25.9",
+        "description": "Broad category of disorders affecting the heart and blood vessels, including coronary artery disease, heart failure, and arrhythmias.",
+        "symptoms": ["Chest pain or pressure", "Shortness of breath", "Pain radiating to arm/jaw", "Fatigue", "Dizziness", "Swelling in legs", "Palpitations"],
+        "causes": ["Atherosclerosis", "High blood pressure", "High cholesterol", "Blood clots", "Heart valve dysfunction"],
+        "risk_factors": ["Age >55", "Family history of CVD", "Smoking", "Hypertension", "Hyperlipidemia", "Diabetes", "Obesity", "Physical inactivity"],
+        "treatment": ["Medications (statins, beta-blockers, ACE inhibitors)", "Antiplatelet therapy (aspirin)", "Lifestyle interventions", "Interventional cardiology (angioplasty/stenting)", "Cardiac rehabilitation"],
+        "when_to_see_doctor": ["Severe or crushing chest pain", "Pain spreading to left arm, neck, or jaw", "Unexplained shortness of breath with sweating", "Fainting or severe lightheadedness", "Sudden irregular heartbeat"],
+        "prognosis": "Variable depending on severity and adherence to treatment. Early detection significantly improves outcomes.",
+        "prevention": ["Heart-healthy diet (Mediterranean/DASH)", "At least 150 min exercise/week", "Smoking cessation", "Weight control", "Blood pressure management"],
+    },
+    "migraine": {
+        "name": "Migraine",
+        "icd10": "G43.9",
+        "description": "Recurrent primary headache disorder characterized by moderate to severe throbbing pain, often unilateral, with associated neurological symptoms.",
+        "symptoms": ["Throbbing headache", "Nausea and vomiting", "Sensitivity to light", "Sensitivity to sound", "Visual aura", "Dizziness", "Fatigue after attack"],
+        "causes": ["Neurological disorder", "Genetic predisposition", "Neurotransmitter imbalances", "Blood vessel changes", "Trigeminal nerve activation"],
+        "risk_factors": ["Family history", "Female sex", "Hormonal changes", "Stress", "Sleep disturbances", "Certain foods"],
+        "treatment": ["Acute: triptans, NSAIDs", "Preventive: beta-blockers, anticonvulsants, CGRP inhibitors", "Lifestyle modifications", "Trigger avoidance", "Botox for chronic migraines"],
+        "when_to_see_doctor": ["Sudden severe headache (thunderclap)", "Headache with fever, stiff neck", "New headaches after age 50", "Headache after head injury", "Headaches that worsen over time"],
+        "prognosis": "Chronic but manageable. Many patients experience improvement with age. Quality of life can be significantly impacted without proper treatment.",
+        "prevention": ["Identify and avoid triggers", "Regular sleep schedule", "Stress management", "Regular exercise", "Adequate hydration"],
+    },
+    "gastroenteritis": {
+        "name": "Acute Gastroenteritis",
+        "icd10": "K52.9",
+        "description": "Inflammation of the stomach and intestines causing diarrhea, vomiting, and abdominal pain. Usually viral and self-limiting.",
+        "symptoms": ["Diarrhea", "Nausea and vomiting", "Abdominal cramps", "Low-grade fever", "Dehydration", "Loss of appetite", "Muscle aches"],
+        "causes": ["Norovirus", "Rotavirus", "Salmonella", "Campylobacter", "E. coli", "Giardia"],
+        "risk_factors": ["Contaminated food/water", "Close contact with infected person", "Weakened immune system", "Daycare/nursing home settings", "Recent antibiotic use"],
+        "treatment": ["Oral rehydration therapy", "Electrolyte replacement", "Gradual reintroduction of bland foods (BRAT diet)", "Antiemetics if severe", "Antibiotics only if bacterial etiology confirmed"],
+        "when_to_see_doctor": ["Signs of severe dehydration (no urination, dry mouth, extreme thirst)", "Inability to keep liquids down for 24 hours", "Bloody stools or vomit", "Fever above 102°F", "Severe abdominal pain"],
+        "prognosis": "Usually resolves within 3-7 days with supportive care. Dehydration is the primary risk, especially in young children and elderly.",
+        "prevention": ["Hand hygiene", "Food safety practices", "Safe drinking water", "Avoid raw or undercooked shellfish", "Disinfect contaminated surfaces"],
+    },
+    "asthma": {
+        "name": "Asthma",
+        "icd10": "J45.9",
+        "description": "Chronic inflammatory disease of the airways causing reversible airflow obstruction, bronchospasm, and increased mucous production.",
+        "symptoms": ["Wheezing", "Shortness of breath", "Chest tightness", "Chronic cough (especially at night)", "Difficulty breathing during exercise"],
+        "causes": ["Genetic susceptibility", "Environmental allergen exposure", "Respiratory infections in early childhood", "Occupational exposures"],
+        "risk_factors": ["Family history of asthma or atopy", "Allergic conditions (eczema, hay fever)", "Exposure to second-hand smoke", "Air pollution", "Obesity"],
+        "treatment": ["Inhaled corticosteroids (controller)", "Short-acting beta agonists (rescue inhaler)", "Long-acting beta agonists (combination therapy)", "Leukotriene receptor antagonists", "Biologic therapies for severe refractory asthma"],
+        "when_to_see_doctor": ["Frequent asthma attacks", "Using rescue inhaler more than twice weekly", "Wheezing that doesn't improve", "Difficulty speaking due to breathlessness", "Peak flow readings consistently low"],
+        "prognosis": "Good with proper management. Many children outgrow symptoms. Adults typically have lifelong condition requiring ongoing management.",
+        "prevention": ["Avoid known triggers", "Use preventive medications as prescribed", "Regular monitoring", "Create an asthma action plan", "Annual flu vaccination"],
+    },
+    "hypertension": {
+        "name": "Hypertension (High Blood Pressure)",
+        "icd10": "I10",
+        "description": "Chronic condition where blood pressure in the arteries is persistently elevated, increasing risk of cardiovascular disease, stroke, and kidney disease.",
+        "symptoms": ["Usually asymptomatic", "Headaches (severe cases)", "Shortness of breath", "Nosebleeds", "Flushing", "Dizziness", "Chest pain"],
+        "causes": ["Primary: unknown (90-95%)", "Secondary: kidney disease, hormonal disorders", "Narrowed arteries", "Increased blood volume"],
+        "risk_factors": ["Age >60", "Family history", "Obesity", "High sodium diet", "Excessive alcohol", "Sedentary lifestyle", "Stress", "Smoking"],
+        "treatment": ["Lifestyle changes (DASH diet, exercise)", "ACE inhibitors", "Calcium channel blockers", "Diuretics", "ARBs", "Beta-blockers"],
+        "when_to_see_doctor": ["Blood pressure consistently above 130/80", "Headaches with elevated BP", "Vision changes", "Chest pain", "Blood pressure above 180/120 (emergency)"],
+        "prognosis": "Lifelong condition requiring ongoing management. Well-controlled hypertension significantly reduces complication risk.",
+        "prevention": ["Healthy diet (low sodium)", "Regular exercise", "Maintain healthy weight", "Limit alcohol", "Don't smoke", "Manage stress", "Regular BP monitoring"],
+    },
+    "anxiety disorder": {
+        "name": "Anxiety Disorder",
+        "icd10": "F41.9",
+        "description": "Group of mental health conditions characterized by persistent, excessive fear or worry that significantly impairs daily functioning.",
+        "symptoms": ["Excessive worry", "Restlessness", "Fatigue", "Difficulty concentrating", "Sleep disturbances", "Rapid heartbeat", "Muscle tension", "Trembling"],
+        "causes": ["Neurotransmitter imbalances", "Genetic factors", "Environmental stress", "Traumatic experiences", "Medical conditions"],
+        "risk_factors": ["Family history", "Traumatic experiences", "Chronic stress", "Other mental health conditions", "Substance use", "Female sex"],
+        "treatment": ["Cognitive behavioral therapy", "SSRIs/SNRIs", "Benzodiazepines (short-term)", "Relaxation techniques", "Exercise", "Mindfulness meditation"],
+        "when_to_see_doctor": ["Worry interfering with daily life", "Panic attacks", "Physical symptoms without medical cause", "Sleep disturbances", "Avoidance behavior"],
+        "prognosis": "Good with treatment. Many people achieve significant improvement with therapy and/or medication. Untreated anxiety can worsen over time.",
+        "prevention": ["Stress management", "Regular exercise", "Adequate sleep", "Limit caffeine and alcohol", "Seek help early"],
+    },
+    "urinary tract infection": {
+        "name": "Urinary Tract Infection",
+        "icd10": "N39.0",
+        "description": "Infection in any part of the urinary system (kidneys, bladder, ureters, urethra). Most commonly affects the lower tract.",
+        "symptoms": ["Burning during urination", "Frequent urge to urinate", "Cloudy or strong-smelling urine", "Pelvic pain", "Blood in urine", "Low-grade fever"],
+        "causes": ["E. coli (most common)", "Other bacteria entering urinary tract", "Sexual activity", "Anatomical factors", "Catheter use"],
+        "risk_factors": ["Female anatomy", "Sexual activity", "Menopause", "Urinary tract abnormalities", "Kidney stones", "Weakened immune system", "Catheter use"],
+        "treatment": ["Antibiotics (nitrofurantoin, trimethoprim, ciprofloxacin)", "Increased fluid intake", "Pain relievers (phenazopyridine)", "Cranberry extract (preventive)"],
+        "when_to_see_doctor": ["Symptoms lasting more than 2-3 days", "Fever and back/flank pain (possible kidney infection)", "Blood in urine", "Pregnancy with UTI symptoms", "Recurrent infections"],
+        "prognosis": "Excellent with antibiotic treatment. Most uncomplicated UTIs resolve completely within 3-5 days.",
+        "prevention": ["Drink plenty of water", "Wipe from front to back", "Urinate promptly after intercourse", "Avoid irritating feminine hygiene products"],
+    },
+    "gerd": {
+        "name": "Gastroesophageal Reflux Disease",
+        "icd10": "K21.9",
+        "description": "Chronic digestive disease occurring when stomach acid or bile flows back into the food pipe, irritating the lining and causing burning discomfort.",
+        "symptoms": ["Heartburn", "Chest pain", "Regurgitation", "Sour taste", "Difficulty swallowing", "Hoarseness", "Cough"],
+        "causes": ["Lower esophageal sphincter weakness", "Hiatal hernia", "Delayed gastric emptying", "Increased intra-abdominal pressure"],
+        "risk_factors": ["Obesity", "Pregnancy", "Smoking", "Hiatal hernia", "Late-night heavy meals", "Fatty or acidic foods", "Alcohol"],
+        "treatment": ["Proton pump inhibitors (omeprazole, pantoprazole)", "H2 blockers (famotidine)", "Antacids", "Dietary modifications", "Elevating head during sleep"],
+        "when_to_see_doctor": ["Difficulty or pain when swallowing", "Unexplained weight loss", "Vomiting blood or black stools", "Chest pain radiating to jaw or arm"],
+        "prognosis": "Good with consistent lifestyle and medical management; endoscopic or surgical interventions available for refractory cases.",
+        "prevention": ["Maintain healthy weight", "Avoid trigger foods", "Do not lie down within 3 hours of eating", "Eat smaller meals", "Stop smoking"],
+    },
+    "back pain": {
+        "name": "Back Pain (Lumbar Strain / Radiculopathy)",
+        "icd10": "M54.5",
+        "description": "Acute or chronic pain localized to the lumbar spine, frequently caused by musculoligamentous strain, facet arthropathy, or discogenic compression.",
+        "symptoms": ["Back pain", "Muscle stiffness", "Muscle spasm", "Limited mobility", "Pain radiating to leg", "Numbness"],
+        "causes": ["Muscle or ligament strain", "Lumbar disc herniation", "Degenerative disc disease", "Spondylolisthesis", "Poor ergonomic mechanics"],
+        "risk_factors": ["Heavy lifting or repetitive twisting", "Sedentary lifestyle", "Obesity", "Poor core muscle tone", "Smoking", "Advanced age"],
+        "treatment": ["NSAIDs (naproxen, ibuprofen)", "Muscle relaxants (short course)", "Targeted physical therapy", "Core stabilization exercise", "Thermal therapy"],
+        "when_to_see_doctor": ["Bowel or bladder dysfunction (cauda equina red flag)", "Progressive lower extremity weakness", "Fever or chills with back pain", "Unexplained weight loss"],
+        "prognosis": "Favorable for acute musculoskeletal strain (>90% recover within 4-6 weeks with conservative therapy).",
+        "prevention": ["Proper lifting ergonomics", "Maintain active core strength", "Ergonomic seating", "Weight management", "Regular low-impact walking"],
+    },
+    "eczema": {
+        "name": "Eczema (Atopic Dermatitis)",
+        "icd10": "L20.9",
+        "description": "Chronic pruritic inflammatory dermatosis characterized by defective epidermal barrier function and recurrent erythematous eczema plaques.",
+        "symptoms": ["Itchy skin", "Red rash", "Dry skin", "Skin cracking", "Oozing", "Darkened patches", "Swelling"],
+        "causes": ["Filaggrin gene mutations / barrier disruption", "Immune dysregulation (Th2 pathway)", "Environmental allergen sensitization"],
+        "risk_factors": ["Family history of atopy (eczema, asthma, allergic rhinitis)", "Dry climates", "Frequent hot showers", "Harsh soaps and detergents"],
+        "treatment": ["High-lipid barrier emollients", "Topical corticosteroids (hydrocortisone, triamcinolone)", "Topical calcineurin inhibitors", "Oral antihistamines for pruritus"],
+        "when_to_see_doctor": ["Secondary bacterial infection signs (honey-colored crusting, pustules)", "Painful skin fissures", "Severe sleep disturbance due to itching"],
+        "prognosis": "Chronic relapsing course; often improves with age and consistent barrier maintenance.",
+        "prevention": ["Daily fragrance-free emollient application", "Lukewarm short showers", "Gentle non-soap cleansers", "Avoid wool and synthetic fabrics"],
+    },
+    "osteoarthritis": {
+        "name": "Osteoarthritis",
+        "icd10": "M19.9",
+        "description": "Degenerative joint disease featuring progressive degradation of articular cartilage, subchondral bone remodeling, and osteophyte formation causing mechanical joint pain.",
+        "symptoms": ["Joint pain", "Stiffness", "Pain with movement", "Reduced range of motion", "Swelling", "Grating"],
+        "causes": ["Mechanical wear and tear", "Cartilage chondrocyte senescence", "Prior joint trauma / ligament rupture", "Abnormal joint alignment"],
+        "risk_factors": ["Age >50", "Female sex", "Obesity (especially knees/hips)", "Repetitive occupational joint stress", "Prior joint surgery or injury"],
+        "treatment": ["Acetaminophen / oral or topical NSAIDs", "Low-impact aerobic conditioning (swimming, cycling)", "Physical therapy", "Weight loss", "Intra-articular corticosteroid injections"],
+        "when_to_see_doctor": ["Acute inability to bear weight", "Hot, markedly erythematous swollen joint (to exclude septic arthritis)", "Rapid joint deformity"],
+        "prognosis": "Slowly progressive non-inflammatory condition; pain and functional impairment well managed with multimodality care.",
+        "prevention": ["Maintain healthy BMI to minimize joint loading", "Avoid high-impact joint trauma", "Cross-training and quadriceps strengthening", "Early treatment of joint injuries"],
+    },
+    "neurological disorder": {
+        "name": "Neurological Disorder (Stroke / TIA / Cerebrovascular Disease)",
+        "icd10": "I67.9",
+        "description": "Acute or transient focal central nervous system dysfunction resulting from localized cerebral ischemia, thrombosis, or transient microvascular disruption.",
+        "symptoms": ["Severe headache", "Dizziness", "Vision changes", "Numbness", "Weakness", "Loss of balance", "Difficulty speaking", "Confusion"],
+        "causes": ["Thromboembolism / cerebral artery occlusion", "Carotid artery stenosis", "Cardioembolic sources (atrial fibrillation)", "Microvascular small vessel disease"],
+        "risk_factors": ["Hypertension", "Atrial fibrillation", "Type 2 diabetes", "Hyperlipidemia", "Smoking", "Age >55", "Prior TIA or stroke"],
+        "treatment": ["Immediate emergency medical care (FAST evaluation)", "Intravenous thrombolysis (alteplase within 4.5h)", "Endovascular thrombectomy", "Antiplatelet therapy (aspirin, clopidogrel)", "High-intensity statins"],
+        "when_to_see_doctor": ["EMERGENCY: Any sudden facial droop, arm weakness, or speech difficulty — call emergency services immediately."],
+        "prognosis": "Outcome depends strictly on time to revascularization and infarct volume. Prompt recognition dramatically reduces long-term disability.",
+        "prevention": ["Strict blood pressure control (<130/80)", "Anticoagulation for atrial fibrillation", "Statin therapy", "Smoking cessation", "Regular glycemic monitoring"],
+    },
+}
+
+
+def find_disease_in_kb(query: str) -> Optional[Dict[str, Any]]:
+    """Look up a disease by exact or partial key match in the knowledge base."""
+    name_lower = query.replace("-", " ").replace("_", " ").lower().strip()
+
+    if name_lower in DISEASE_DATABASE:
+        return DISEASE_DATABASE[name_lower]
+
+    for key, info in DISEASE_DATABASE.items():
+        if name_lower in key or key in name_lower or name_lower in info["name"].lower():
+            return info
+
+    return None

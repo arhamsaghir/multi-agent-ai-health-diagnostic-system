@@ -177,8 +177,11 @@ async def health_check():
 
 
 # Import routes
-from src.api.routes import diagnosis, chat, vision, history
+from src.api.routes import diagnosis, chat, vision, history, stream, report, fhir
 app.include_router(diagnosis.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 app.include_router(vision.router, prefix="/api")
 app.include_router(history.router, prefix="/api")
+app.include_router(stream.router, prefix="/api")
+app.include_router(report.router, prefix="/api")
+app.include_router(fhir.router, prefix="/api")

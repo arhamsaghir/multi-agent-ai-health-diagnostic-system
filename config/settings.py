@@ -35,10 +35,16 @@ class Settings(BaseSettings):
     openai_base_url: str = "https://api.openai.com/v1"
 
     # LLM Model Names
-    orchestrator_model: str = "openai/gpt-oss-120b:free"
-    synthesis_model: str = "nvidia/nemotron-3-super-120b-a12b:free"
-    rag_model: str = "nvidia/nemotron-3-super-120b-a12b:free"
-    chatbot_model: str = "openai/gpt-oss-120b:free"
+    orchestrator_model: str = "nvidia/nemotron-3.5-lightning:free"
+    synthesis_model: str = "nvidia/nemotron-3.5-lightning:free"
+    rag_model: str = "nvidia/nemotron-3.5-lightning:free"
+    chatbot_model: str = "nvidia/nemotron-3.5-lightning:free"
+
+    # OmniRoute Gateway Settings (Local / Remote multi-provider proxy)
+    omniroute_base_url: str = "http://localhost:20128/v1"
+    omniroute_api_key: str = "omniroute-local"
+    omniroute_model: str = "antigravity/gemini-3.8-flash-medium"
+    use_omniroute: bool = True
 
     # Vision Model
     vision_model_name: str = "resnet50"

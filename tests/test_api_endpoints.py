@@ -169,6 +169,10 @@ class TestVisionEndpoint:
         assert "total_detected" in data
         assert "highest_confidence" in data
         assert "anomalies" in data
+        assert "heatmap" in data
+        assert data["heatmap"] is not None
+        assert data["heatmap"].startswith("data:image/png;base64,")
+        assert "heatmap_class" in data
         assert isinstance(data["findings"], list)
 
     def test_vision_analyze_invalid_extension(self, client):
@@ -184,6 +188,49 @@ class TestVisionEndpoint:
     def test_vision_analyze_missing_file(self, client):
         response = client.post("/api/vision/analyze")
         assert response.status_code == 422
+
+
+class TestDEMATActiveTriageEndpoint:
+    def test_follow_up_generates_entropy_and_questions(self, client):
+        response = client.post(
+            "/api/diagnosis/follow-up",
+            json={
+                "text": "I have chest discomfort and cough",
+                "patient_history": {"age": 55, "family_history": ["heart_disease"]},
+            },
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "session_id" in data
+        assert "questions" in data
+        assert "has_more" in data
+        assert "triage" in data
+        assert data["triage"] is not None
+        assert "entropy_bits" in data["triage"]
+        assert "top_candidates" in data["triage"]
+        assert len(data["questions"]) > 0
+        assert "expected_information_gain" in data["questions"][0]
+
+    def test_refine_diagnosis_endpoint(self, client):
+        response = client.post(
+            "/api/diagnosis/refine",
+            json={
+                "text": "Chest pain and shortness of breath",
+                "patient_history": {"age": 58, "bmi": 28.0},
+                "follow_up_answers": [
+                    {
+                        "id": "q_chest_pain_exertion",
+                        "question": "Does the chest discomfort worsen with physical exertion?",
+                        "answer": "Yes, distinctly worse with activity",
+                    }
+                ],
+            },
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "diagnosis" in data or "differential_diagnoses" in data
+        assert "severity" in data
+        assert "recommendations" in data
 
 
 class TestHistoryEndpoint:

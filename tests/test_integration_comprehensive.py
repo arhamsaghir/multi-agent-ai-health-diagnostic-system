@@ -386,11 +386,20 @@ class TestOpenRouterClient:
     def test_client_initializes(self):
         """Test that OpenRouter client initializes."""
         from src.llm.openrouter_client import OpenRouterClient
+        from config import settings
 
         client = OpenRouterClient()
         assert client is not None
-        assert client.CHAT_MODEL == "openai/gpt-oss-120b:free"
-        assert client.SYNTHESIS_MODEL == "nvidia/nemotron-3-super-120b-a12b:free"
+
+        if getattr(settings, "use_omniroute", False):
+            # OmniRoute mode: all role models alias the configured gateway model
+            assert client.CHAT_MODEL == settings.omniroute_model
+            assert client.SYNTHESIS_MODEL == settings.omniroute_model
+            assert client.RAG_MODEL == settings.omniroute_model
+            assert client.default_model == settings.omniroute_model
+        else:
+            assert client.CHAT_MODEL == "nvidia/nemotron-3.5-lightning:free"
+            assert client.SYNTHESIS_MODEL == "nvidia/nemotron-3.5-lightning:free"
 
     def test_all_methods_have_timeout(self):
         """Test that all generate methods use 30s timeout."""
