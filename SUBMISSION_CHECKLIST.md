@@ -25,7 +25,32 @@
 - All API tests pass (18 tests)
 - Integration tests properly marked with skip decorators
 
-## Remaining Tasks
+## Phase 3 Deliverables: Patent Filing & Conference Submission Packages
+
+The Phase 3 research benchmark, patent portfolio, and conference paper draft are packaged and verified. All technical artifacts are committed to the repository; formal submission actions require human author/inventor execution.
+
+### Provisional Patent Package (Indian Patent Office / USPTO)
+- **Status:** Package assembled & verified; `BLOCKED: user action` for official filing.
+- **Detailed Checklist:** See [`patent/FILING_CHECKLIST.md`](patent/FILING_CHECKLIST.md)
+- **Specification Draft (DOCX):** [`patent/specification/provisional_patent_specification.docx`](patent/specification/provisional_patent_specification.docx)
+- **Specification Source (MD):** [`patent/specification/provisional_patent_specification.md`](patent/specification/provisional_patent_specification.md)
+- **Drawings (300 DPI, FIGS. 1–5):** [`patent/figures/`](patent/figures/)
+- **Counsel Brief & Search Strings:** [`patent/PATENT_AGENT_BRIEF.md`](patent/PATENT_AGENT_BRIEF.md)
+- **Claim Traceability Matrix:** [`patent/PATENT_PORTFOLIO_SUMMARY.md`](patent/PATENT_PORTFOLIO_SUMMARY.md)
+- **Next User Action:** Appoint/transmit brief to registered patent agent, execute Form 1/2, pay statutory fee, and receive official application number.
+
+### Conference Submission Package (ACM CHIL / MICCAI)
+- **Status:** Manuscript compiled (8 pages, 0 errors); `BLOCKED: user action` for OpenReview upload (after patent priority is secured).
+- **Detailed Checklist:** See [`paper/SUBMISSION_CHECKLIST.md`](paper/SUBMISSION_CHECKLIST.md)
+- **Compiled Manuscript (PDF):** [`paper/phase3-paper/main.pdf`](paper/phase3-paper/main.pdf)
+- **LaTeX Source & Figures:** [`paper/phase3-paper/`](paper/phase3-paper/)
+- **Reproducibility Harness:** [`scripts/benchmark/demat_benchmark.py`](scripts/benchmark/demat_benchmark.py) (seed: 42, cases: 200)
+- **Committed Results:** [`data/benchmarks/results/demat_research_benchmark.json`](data/benchmarks/results/demat_research_benchmark.json)
+- **Next User Action:** After obtaining patent application number, anonymize author headers in `main.tex`, compile blinded submission PDF, and upload to OpenReview with reproducibility supplement.
+
+---
+
+## Remaining Tasks (Academic Thesis & Presentation)
 
 ### A3: Demo & Presentation Polish
 - [ ] Update presentation slides with new benchmark results (100% accuracy)

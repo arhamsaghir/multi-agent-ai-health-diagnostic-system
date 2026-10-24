@@ -1,0 +1,148 @@
+%% main_updated.tex
+%% Separate updated main file for the revised medical-AI synopsis.
+%% Copy this file into the synopsis folder and rename it to main.tex when ready.
+\documentclass[a4paper,12pt]{report}
+
+% GEOMETRY: retained from the supplied Overleaf template
+\usepackage[top=30mm, bottom=25mm, left=35mm, right=20mm]{geometry}
+
+% PACKAGES
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{times}
+\usepackage[hidelinks]{hyperref}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{xcolor}
+\captionsetup{font=small, labelfont=bf}
+
+% BIBLIOGRAPHY SETUP
+\usepackage[backend=biber, style=ieee, sorting=none]{biblatex}
+\addbibresource{References.bib}
+
+% Optional draft watermark. Disabled for the clean synopsis by default.
+\newif\ifwatermark
+\watermarkfalse
+% Enable the conditional above only if a draft watermark is required.
+\ifwatermark
+    \usepackage[firstpage]{draftwatermark}
+    \SetWatermarkText{DRAFT}
+    \SetWatermarkColor[gray]{0.8}
+    \SetWatermarkFontSize{3.2cm}
+    \SetWatermarkAngle{45}
+\fi
+
+% DOCUMENT INFORMATION -- replace bracketed fields before submission
+\newcommand{\reporttitle}{Multi-Agent AI Health Diagnostic System}
+\newcommand{\subtitle}{A Proposed Multi-Modal Clinical Decision-Support Framework}
+\newcommand{\session}{2023--2027}
+\newcommand{\batchcode}{[BATCH / BRANCH / SECTION / GROUP CODE]}
+\newcommand{\degree}{Bachelor of Technology \\ in \\ [PROGRAMME / SPECIALISATION]}
+\newcommand{\students}{
+    [STUDENT NAME 1] ([ROLL NUMBER 1]) \\
+    [STUDENT NAME 2] ([ROLL NUMBER 2]) \\
+    [STUDENT NAME 3] ([ROLL NUMBER 3]) \\
+    [STUDENT NAME 4] ([ROLL NUMBER 4])
+}
+\newcommand{\mentor}{[SUPERVISOR NAME]}
+\newcommand{\institution}{[INSTITUTION NAME]}
+\newcommand{\university}{[AFFILIATING UNIVERSITY]}
+\newcommand{\submissiondate}{[MONTH, YEAR]}
+
+% DOCUMENT START
+\begin{document}
+
+% TITLE PAGE
+\begin{titlepage}
+    \begin{flushright}
+        \textbf{\batchcode}
+    \end{flushright}
+
+    \vspace{-0.5cm}
+    \centering
+    \vspace*{1cm}
+
+    {\Huge \textbf{\reporttitle}\par}
+    \vspace{0.45cm}
+    {\large\textit{\subtitle}\par}
+
+    \vfill
+
+    \textbf{A Research Proposal Synopsis}\par
+
+    \vfill
+
+    Submitted in Partial Fulfillment of the Requirements for the Degree of\par
+    \vspace{1cm}
+
+    {\LARGE \textbf{\degree}\par}
+    \vspace{0.5cm}
+    Session: \textbf{\session}\par
+
+    \vfill
+
+    by\par
+    \vspace{0.5cm}
+    {\large \students\par}
+
+    \vfill
+
+    Under the Supervision of\par
+    \vspace{0.5cm}
+    {\large \textbf{\mentor}\par}
+
+    \vfill
+
+    % Keep AKGEC_1_0.png in the same Overleaf project folder.
+    \includegraphics[width=3cm]{AKGEC_1_0.png}
+    \vspace{0.8cm}
+
+    {\large \textbf{\institution}\par}
+    {\large \textbf{\university}\par}
+
+    \vfill
+
+    {\large \submissiondate\par}
+    \vspace*{1cm}
+\end{titlepage}
+
+% FRONT MATTER
+\onehalfspacing
+\pagenumbering{roman}
+
+\newpage
+\input{DECLARATION}
+
+\newpage
+\input{certificate}
+
+\newpage
+\input{ABSTRACT}
+
+\newpage
+\tableofcontents
+
+\newpage
+\listoffigures
+
+\newpage
+\listoftables
+
+% PROJECT-SPECIFIC SYNOPSIS CHAPTERS
+\newpage
+\pagenumbering{arabic}
+
+\input{Chapter1_Introduction}
+\input{Chapter2_LiteratureReview}
+\input{Chapter3_ProposedSystem}
+\input{Chapter4_EvaluationOutcomes}
+\input{Chapter5_ScopePlan}
+
+% BACK MATTER
+\newpage
+\addcontentsline{toc}{chapter}{References}
+\printbibliography
+
+\end{document}
