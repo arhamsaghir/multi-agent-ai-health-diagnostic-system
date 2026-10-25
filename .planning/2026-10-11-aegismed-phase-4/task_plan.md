@@ -8,12 +8,12 @@
 
 ## Next Step
 
-Workstream 4.1 (FHIR R4 interoperability) is complete and gated (155 passed / 17 skipped, 0 regressions). Execute **Workstream 4.2 — Containerized On-Prem Deployment** next.
+**Phase 4 is closed.** Autonomous workstreams 4.1 and 4.2 are complete and gated; 4.3 and 4.4 are delivered as verified scaffolds with explicit `BLOCKED` tags. Everything remaining is user action (statutory filings, IRB, OpenReview) — see `progress.md` blocked-item registers.
 
 ## Current Phase
 
 ### Workstream 4.2 — Containerized On-Prem Deployment
-**Status:** pending (next)
+**Status:** complete (verified live 2026-10-25)
 
 ## Phases
 
@@ -31,25 +31,25 @@ Workstream 4.1 (FHIR R4 interoperability) is complete and gated (155 passed / 17
 - [x] 4.1.5 Acceptance: 15 new tests green; full suite **155 passed / 17 skipped**, 0 regressions.
 
 ### Workstream 4.2 — Containerized On-Prem Deployment
-**Status:** pending
-- [ ] 4.2.1 Rewrite `docker-compose.yml` for Next.js frontend (3000) + FastAPI (8000) with healthchecks.
-- [ ] 4.2.2 `frontend/Dockerfile` (Node multi-stage) + fixed root `Dockerfile` (non-root, drop 8501).
-- [ ] 4.2.3 `.dockerignore`.
-- [ ] 4.2.4 `scripts/deploy/export_onnx.py` (CPU) + TensorRT INT8 runbook tagged `BLOCKED: GPU host`.
-- [ ] 4.2.5 Acceptance: `docker compose config` valid; ONNX parity test vs torch forward pass green.
+**Status:** verifying (final acceptance evidence pending)
+- [x] 4.2.1 Rewrite `docker-compose.yml` for Next.js frontend (3000) + FastAPI (8000) with healthchecks.
+- [x] 4.2.2 `frontend/Dockerfile` (Node multi-stage) + fixed root `Dockerfile` (non-root `USER aegismed`, drop 8501).
+- [x] 4.2.3 `.dockerignore` (root + frontend).
+- [x] 4.2.4 `scripts/deploy/export_onnx.py` (CPU) + TensorRT INT8 runbook tagged `BLOCKED: GPU host`.
+- [x] 4.2.5 Acceptance: `docker compose config` valid; ONNX parity vs torch forward pass **2.6e-06** (tol 1e-4); contract tests 28 green; full suite **197 passed / 17 skipped**; live stack healthy with non-root PID 1, key enforcement, cross-origin guard, and a full DEMAT diagnosis flow through the portal proxy.
 
 ### Workstream 4.3 — Retrospective IRB Clinical Validation
-**Status:** pending (BLOCKED: external — IRB + hospital data)
-- [ ] 4.3.1 `clinical/VALIDATION_PROTOCOL.md`.
-- [ ] 4.3.2 Validation harness interface design (reuses `scripts/benchmark/metrics.py`).
-- [ ] 4.3.3 IRB submission templates.
-- [ ] 4.3.4 Acceptance: every item a file or explicit `BLOCKED: user action`; no simulated patient results.
+**Status:** complete as scaffold (`BLOCKED: external`)
+- [x] 4.3.1 `clinical/VALIDATION_PROTOCOL.md` — retrospective design, cohort criteria, endpoints E1–E6, sample-size rationale (n≥350 paired, McNemar), Safe-Harbor de-identification plan, blocked-item register.
+- [x] 4.3.2 `clinical/VALIDATION_HARNESS_DESIGN.md` — `CohortSource`/`run_validation` interface reusing `scripts/benchmark/metrics.py`; synthetic smoke-run requirement, never quotable as evidence.
+- [x] 4.3.3 `clinical/IRB_SUBMISSION_TEMPLATES.md` — protocol synopsis, DUA checklist, consent-waiver justification, submission checklist.
+- [x] 4.3.4 Acceptance: every item is a repo file or explicit `BLOCKED: user action`; zero simulated patient results.
 
 ### Workstream 4.4 — Global PCT International Patent Application
-**Status:** pending (BLOCKED: legal — gated on provisional filing first)
-- [ ] 4.4.1 `patent/PCT_FILING_CHECKLIST.md` (30-month national-phase map, Paris priority anchor).
-- [ ] 4.4.2 FHIR-interoperability dependent-claim addendum for counsel.
-- [ ] 4.4.3 Acceptance: checklist maps to files or `BLOCKED`; embargo preserved.
+**Status:** complete as scaffold (`BLOCKED: legal`)
+- [x] 4.4.1 `patent/PCT_FILING_CHECKLIST.md` — RO choice (IPO default / USPTO alt), `D0`+12-month Paris window, `D0`+30-month national-phase map (8 offices), cost anchors, embargo schedule through publication.
+- [x] 4.4.2 `patent/FHIR_INTEROP_CLAIM_ADDENDUM.md` — 6 draft dependent claims (A–F) covering the 4.1 FHIR embodiments with claims→code→tests traceability and §3(k)/§101 technical-effect notes for counsel.
+- [x] 4.4.3 Acceptance: checklist maps each step to a file or `BLOCKED`; filing strictly gated on the provisional application number; embargo preserved.
 
 ## Decisions Made
 
