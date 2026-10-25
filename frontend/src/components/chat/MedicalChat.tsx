@@ -14,6 +14,8 @@ import {
   RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { sendChatMessage } from "@/lib/api";
+import { usePersona } from "@/lib/persona";
 
 interface Message {
   id: string;
@@ -31,6 +33,7 @@ const quickQuestions = [
 ];
 
 export function MedicalChat() {
+  const { persona } = usePersona();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -41,6 +44,7 @@ export function MedicalChat() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string | undefined>(undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -64,37 +68,52 @@ export function MedicalChat() {
     setInput("");
     setIsLoading(true);
 
-    // Simulate AI response
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    const responses: Record<string, string> = {
-      "pneumonia": "Pneumonia is an infection that inflames the air sacs in one or both lungs. The air sacs may fill with fluid or pus, causing cough, fever, chills, and difficulty breathing. Common symptoms include: productive cough, fever with chills, shortness of breath, chest pain, and fatigue. Risk factors include age (young children and elderly), smoking, weakened immune system, and chronic lung diseases.",
-      "diabetes": "Diabetes is a chronic condition that affects how your body turns food into energy. The main types are Type 1 and Type 2 diabetes. Symptoms include: frequent urination, increased thirst, unexplained weight loss, fatigue, blurred vision, and slow-healing wounds. Diagnosis is made through blood tests including fasting glucose, HbA1c, and oral glucose tolerance test.",
-      "chest pain": "Chest pain can range from harmless to life-threatening. Causes include: heart-related (angina, heart attack, pericarditis), lung-related (pneumonia, pleurisy, pneumothorax), digestive (GERD, ulcers), musculoskeletal (costochondritis, muscle strain), and anxiety. Seek immediate care for: radiating pain to arm/jaw, shortness of breath, sweating, or pressure-like pain.",
-      "heart disease": "Heart disease encompasses various conditions affecting the heart. Common symptoms include: chest discomfort (pressure, squeezing), shortness of breath, pain in neck/jaw/throat, pain in upper abdomen, and fatigue. Risk factors include: high blood pressure, high cholesterol, smoking, obesity, diabetes, family history, and sedentary lifestyle. Prevention includes healthy diet, regular exercise, and managing stress.",
-      "fever": "Fever is a temporary increase in body temperature, often due to an illness. When to see a doctor: infants under 3 months with any fever, temperatures above 103°F (39.4°C), fever lasting more than 3 days, severe headache, stiff neck, confusion, or difficulty breathing. Home care: rest, hydration, acetaminophen/ibuprofen, and cool compresses.",
-    };
-
-    // Find matching response
-    let response = "I'm not specifically trained on that medical topic yet. For accurate medical information, please consult a healthcare professional or reliable medical resources. Is there something else I can help you with?";
-    
-    const lowerInput = messageText.toLowerCase();
-    for (const [key, value] of Object.entries(responses)) {
-      if (lowerInput.includes(key)) {
-        response = value;
-        break;
+    try {
+      // Connect to live FastAPI backend (/api/chat/message)
+      const chatRes = await sendChatMessage(messageText, conversationId);
+      if (chatRes.conversationId) {
+        setConversationId(chatRes.conversationId);
       }
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: chatRes.reply,
+        timestamp: chatRes.timestamp,
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (err: any) {
+      console.warn("Backend chat unavailable, using local guidance:", err);
+
+      const responses: Record<string, string> = {
+        "pneumonia": "Pneumonia is an infection that inflames the air sacs in one or both lungs. Common symptoms include: productive cough, fever with chills, shortness of breath, chest pain, and fatigue.",
+        "diabetes": "Diabetes is a chronic condition affecting glucose regulation. Symptoms include frequent urination, increased thirst, unexplained weight loss, and fatigue.",
+        "chest pain": "Chest pain should always be evaluated promptly. If accompanied by radiating pain, shortness of breath, or sweating, contact emergency services (112 / 108) immediately.",
+        "heart disease": "Common symptoms include chest discomfort, shortness of breath, palpitations, and fatigue with exertion.",
+        "fever": "A fever is generally a body temperature above 100.4°F (38°C). Seek immediate care if accompanied by stiff neck, confusion, or difficulty breathing.",
+      };
+
+      let fallbackResponse = "I understand you have questions about medical symptoms. While I can provide general health information, please consult a healthcare provider for clinical evaluation.";
+      const lowerInput = messageText.toLowerCase();
+      for (const [key, value] of Object.entries(responses)) {
+        if (lowerInput.includes(key)) {
+          fallbackResponse = value;
+          break;
+        }
+      }
+
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: fallbackResponse,
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+    } finally {
+      setIsLoading(false);
     }
-
-    const assistantMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      role: "assistant",
-      content: response,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, assistantMessage]);
-    setIsLoading(false);
   };
 
   const copyMessage = (content: string) => {
@@ -117,7 +136,9 @@ export function MedicalChat() {
             Medical Q&A Assistant
           </h1>
           <p className="text-sm text-neutral-500">
-            AI-powered health information
+            {persona === "clinician"
+              ? "Clinical terminology, with source context when available"
+              : "Plain-language health information"}
           </p>
         </div>
       </div>

@@ -92,10 +92,20 @@ class GenAIAgent(BaseAgent):
         # Generate patient-friendly explanation
         patient_explanation = report.get("explanation", "No explanation available.")
         try:
-            patient_explanation = self.gemini.explain_to_patient(
+            generated = self.gemini.explain_to_patient(
                 report,
                 language="simple"
             )
+            # The LLM client reports a total failure as an error string
+            # instead of raising, so an unreachable provider would otherwise
+            # surface "Error generating response: ..." to the patient.
+            if generated and not generated.startswith("Error generating response"):
+                patient_explanation = generated
+            else:
+                self.log(
+                    "warning",
+                    "LLM patient explanation unavailable — using the rule-based explanation",
+                )
         except Exception as e:
             self.log("warning", f"Failed to generate patient explanation: {e}")
             patient_explanation = report.get("explanation", "Please consult a healthcare professional for evaluation of your symptoms.")

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
   BarChart, 
@@ -18,9 +19,13 @@ import {
   AlertCircle,
   Activity,
   FileText,
-  FlaskConical
+  FlaskConical,
+  Download,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePersona } from "@/lib/persona";
+import { downloadReport, type AgentProgressEvent, type TriageInfo } from "@/lib/api";
 
 export interface DiagnosisResult {
   condition: string;
@@ -29,12 +34,29 @@ export interface DiagnosisResult {
   description: string;
   recommendations: string[];
   redFlags: string[];
+  icd10?: string;
+  rationale?: string;
+  patientExplanation?: string;
+  clinicalExplanation?: string;
+  doctorAlert?: boolean;
+  confidenceBreakdown?: Record<string, number>;
 }
 
 interface DiagnosisResultsProps {
   results: DiagnosisResult[];
   isLoading?: boolean;
+  triage?: TriageInfo;
+  sourceText?: string;
+  patientHistory?: { age: number; bmi: number; gender: string };
+  executionTrace?: AgentProgressEvent[];
 }
+
+const TRIAGE_FROM_SEVERITY: Record<DiagnosisResult["severity"], string> = {
+  critical: "ESI-1",
+  high: "ESI-2",
+  moderate: "ESI-3",
+  low: "ESI-4",
+};
 
 const severityConfig = {
   critical: {
@@ -128,7 +150,18 @@ export function ConfidenceChart({ data }: { data: DiagnosisResult[] }) {
   );
 }
 
-export function DiagnosisResults({ results, isLoading }: DiagnosisResultsProps) {
+export function DiagnosisResults({
+  results,
+  isLoading,
+  triage,
+  sourceText = "",
+  patientHistory,
+  executionTrace = [],
+}: DiagnosisResultsProps) {
+  const { persona } = usePersona();
+  const [reportLoading, setReportLoading] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
+
   if (isLoading) {
     return <LoadingSkeleton />;
   }
@@ -139,13 +172,71 @@ export function DiagnosisResults({ results, isLoading }: DiagnosisResultsProps) 
 
   const primaryResult = results[0];
   const severity = primaryResult?.severity || "low";
+  const clinician = persona === "clinician";
+  const narrative = clinician
+    ? primaryResult.clinicalExplanation || primaryResult.description
+    : primaryResult.patientExplanation || primaryResult.description;
+  const breakdown = primaryResult.confidenceBreakdown || {};
+
+  const handleDownloadReport = async () => {
+    setReportLoading(true);
+    setReportError(null);
+    try {
+      await downloadReport({
+        symptom_input: sourceText,
+        age: patientHistory?.age,
+        bmi: patientHistory?.bmi,
+        gender: patientHistory?.gender,
+        diagnosis: results.map((item) => ({
+          condition: item.condition,
+          confidence: item.confidence,
+          severity: item.severity,
+          icd10_code: item.icd10,
+          rationale: item.rationale,
+        })),
+        explanation: primaryResult.clinicalExplanation,
+        patient_explanation: primaryResult.patientExplanation,
+        recommendations: primaryResult.recommendations,
+        severity,
+        doctor_alert: primaryResult.doctorAlert,
+        red_flags: primaryResult.redFlags,
+        confidence: { breakdown },
+        triage,
+        execution_trace: executionTrace,
+        disclaimer: "AegisMed is clinical decision support and does not replace independent clinical judgment.",
+      });
+    } catch (error) {
+      setReportError(error instanceof Error ? error.message : "Unable to generate report");
+    } finally {
+      setReportLoading(false);
+    }
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
+      data-persona-view={persona}
     >
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className="text-sm text-neutral-500 dark:text-neutral-400">
+          {clinician ? "Clinician consultation report" : "Save your assessment"}
+        </span>
+        <button
+          type="button"
+          onClick={handleDownloadReport}
+          disabled={reportLoading}
+          className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-primary-700 disabled:cursor-wait disabled:opacity-60"
+        >
+          {reportLoading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+          {reportLoading ? "Preparing PDF…" : "Download Report"}
+        </button>
+        {reportError && (
+          <p role="alert" className="basis-full text-sm text-red-600 dark:text-red-400">{reportError}</p>
+        )}
+      </div>
+
       {/* Main Result Card */}
       <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-lg">
         <div className="flex items-start justify-between gap-4 mb-4">
@@ -153,19 +244,41 @@ export function DiagnosisResults({ results, isLoading }: DiagnosisResultsProps) 
             <div className="flex items-center gap-3 mb-2">
               <Activity className="text-primary-600 dark:text-primary-400" size={24} />
               <span className="text-sm text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                Primary Diagnosis
+                {clinician ? "Leading differential" : "What this may be"}
               </span>
             </div>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
-              {primaryResult.condition}
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+                {primaryResult.condition}
+              </h2>
+              {clinician && primaryResult.icd10 && (
+                <span className="px-2 py-0.5 rounded-md text-xs font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
+                  {primaryResult.icd10}
+                </span>
+              )}
+            </div>
           </div>
-          <SeverityBadge severity={severity as keyof typeof severityConfig} />
+          <div className="flex flex-col items-end gap-2">
+            <SeverityBadge severity={severity as keyof typeof severityConfig} />
+            {clinician && (
+              <span
+                className="px-2 py-0.5 rounded-md text-[11px] font-semibold tracking-wide bg-primary-50 dark:bg-primary-950 text-primary-700 dark:text-primary-300"
+                title="Mapped from the assessed severity, not a bedside ESI assignment"
+              >
+                {TRIAGE_FROM_SEVERITY[severity]} · mapped
+              </span>
+            )}
+          </div>
         </div>
 
         <p className="text-neutral-600 dark:text-neutral-300">
-          {primaryResult.description}
+          {narrative}
         </p>
+        {clinician && primaryResult.doctorAlert && (
+          <p className="mt-3 text-sm font-medium text-red-700 dark:text-red-300">
+            Physician review flagged for this result.
+          </p>
+        )}
 
         {/* Confidence Score */}
         <div className="mt-6 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800">
@@ -191,17 +304,70 @@ export function DiagnosisResults({ results, isLoading }: DiagnosisResultsProps) 
       {/* Confidence Chart */}
       <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
         <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
-          Differential Diagnoses
+          {clinician ? "Differential confidence" : "Other possibilities"}
         </h3>
         <ConfidenceChart data={results} />
+        {clinician && (
+          <ul className="mt-4 divide-y divide-neutral-100 dark:divide-neutral-800">
+            {results.map((item) => (
+              <li key={item.condition} className="py-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-semibold text-neutral-900 dark:text-white">
+                    {item.condition}
+                  </span>
+                  {item.icd10 && (
+                    <span className="px-1.5 py-0.5 rounded text-[11px] font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-500">
+                      {item.icd10}
+                    </span>
+                  )}
+                  <span className="ml-auto text-sm tabular-nums text-neutral-500">
+                    {Math.round(item.confidence * 100)}%
+                  </span>
+                </div>
+                {item.rationale && (
+                  <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                    {item.rationale}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
+
+      {clinician && (Object.keys(breakdown).length > 0 || triage) && (
+        <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+          <div className="flex items-center gap-2 mb-4">
+            <FlaskConical className="text-primary-600 dark:text-primary-400" size={20} />
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
+              Agent agreement
+            </h3>
+          </div>
+          {triage && (
+            <p className="mb-3 text-sm text-neutral-600 dark:text-neutral-300">
+              DEMAT entropy {triage.entropy_bits.toFixed(2)} bits
+              {triage.converged ? " · interrogation converged" : ""}
+            </p>
+          )}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {Object.entries(breakdown).map(([agent, score]) => (
+              <div key={agent} className="rounded-xl bg-neutral-50 dark:bg-neutral-800 p-3">
+                <p className="text-[11px] uppercase tracking-wide text-neutral-500">{agent}</p>
+                <p className="text-lg font-semibold text-neutral-900 dark:text-white tabular-nums">
+                  {Math.round(Number(score) * 100)}%
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Recommendations */}
       <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
         <div className="flex items-center gap-2 mb-4">
           <FileText className="text-primary-600 dark:text-primary-400" size={20} />
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-            Recommendations
+            {clinician ? "Recommended actions" : "What to do next"}
           </h3>
         </div>
         <ul className="space-y-3">
@@ -230,9 +396,29 @@ export function DiagnosisResults({ results, isLoading }: DiagnosisResultsProps) 
           <div className="flex items-center gap-2 mb-4">
             <AlertTriangle className="text-red-600 dark:text-red-400" size={20} />
             <h3 className="text-lg font-semibold text-red-900 dark:text-red-200">
-              Red Flags -Seek Immediate Care
+              {clinician ? "Red flags" : "Get help right away if you notice"}
             </h3>
           </div>
+          {clinician ? (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left text-red-900 dark:text-red-100">
+                <thead>
+                  <tr className="border-b border-red-200 dark:border-red-800">
+                    <th className="py-2 pr-3 font-semibold">Finding</th>
+                    <th className="py-2 font-semibold">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {primaryResult.redFlags.map((flag) => (
+                    <tr key={flag} className="border-b border-red-100 dark:border-red-900/40">
+                      <td className="py-2 pr-3">{flag}</td>
+                      <td className="py-2">Urgent clinical review</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
           <ul className="space-y-3">
             {primaryResult.redFlags.map((flag, i) => (
               <li key={i} className="flex items-start gap-3 text-red-800 dark:text-red-200">
@@ -241,6 +427,7 @@ export function DiagnosisResults({ results, isLoading }: DiagnosisResultsProps) 
               </li>
             ))}
           </ul>
+          )}
         </motion.div>
       )}
 

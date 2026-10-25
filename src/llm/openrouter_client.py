@@ -19,17 +19,31 @@ class OpenRouterClient:
     - RAG: nemotron-3-super-120b (same model, specialized prompt)
     """
 
-    CHAT_MODEL = "openai/gpt-oss-120b:free"
-    SYNTHESIS_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
-    RAG_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
+    # Active free models on OpenRouter
+    CHAT_MODEL = "nvidia/nemotron-3.5-lightning:free"
+    SYNTHESIS_MODEL = "nvidia/nemotron-3.5-lightning:free"
+    RAG_MODEL = "nvidia/nemotron-3.5-lightning:free"
 
     def __init__(self, api_key: Optional[str] = None):
-        self.client = openai.OpenAI(
-            api_key=api_key or settings.openrouter_api_key,
-            base_url=settings.openrouter_base_url,
-        )
-        self.default_model = settings.chatbot_model or self.CHAT_MODEL
-        logger.info(f"OpenRouter client initialized — default: {self.default_model}")
+        if getattr(settings, "use_omniroute", False) and getattr(settings, "omniroute_base_url", ""):
+            self.base_url = settings.omniroute_base_url
+            self.api_key = api_key or settings.omniroute_api_key or "omniroute-local"
+            self.default_model = settings.omniroute_model or "antigravity/gemini-3.8-flash-high"
+            self.CHAT_MODEL = self.default_model
+            self.SYNTHESIS_MODEL = self.default_model
+            self.RAG_MODEL = self.default_model
+            self.client = openai.OpenAI(
+                api_key=self.api_key,
+                base_url=self.base_url,
+            )
+            logger.info(f"OpenRouter/OmniRoute client initialized via {self.base_url} — default: {self.default_model}")
+        else:
+            self.client = openai.OpenAI(
+                api_key=api_key or settings.openrouter_api_key,
+                base_url=settings.openrouter_base_url,
+            )
+            self.default_model = settings.chatbot_model or self.CHAT_MODEL
+            logger.info(f"OpenRouter client initialized — default: {self.default_model}")
 
     def generate(self, prompt: str, system_message: str = "",
                  temperature: float = 0.5, max_tokens: int = 1024,
@@ -53,18 +67,45 @@ class OpenRouterClient:
             messages.append({"role": "system", "content": system_message})
         messages.append({"role": "user", "content": prompt})
 
-        try:
-            response = self.client.chat.completions.create(
-                model=target_model,
-                messages=messages,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                timeout=timeout,
-            )
-            return response.choices[0].message.content.strip()
-        except Exception as e:
-            logger.error(f"OpenRouter API error ({target_model}): {e}")
-            return f"Error generating response: {str(e)}"
+        # Candidate models to try in sequence if OmniRoute is enabled
+        models_to_try = [target_model]
+        if getattr(settings, "use_omniroute", False):
+            fallback_candidates = [
+                "antigravity/gemini-3.8-flash-medium",
+                "agy/gemini-3.8-flash",
+                "auto/best-fast",
+                "auto/best-chat"
+            ]
+            for cand in fallback_candidates:
+                if cand not in models_to_try:
+                    models_to_try.append(cand)
+
+        last_error = None
+        for m in models_to_try:
+            try:
+                response = self.client.chat.completions.create(
+                    model=m,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    timeout=timeout,
+                )
+                # Some free-tier models answer with a null content block
+                # (empty completion or reasoning-only response). Treat that
+                # as a failed candidate instead of raising AttributeError.
+                content = response.choices[0].message.content
+                if content is None or not content.strip():
+                    last_error = ValueError("Model returned an empty completion")
+                    logger.warning(f"Model {m} returned no content, attempting next candidate if available...")
+                    continue
+                return content.strip()
+            except Exception as e:
+                last_error = e
+                logger.warning(f"Model {m} failed ({e}), attempting next candidate if available...")
+                continue
+
+        logger.error(f"All model candidates failed. Last error: {last_error}")
+        return f"Error generating response: {str(last_error)}"
 
     def generate_json(self, prompt: str, system_message: str = "Respond with valid JSON only.",
                       temperature: float = 0.3, model: Optional[str] = None) -> dict:
@@ -185,12 +226,13 @@ IMPORTANT:
 
 Respond with valid JSON only. No markdown, no explanations outside the JSON."""
 
+        target_model = settings.omniroute_model if getattr(settings, "use_omniroute", False) else self.SYNTHESIS_MODEL
         raw_response = self.generate(
             prompt=prompt,
             system_message=system_message,
             temperature=0.3,
             max_tokens=3000,
-            model=self.SYNTHESIS_MODEL,
+            model=target_model,
             timeout=30,
         )
 
@@ -202,18 +244,12 @@ Respond with valid JSON only. No markdown, no explanations outside the JSON."""
                     json_str = json_str[4:]
                 return json.loads(json_str.strip())
             return json.loads(raw_response)
-        except json.JSONDecodeError as e:
+        except (json.JSONDecodeError, TypeError, IndexError) as e:
             logger.error(f"Failed to parse synthesis report JSON: {e}")
-            return {
-                "diagnosis": [],
-                "explanation": raw_response[:500],
-                "recommendations": ["Consult a healthcare professional"],
-                "severity": "unknown",
-                "doctor_alert": False,
-                "differential_diagnoses": [],
-                "red_flags": [],
-                "disclaimer": "This is an AI-generated assessment and not a substitute for professional medical advice.",
-            }
+            logger.warning("Falling back to RuleBasedSynthesizer for diagnostic report")
+            from src.agents.rule_based_synthesis import RuleBasedSynthesizer
+            synthesizer = RuleBasedSynthesizer()
+            return synthesizer.generate_report(agent_outputs, patient_context)
 
     def synthesize_knowledge(self, query: str, retrieved_docs: list[dict]) -> str:
         """Synthesize retrieved medical documents into a coherent knowledge summary.
@@ -250,12 +286,13 @@ Your role is to summarize retrieved clinical guidelines and medical literature
 in the context of a patient's symptoms.
 Be factual, cite sources, and avoid making diagnoses."""
 
+        target_model = settings.omniroute_model if getattr(settings, "use_omniroute", False) else self.RAG_MODEL
         return self.generate(
             prompt=prompt,
             system_message=system_message,
             temperature=0.3,
             max_tokens=1500,
-            model=self.RAG_MODEL,
+            model=target_model,
             timeout=30,
         )
 

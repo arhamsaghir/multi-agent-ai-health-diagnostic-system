@@ -2,11 +2,12 @@
 
 import { ThemeProvider } from "next-themes";
 import { ReactNode } from "react";
+import { PersonaProvider } from "@/lib/persona";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      {children}
+      <PersonaProvider>{children}</PersonaProvider>
     </ThemeProvider>
   );
 }

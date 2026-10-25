@@ -1,0 +1,53 @@
+# Version control & tooling
+.git/
+.gitignore
+.omc/
+.omo/
+.zcode/
+.playwright-mcp/
+.planning/
+
+# Python caches & environments
+__pycache__/
+*.py[cod]
+venv*/
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node & frontend build artifacts
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+
+# Secrets — supplied at runtime via env_file
+.env
+.env.*
+!.env.example
+
+# Models, datasets and logs — mounted as volumes, never baked in
+models/
+data/
+logs/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Research & authoring artifacts (not needed at runtime)
+paper/
+patent/
+docs/
+frontend_old/
+tests/
+scripts/
+*.md
+!README.md
+
+# Editor & OS noise
+.vscode/
+.idea/
+.DS_Store

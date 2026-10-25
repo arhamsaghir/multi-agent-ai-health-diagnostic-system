@@ -55,7 +55,7 @@ class TestNLPAgent:
         assert agent._extract_duration("pain for 2 weeks") == "2 weeks"
 
     def test_full_run(self, agent):
-        result = asyncio.get_event_loop().run_until_complete(
+        result = asyncio.run(
             agent.run({"text": "I have a severe headache and fever for 3 days with nausea"})
         )
         assert "symptoms" in result
@@ -66,5 +66,5 @@ class TestNLPAgent:
         assert result["duration"] is not None
 
     def test_run_empty_text(self, agent):
-        result = asyncio.get_event_loop().run_until_complete(agent.run({"text": ""}))
+        result = asyncio.run(agent.run({"text": ""}))
         assert "error" in result

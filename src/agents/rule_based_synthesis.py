@@ -123,17 +123,59 @@ class RuleBasedSynthesizer:
                     "icd10_code": info.get("icd10", ""),
                 })
 
+        # If no prediction risk score exceeded 0.3 (or prediction didn't run because no clinical history was provided),
+        # infer potential conditions from symptoms and RAG
+        if not diagnoses and (symptom_texts or symptoms):
+            combined_symptoms_str = " ".join([str(s).lower() for s in symptom_texts]).lower()
+
+            for disease_key, info in self.DISEASE_INFO.items():
+                disease_name = info.get("name", disease_key)
+                matches = 0
+                for rf in info.get("red_flags", []):
+                    rf_words = [w for w in rf.lower().split() if len(w) > 3]
+                    if any(w in combined_symptoms_str for w in rf_words):
+                        matches += 1
+
+                keywords = {
+                    "cardiovascular_disease": ["chest", "heart", "cardio", "arm", "palpitation", "angina"],
+                    "respiratory_infection": ["cough", "breath", "lung", "respiratory", "fever", "throat", "phlegm", "dyspnea"],
+                    "diabetes": ["thirst", "urination", "glucose", "sugar", "diabetic"],
+                    "neurological_disorder": ["headache", "migraine", "dizziness", "seizure", "numbness", "vision", "neuro"],
+                }.get(disease_key, [])
+
+                keyword_matches = sum(1 for kw in keywords if kw in combined_symptoms_str)
+                if matches > 0 or keyword_matches > 0:
+                    conf = min(0.85, 0.45 + (matches * 0.15) + (keyword_matches * 0.10))
+                    diagnoses.append({
+                        "condition": disease_name,
+                        "confidence": round(conf, 2),
+                        "rationale": f"Reported symptoms ({', '.join(symptom_texts[:3])}) align with clinical indicators for {disease_name}.",
+                        "icd10_code": info.get("icd10", ""),
+                    })
+
+            if not diagnoses and symptom_texts:
+                primary = symptom_texts[0].title()
+                diagnoses.append({
+                    "condition": f"{primary} (Clinical Evaluation Recommended)",
+                    "confidence": 0.50,
+                    "rationale": f"Patient reported {', '.join(symptom_texts)}. Rule-based evaluation recommends clinical assessment.",
+                    "icd10_code": "R68.89",
+                })
+
         # Sort by confidence
         diagnoses.sort(key=lambda x: x["confidence"], reverse=True)
 
         # Determine overall severity
+        nlp_severity = nlp.get("severity", "unknown")
         max_risk = max(risk_scores.values()) if risk_scores else 0
-        if max_risk > 0.8 or prediction_severity == "critical":
+        if max_risk > 0.8 or prediction_severity == "critical" or nlp_severity == "critical":
             severity = "critical"
-        elif max_risk > 0.6 or prediction_severity == "high":
+        elif max_risk > 0.6 or prediction_severity == "high" or nlp_severity == "high":
             severity = "high"
-        elif max_risk > 0.3 or prediction_severity == "moderate":
+        elif max_risk > 0.3 or prediction_severity == "moderate" or nlp_severity == "moderate":
             severity = "moderate"
+        elif any("severe" in str(s).lower() or "chest pain" in str(s).lower() for s in symptom_texts):
+            severity = "high"
         else:
             severity = "low"
 
@@ -166,6 +208,68 @@ class RuleBasedSynthesizer:
             "red_flags": red_flags,
             "disclaimer": "This is an AI-generated assessment and not a substitute for professional medical advice. Always consult a qualified healthcare provider for diagnosis and treatment.",
         }
+
+    def compose_explanations(self, synthesis: Dict[str, Any]) -> Dict[str, Any]:
+        """Guarantee both explanation flavors exist in a synthesis payload.
+
+        LLM synthesis can omit one of the two explanation fields (clinical
+        ``explanation`` vs plain-language ``patient_explanation``). The
+        dual-mode UI renders both, so each missing flavor is composed from
+        the structured diagnosis entries rather than left empty.
+
+        Args:
+            synthesis: Synthesis result dict, mutated in place.
+
+        Returns:
+            The same dict with both explanation flavors populated.
+        """
+        diagnoses = synthesis.get("diagnosis") or []
+        normalized = []
+        for d in diagnoses:
+            if isinstance(d, dict):
+                normalized.append({
+                    "condition": d.get("condition") or d.get("name") or "Undetermined",
+                    "confidence": float(d.get("confidence") or 0.0),
+                })
+
+        if not synthesis.get("patient_explanation"):
+            synthesis["patient_explanation"] = self._build_explanation(normalized, [], "", [])
+
+        if not synthesis.get("explanation"):
+            synthesis["explanation"] = self._build_clinical_explanation(normalized, synthesis)
+
+        return synthesis
+
+    def _build_clinical_explanation(self, diagnoses: list, synthesis: dict) -> str:
+        """Compose the clinician-facing explanation from structured differentials."""
+        if not diagnoses:
+            return (
+                "Clinical correlation recommended: multi-agent analysis did not "
+                "produce a ranked differential; structured evaluation is advised."
+            )
+
+        top = diagnoses[0]
+        lines = [f"Primary differential: {top['condition']} (confidence {top['confidence']:.0%})."]
+
+        if len(diagnoses) > 1:
+            others = ", ".join(f"{d['condition']} ({d['confidence']:.0%})" for d in diagnoses[1:4])
+            lines.append(f"Alternative differentials to exclude: {others}.")
+
+        severity = synthesis.get("severity")
+        if severity and severity != "unknown":
+            lines.append(f"Overall triage severity: {severity}.")
+
+        red_flags = synthesis.get("red_flags") or []
+        if red_flags:
+            lines.append(
+                "Red-flag findings require exclusion of acute pathology: " + "; ".join(red_flags[:3]) + "."
+            )
+
+        lines.append(
+            "Recommend confirmatory workup and physician sign-off; this "
+            "assessment is decision support, not a diagnosis."
+        )
+        return " ".join(lines)
 
     def _build_rationale(self, disease: str, symptoms: list, risk_scores: dict) -> str:
         """Build rationale for a diagnosis based on symptoms and risk factors."""

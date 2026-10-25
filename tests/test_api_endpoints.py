@@ -146,3 +146,120 @@ class TestCORS:
         assert response.status_code == 200
         # CORS headers should be present for allowed origins
         assert "access-control-allow-origin" in response.headers or response.status_code == 200
+
+
+class TestVisionEndpoint:
+    def test_vision_analyze_valid_image(self, client):
+        from PIL import Image
+        import io
+
+        # Create a small valid test image
+        img = Image.new("RGB", (64, 64), color=(128, 128, 128))
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        buf.seek(0)
+
+        response = client.post(
+            "/api/vision/analyze",
+            files={"image": ("test_chest_xray.png", buf, "image/png")},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "findings" in data
+        assert "total_detected" in data
+        assert "highest_confidence" in data
+        assert "anomalies" in data
+        assert "heatmap" in data
+        assert data["heatmap"] is not None
+        assert data["heatmap"].startswith("data:image/png;base64,")
+        assert "heatmap_class" in data
+        assert isinstance(data["findings"], list)
+
+    def test_vision_analyze_invalid_extension(self, client):
+        import io
+        buf = io.BytesIO(b"not an image")
+        response = client.post(
+            "/api/vision/analyze",
+            files={"image": ("test.txt", buf, "text/plain")},
+        )
+        assert response.status_code == 400
+        assert "Invalid file type" in response.json().get("detail", "")
+
+    def test_vision_analyze_missing_file(self, client):
+        response = client.post("/api/vision/analyze")
+        assert response.status_code == 422
+
+
+class TestDEMATActiveTriageEndpoint:
+    def test_follow_up_generates_entropy_and_questions(self, client):
+        response = client.post(
+            "/api/diagnosis/follow-up",
+            json={
+                "text": "I have chest discomfort and cough",
+                "patient_history": {"age": 55, "family_history": ["heart_disease"]},
+            },
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "session_id" in data
+        assert "questions" in data
+        assert "has_more" in data
+        assert "triage" in data
+        assert data["triage"] is not None
+        assert "entropy_bits" in data["triage"]
+        assert "top_candidates" in data["triage"]
+        assert len(data["questions"]) > 0
+        assert "expected_information_gain" in data["questions"][0]
+
+    def test_refine_diagnosis_endpoint(self, client):
+        response = client.post(
+            "/api/diagnosis/refine",
+            json={
+                "text": "Chest pain and shortness of breath",
+                "patient_history": {"age": 58, "bmi": 28.0},
+                "follow_up_answers": [
+                    {
+                        "id": "q_chest_pain_exertion",
+                        "question": "Does the chest discomfort worsen with physical exertion?",
+                        "answer": "Yes, distinctly worse with activity",
+                    }
+                ],
+            },
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "diagnosis" in data or "differential_diagnoses" in data
+        assert "severity" in data
+        assert "recommendations" in data
+
+
+class TestHistoryEndpoint:
+    def test_history_list_returns_200(self, client):
+        response = client.get("/api/history")
+        assert response.status_code == 200
+        data = response.json()
+        assert "sessions" in data
+        assert "total" in data
+        assert isinstance(data["sessions"], list)
+
+    def test_diagnosis_persists_to_history(self, client):
+        # 1. Analyze symptoms
+        analyze_res = client.post(
+            "/api/diagnosis/analyze",
+            json={"text": "Severe chest pain radiating to left arm and shortness of breath"},
+        )
+        assert analyze_res.status_code == 200
+        session_id = analyze_res.json().get("session_id")
+        assert session_id is not None
+
+        # 2. Retrieve session detail
+        detail_res = client.get(f"/api/history/{session_id}")
+        assert detail_res.status_code == 200
+        detail = detail_res.json()
+        assert detail["id"] == session_id
+        assert "chest pain" in detail["user_input"].lower()
+        assert len(detail.get("diagnoses", [])) > 0
+
+    def test_history_nonexistent_session(self, client):
+        response = client.get("/api/history/nonexistent-session-id-12345")
+        assert response.status_code == 404

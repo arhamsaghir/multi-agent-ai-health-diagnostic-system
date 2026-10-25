@@ -4,19 +4,28 @@ __pycache__/
 *$py.class
 *.so
 .Python
-venv/
-.env
 *.egg-info/
 dist/
 build/
 
+# Virtual environments (incl. symlinked and spaced-name envs)
+venv*
+
 # Models & Data
 models/
-data/
+data/*
+# Research evidence is versioned; generated fixtures and large binaries are not
+!data/benchmark_cases.json
+!data/benchmarks/
+data/benchmarks/*
+!data/benchmarks/results/
+data/benchmarks/results/*
+!data/benchmarks/results/demat_research_benchmark.json
+!data/benchmarks/results/demat_benchmark_summary.md
 logs/
 
-
 # Secrets & Credentials
+.env
 *.key
 *.pem
 *.p12
@@ -32,9 +41,12 @@ service-account.json
 *.swo
 *~
 
-# OS
+# OS & Database
 .DS_Store
 Thumbs.db
+*.db
+*.sqlite
+*.sqlite3
 
 # Testing
 .coverage
@@ -55,4 +67,17 @@ build/
 frontend/node_modules/
 frontend/.next/
 .git_backup/
-.git_backup/
+
+# Agent tooling caches (local state, not project artifacts)
+.omc/
+.omo/
+.zcode/
+.playwright-mcp/
+.planning/.active_plan
+
+# Logs & LaTeX build artifacts
+*.log
+*.blg
+*.aux
+*.out
+*.toc
