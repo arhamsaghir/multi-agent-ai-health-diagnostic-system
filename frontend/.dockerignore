@@ -1,0 +1,24 @@
+# Dependencies & build artifacts
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-error.log*
+
+# Tooling caches
+.omc/
+.playwright-mcp/
+
+# Local env files — runtime configuration comes from the compose service
+.env
+.env.*
+!.env.example
+
+# Source control
+.git/
+.gitignore
+
+# Editor & OS noise
+.vscode/
+.idea/
+.DS_Store

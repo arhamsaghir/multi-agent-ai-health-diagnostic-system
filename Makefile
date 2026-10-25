@@ -9,9 +9,9 @@ setup:
 api:
 	uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
 
-# Run Streamlit frontend
+# Run Next.js frontend (dev server on :3000)
 frontend:
-	streamlit run frontend/app.py --server.port 8501
+	cd frontend && npm run dev
 
 # Tests
 test:
@@ -37,7 +37,7 @@ clean:
 
 # Docker
 docker-build:
-	docker build -t health-diagnostic-system .
+	docker compose build
 
 docker-run:
 	docker compose up -d

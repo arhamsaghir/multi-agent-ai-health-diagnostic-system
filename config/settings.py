@@ -34,6 +34,13 @@ class Settings(BaseSettings):
     nvidia_nim_base_url: str = "https://integrate.api.nvidia.com/v1"
     openai_base_url: str = "https://api.openai.com/v1"
 
+    # Deployment
+    cors_origins: str = (
+        "http://localhost:8501,http://127.0.0.1:8501,"
+        "http://localhost:3000,http://127.0.0.1:3000"
+    )
+    enforce_api_key: bool = False
+
     # LLM Model Names
     orchestrator_model: str = "nvidia/nemotron-3.5-lightning:free"
     synthesis_model: str = "nvidia/nemotron-3.5-lightning:free"
@@ -54,6 +61,11 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = False
+
+    @property
+    def cors_origin_list(self) -> list[str]:
+        """Allowed browser origins parsed from the comma-separated setting."""
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
 
 @lru_cache()
