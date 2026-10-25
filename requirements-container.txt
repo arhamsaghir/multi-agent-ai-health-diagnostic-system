@@ -3,11 +3,13 @@
 # Mirrors requirements.txt, minus the packages listed below, so the on-prem
 # backend image stays small, auditable, and free of GPU/CUDA payloads.
 #
-# Excluded from requirements.txt: streamlit, streamlit-mic-recorder, plotly, crewai, chromadb, llama-index, llama-index-vector-stores-faiss, spacy, opencv-python-headless, pytest, pytest-asyncio, pytest-cov, ruff, black
+# Excluded from requirements.txt: pytest, pytest-asyncio, pytest-cov, ruff, black
 #
-# Exclusions are either (a) unused by the FastAPI runtime, (b) the legacy
-# Streamlit UI replaced by the Next.js frontend, or (c) developer tooling.
-# tests/unit/test_deployment_assets.py enforces parity with requirements.txt.
+# The only exclusions are developer tooling. The legacy Streamlit-era
+# dependencies (streamlit, crewai, chromadb, llama-index, spacy, opencv,
+# plotly) were removed from requirements.txt entirely — nothing imports
+# them. tests/unit/test_deployment_assets.py enforces parity with
+# requirements.txt.
 
 # CPU-only PyTorch wheels — the on-prem image has no CUDA runtime.
 --extra-index-url https://download.pytorch.org/whl/cpu
