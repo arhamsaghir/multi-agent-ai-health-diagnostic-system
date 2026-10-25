@@ -2,39 +2,28 @@
 
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Upload, 
-  Scan, 
-  AlertCircle, 
-  CheckCircle, 
+import {
+  Upload,
+  Scan,
+  AlertCircle,
+  CheckCircle,
   XCircle,
   Activity,
   FileImage,
   Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import { analyzeImage, type VisionResult } from "@/lib/api";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
-  Cell 
+  Cell
 } from "recharts";
-
-interface AnalysisResult {
-  disease: string;
-  confidence: number;
-}
-
-interface VisionResult {
-  predictions: AnalysisResult[];
-  primary_finding: string;
-  severity: "critical" | "high" | "moderate" | "low";
-  recommendation: string;
-}
 
 const demoResults: Record<string, VisionResult> = {
   pneumonia: {
@@ -71,14 +60,19 @@ const demoResults: Record<string, VisionResult> = {
 
 export function VisionUploader() {
   const [image, setImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<VisionResult | null>(null);
   const [selectedDemo, setSelectedDemo] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
+      setSelectedFile(file);
+      setSelectedDemo(null);
+      setErrorMessage(null);
       const reader = new FileReader();
       reader.onload = () => {
         setImage(reader.result as string);
@@ -91,6 +85,9 @@ export function VisionUploader() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
+      setSelectedDemo(null);
+      setErrorMessage(null);
       const reader = new FileReader();
       reader.onload = () => {
         setImage(reader.result as string);
@@ -103,19 +100,45 @@ export function VisionUploader() {
   const runAnalysis = async (demoKey?: string) => {
     setIsAnalyzing(true);
     setResult(null);
+    setErrorMessage(null);
 
-    // Simulate processing time
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // If explicit demo case requested
+    if (demoKey && demoResults[demoKey]) {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      setResult(demoResults[demoKey]);
+      setIsAnalyzing(false);
+      return;
+    }
 
-    const demoResult = demoKey ? demoResults[demoKey] : demoResults.pneumonia;
-    setResult(demoResult);
+    // If user uploaded an actual file, invoke real backend model
+    if (selectedFile) {
+      try {
+        const liveResult = await analyzeImage(selectedFile);
+        setResult(liveResult);
+      } catch (err: any) {
+        console.error("Backend vision analysis error:", err);
+        setErrorMessage(
+          err.message || "Failed to reach AI vision model. Showing reference demo findings."
+        );
+        // Fallback to demo so user still sees the UI flow
+        setResult(demoResults.pneumonia);
+      } finally {
+        setIsAnalyzing(false);
+      }
+      return;
+    }
+
+    // Default fallback
+    setResult(demoResults.pneumonia);
     setIsAnalyzing(false);
   };
 
   const clearAll = () => {
     setImage(null);
+    setSelectedFile(null);
     setResult(null);
     setSelectedDemo(null);
+    setErrorMessage(null);
   };
 
   const severityConfig = {
@@ -260,6 +283,13 @@ export function VisionUploader() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
         >
+          {errorMessage && (
+            <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-sm flex items-center gap-3">
+              <AlertCircle size={20} className="shrink-0 text-amber-600 dark:text-amber-400" />
+              <p>{errorMessage}</p>
+            </div>
+          )}
+
           {/* Main Result Card */}
           <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
             <div className="flex items-start justify-between gap-4 mb-4">
@@ -276,9 +306,9 @@ export function VisionUploader() {
               </div>
               <span
                 className="px-3 py-1.5 rounded-full text-sm font-semibold capitalize"
-                style={{ 
+                style={{
                   backgroundColor: severityConfig[result.severity].bg,
-                  color: severityConfig[result.severity].color 
+                  color: severityConfig[result.severity].color
                 }}
               >
                 {severityConfig[result.severity].label}
@@ -289,6 +319,61 @@ export function VisionUploader() {
               {result.recommendation}
             </p>
           </div>
+
+          {/* Grad-CAM Explainability Card */}
+          {result.heatmap && (
+            <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Scan className="text-teal-600 dark:text-teal-400" size={20} />
+                    <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
+                      Grad-CAM Saliency & Visual Attention
+                    </h3>
+                  </div>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                    Target Feature: <span className="font-semibold text-neutral-800 dark:text-neutral-200">{result.heatmap_class || result.primary_finding}</span> ({Math.round((result.heatmap_confidence || 0) * 100)}% activation)
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                  ResNet layer4 Gradient Attention
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Source Radiograph
+                  </span>
+                  <div className="relative rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-950 aspect-square flex items-center justify-center">
+                    {image && (
+                      <img
+                        src={image}
+                        alt="Source Scan"
+                        className="w-full h-full object-contain"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Grad-CAM Saliency Overlay (45% Jet Colormap)
+                  </span>
+                  <div className="relative rounded-xl overflow-hidden border border-teal-500/30 bg-neutral-950 aspect-square flex items-center justify-center">
+                    <img
+                      src={result.heatmap}
+                      alt="Grad-CAM Saliency Map"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                Warm colors (red/yellow) indicate anatomical regions of maximal gradient activation driving the model's pathology prediction.
+              </p>
+            </div>
+          )}
 
           {/* Confidence Chart */}
           <div className="p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">

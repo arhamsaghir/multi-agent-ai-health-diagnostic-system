@@ -27,15 +27,10 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# CORS — restricted to localhost for development
+# CORS — allowed origins are deployment-configurable via CORS_ORIGINS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8501",
-        "http://127.0.0.1:8501",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=settings.cors_origin_list,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
@@ -51,8 +46,8 @@ async def verify_api_key(request: Request, call_next):
     if any(request.url.path.startswith(p) for p in public_paths):
         return await call_next(request)
     
-    # Check API key in development mode
-    if settings.app_env == "development" and not os.environ.get("ENFORCE_API_KEY"):
+    # API key is optional in development unless explicitly enforced
+    if settings.app_env == "development" and not settings.enforce_api_key:
         return await call_next(request)
     
     api_key = request.headers.get("X-API-Key")
@@ -177,7 +172,11 @@ async def health_check():
 
 
 # Import routes
-from src.api.routes import diagnosis, chat, vision
+from src.api.routes import diagnosis, chat, vision, history, stream, report, fhir
 app.include_router(diagnosis.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
 app.include_router(vision.router, prefix="/api")
+app.include_router(history.router, prefix="/api")
+app.include_router(stream.router, prefix="/api")
+app.include_router(report.router, prefix="/api")
+app.include_router(fhir.router, prefix="/api")

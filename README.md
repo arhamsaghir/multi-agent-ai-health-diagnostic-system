@@ -48,18 +48,21 @@ The project now features a **modern Next.js 16 + React 19 frontend** with:
 
 | Layer | Technology |
 |---|---|
-| **Orchestration** | LangChain, LangGraph, CrewAI |
-| **LLMs** | OpenRouter free-tier (`openai/gpt-oss-120b:free`, `nvidia/nemotron-3-super-120b-a12b:free`) |
-| **Deep Learning** | PyTorch, ResNet-50 (vision), BioBERT (NLP) |
-| **RAG** | LlamaIndex, FAISS (10 medical knowledge documents) |
+| **Orchestration** | LangGraph (agent routing), DEMAT (evidence arbitration), EN-SCAF (risk bounding) |
+| **LLMs** | OpenRouter free-tier + Gemini fallback, rule-based synthesis when offline |
+| **Deep Learning** | PyTorch (CPU), ResNet-18/50 (vision), BioBERT (NLP) |
+| **RAG** | FAISS vector store, 500 provenance-bearing medical records, 25-query evaluation |
 | **ML Models** | scikit-learn GradientBoosting (4 disease models), rule-based fallback |
-| **Frontend** | Next.js 16 + React 19 + TypeScript + Tailwind CSS |
+| **Frontend** | Next.js 16 + React 19 + TypeScript + Tailwind CSS v4 |
 | **Animations** | Framer Motion (scroll-triggered, staggered) |
 | **Charts** | Recharts (confidence visualization) |
 | **Voice** | OpenAI Whisper API (speech-to-text) |
-| **API** | FastAPI (REST endpoints for diagnosis, chat, image analysis) |
+| **API** | FastAPI (diagnosis, chat, vision, SSE stream, PDF report, FHIR R4) |
+| **Interoperability** | HL7 FHIR R4 (`fhir.resources` 8.3.0) — Bundle in/out |
+| **Deployment** | Docker + Compose (Next.js standalone + FastAPI, CPU-only, non-root) |
+| **Inference Export** | ONNX Runtime (CPU, parity-verified); TensorRT INT8 `BLOCKED: GPU host` |
 | **Report Export** | reportlab (PDF), csv (CSV), plain text |
-| **Testing** | pytest (100 tests, 92+ passing), Jest + React Testing Library |
+| **Testing** | pytest (214 tests: 197 passed, 17 skipped) |
 
 ## Quick Start
 
@@ -84,16 +87,38 @@ cp .env.example .env
 # OPENROUTER_API_KEY=your-key-here
 # OPENAI_API_KEY=your-key-here  (optional, for voice)
 
-# 4. Run the Streamlit frontend
-make frontend
-# or: streamlit run frontend/app.py
+# 4. Start the FastAPI backend
+make api
+# or: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+
+# 5. Start the Next.js frontend (separate terminal)
+cd frontend
+npm install
+npm run dev
+# or: frontend/node_modules/.bin/next dev
 ```
+
+The portal is then at <http://localhost:3000> and the API at <http://localhost:8000>.
+
+### Container Deployment (On-Prem)
+
+```bash
+cp .env.example .env        # set SECRET_KEY and your API keys
+docker compose build
+docker compose up -d
+docker compose ps            # both services report "healthy"
+```
+
+The frontend is served on port 3000; the API stays bound to loopback because
+the browser reaches it through the frontend's same-origin proxy. Model
+weights and the vector store are mounted from the host, not baked into the
+images. Full runbook: [`docs/deploy/CONTAINER_DEPLOYMENT.md`](docs/deploy/CONTAINER_DEPLOYMENT.md).
 
 ### Demo Mode (Recommended for Presentations)
 
 The UI includes a **Demo Mode** toggle that uses pre-computed results for instant display. This is recommended for live demonstrations as it bypasses slow CPU inference and LLM latency.
 
-1. Launch the Streamlit app
+1. Launch the Next.js portal
 2. Go to the **Diagnosis** page
 3. Toggle **Demo Mode** on
 4. Select from 5 pre-built patient scenarios:
@@ -121,16 +146,18 @@ The UI includes a **Demo Mode** toggle that uses pre-computed results for instan
 ├── src/
 │   ├── agents/
 │   │   ├── orchestrator/    # LangGraph task planner & router
-│   │   ├── vision/          # ResNet-50 medical image analysis
+│   │   ├── vision/          # ResNet medical image analysis + Grad-CAM
 │   │   ├── nlp/             # BioBERT symptom extraction
 │   │   ├── rag/             # Medical knowledge retrieval (FAISS)
 │   │   ├── prediction/      # GradientBoosting risk scoring (4 disease models)
 │   │   ├── voice/           # OpenAI Whisper speech-to-text
 │   │   ├── synthesis/       # GenAI report synthesis (Gemini)
 │   │   └── rule_based_synthesis.py  # LLM fallback report generator
+│   ├── core/                # DEMAT engine, disease KB, question bank, FHIR mapping
 │   ├── api/
 │   │   ├── main.py          # FastAPI entry point (CORS, validation, health)
-│   │   └── routes/          # Diagnosis, chat, image analysis endpoints
+│   │   ├── progress.py      # SSE run-event bus for live agent tracing
+│   │   └── routes/          # Diagnosis, chat, vision, stream, report, history, FHIR
 │   ├── llm/
 │   │   ├── openrouter_client.py     # OpenRouter API client (30s timeouts)
 │   │   └── gemini_client.py         # Report synthesis with fallback
@@ -140,18 +167,21 @@ The UI includes a **Demo Mode** toggle that uses pre-computed results for instan
 │   │   └── vector_store/    # FAISS index + metadata
 │   └── utils/
 │       └── report_exporter.py       # PDF/CSV/Text report generation
-├── frontend/                # Streamlit dashboard
-│   ├── app.py               # Main entry point
-│   └── pages/
-│       ├── diagnosis.py     # Symptom input, demo mode, report export
-│       ├── vision.py        # X-ray upload, analysis, demo mode
-│       ├── chat.py          # Multi-turn medical Q&A
-│       ├── history.py       # Past diagnoses with filter + export
-│       └── about.py         # Project information
-├── data/                    # Datasets & vector stores
-├── tests/                   # Unit & integration tests (100 tests)
+├── frontend/                # Next.js 16 + React 19 clinical portal
+│   ├── src/app/             # Landing, diagnosis, vision, chat, history, about
+│   ├── src/components/      # Execution stepper, persona toggle, results, uploader
+│   ├── src/app/api/backend/ # Same-origin proxy to the FastAPI backend
+│   └── Dockerfile           # Multi-stage standalone build
+├── scripts/
+│   ├── benchmark/           # Phase 3 research benchmark + metrics
+│   └── deploy/              # ONNX export scaffold for CPU inference
+├── clinical/                # (Phase 4.3) IRB validation protocol — BLOCKED
+├── docs/deploy/             # Container runbook + TensorRT INT8 runbook
+├── paper/                   # CHIL manuscript (LaTeX + PDF)
+├── patent/                  # Provisional patent package (12 claims + figures)
+├── data/                    # Datasets, vector stores, benchmark evidence
+├── tests/                   # Unit & integration tests (197 passed / 17 skipped)
 ├── models/                  # Saved model weights (vision, prediction)
-├── scripts/                 # Data generation & training scripts
 └── logs/                    # Application logs
 ```
 
@@ -162,6 +192,14 @@ The UI includes a **Demo Mode** toggle that uses pre-computed results for instan
 | `GET` | `/health` | System health check with agent status |
 | `POST` | `/api/diagnosis/analyze` | Run multi-agent diagnosis on text input |
 | `POST` | `/api/diagnosis/analyze-with-image` | Analyze uploaded X-ray image |
+| `POST` | `/api/diagnosis/analyze-stream` | Same, streamed as SSE agent progress events |
+| `POST` | `/api/diagnosis/refine-stream` | DEMAT arbitration refinement, streamed |
+| `POST` | `/api/diagnosis/follow-up` | Next triage question from the question bank |
+| `POST` | `/api/vision/analyze` | Vision agent analysis + Grad-CAM heatmap |
+| `POST` | `/api/report/generate` | One-click clinical PDF report |
+| `POST` | `/api/fhir/diagnose` | HL7 FHIR R4 Bundle in → Bundle out |
+| `GET` | `/api/fhir/diagnosis/{id}` | Export a stored session as a FHIR Bundle |
+| `GET` | `/api/history` | Past diagnosis sessions (SQLite) |
 | `POST` | `/api/chat/message` | Send message to medical chat agent |
 | `GET` | `/api/chat/conversations` | List all chat conversations |
 | `GET` | `/api/chat/conversation/{id}` | Get specific conversation |
@@ -193,16 +231,32 @@ python -m pytest tests/ --cov=src --cov-report=term-missing
 
 | Test Suite | Tests | Status |
 |---|---|---|
-| Confidence Scorer | 10 | ✅ All passed |
-| NLP Agent (Unit) | 10 | ✅ All passed |
-| Preprocessing (Unit) | 12 | ✅ All passed |
-| Report Exporter (Unit) | 10 | ✅ All passed |
-| API Endpoints | 18 | ✅ All passed |
+| API Endpoints | 26 | ✅ All passed |
+| Deployment assets | 28 | ✅ All passed |
 | Integration Comprehensive | 22 | ⚠️ 15 passed, 7 skipped |
-| Integration | 10 | ✅ All passed |
-| **Total** | **92** | **82 passed, 10 skipped** |
+| Preprocessing (Unit) | 16 | ✅ All passed |
+| NLP Agent (Unit) | 12 | ✅ All passed |
+| SSE stream progress (Unit) | 11 | ✅ All passed |
+| Confidence Scorer | 11 | ✅ All passed |
+| Report Exporter (Unit) | 10 | ✅ All passed |
+| FHIR R4 mapping (Unit) | 10 | ✅ All passed |
+| Database (Unit) | 9 | ✅ All passed |
+| Persona explanations (Unit) | 8 | ✅ All passed |
+| ONNX export & parity | 8 | ✅ All passed |
+| DEMAT benchmark harness (Unit) | 7 | ✅ All passed |
+| Integration | 7 | ✅ All passed |
+| DEMAT engine (Unit) | 6 | ✅ All passed |
+| Embedding (Unit) | 5 | ✅ All passed |
+| FHIR endpoints | 5 | ✅ All passed |
+| RAG agent (Unit) | 3 | ✅ All passed |
+| Grad-CAM (Unit) | 3 | ✅ All passed |
+| Report endpoint (Unit) | 1 | ✅ All passed |
+| **Total** | **214** | **197 passed, 17 skipped** |
 
-**Note**: 7 tests are skipped due to XGBoost library compatibility issues with Python 3.13 on macOS (segmentation fault during model pickle load). The prediction agent handles this gracefully by using scikit-learn GradientBoosting models with rule-based fallback.
+**Note**: the skipped tests are documented Python 3.13 / XGBoost compatibility
+issues on macOS (segmentation fault during model pickle load). The prediction
+agent handles this gracefully by falling back to scikit-learn GradientBoosting
+with rule-based risk scoring.
 
 ## Results & Evaluation
 
@@ -242,8 +296,10 @@ python -m pytest tests/ --cov=src --cov-report=term-missing
 2. **CPU Inference Speed**: Full pipeline execution takes 2-5 minutes on CPU due to BioBERT loading and LLM latency. Use **Demo Mode** for instant results.
 3. **Synthetic Vision Data**: The vision model was trained on procedurally generated X-ray images (4,500 images, 15 classes) for prototype validation. Production use requires real medical imaging data (e.g., NIH ChestX-ray14).
 4. **Free-Tier LLM Latency**: OpenRouter free-tier models may have variable response times. The system implements 30-second timeouts with automatic fallback to rule-based synthesis.
-5. **No Production Database**: All data is stored in-memory (session state) or in local files. A production deployment would require PostgreSQL/MongoDB for patient records.
+5. **SQLite Persistence**: Diagnosis history is persisted to SQLite through the `./data` volume. A multi-instance deployment needs PostgreSQL for patient records and audit trails.
 6. **Voice API Dependency**: Voice transcription requires an OpenAI API key. Without it, the voice tab shows a configuration message.
+7. **No TLS or Portal Authentication**: The container stack publishes the portal on port 3000 with no TLS termination and no user authentication. Deploy it behind the hospital's reverse proxy and access control.
+8. **No Clinical Validation**: The deployment mechanism is not evidence of clinical efficacy. Retrospective validation under IRB approval (Phase 4.3) is still outstanding, and TensorRT INT8 quantization is `BLOCKED: GPU host` with no measured numbers.
 
 ## Future Work
 
@@ -264,7 +320,7 @@ make lint        # Run linter
 make format      # Format code
 make clean       # Remove generated files
 make api         # Start FastAPI backend
-make frontend    # Start Streamlit UI
+make frontend    # Start Next.js dev server
 ```
 
 ## Acknowledgments

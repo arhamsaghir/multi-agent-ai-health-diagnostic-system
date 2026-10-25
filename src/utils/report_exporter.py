@@ -170,6 +170,10 @@ def generate_pdf_report(result: dict) -> bytes:
             f"Generated: {datetime.now().strftime('%B %d, %Y at %H:%M')}",
             styles["SmallCaption"],
         ))
+        story.append(Paragraph(
+            "Clinical decision support only — requires review by a licensed clinician.",
+            styles["SmallCaption"],
+        ))
         story.append(Spacer(0, 4 * mm))
 
         # Patient info
@@ -238,6 +242,39 @@ def generate_pdf_report(result: dict) -> bytes:
             ]))
             story.append(diag_table)
 
+        triage_entropy = result.get("triage_entropy")
+        if triage_entropy is not None:
+            story.append(Paragraph("DEMAT Triage", styles["SectionHeader"]))
+            story.append(Paragraph(
+                f"Diagnostic entropy: {float(triage_entropy):.2f} bits",
+                styles["BodyTextCustom"],
+            ))
+
+        execution_trace = result.get("execution_trace", [])
+        if execution_trace:
+            story.append(Paragraph("Agent Execution Trace", styles["SectionHeader"]))
+            trace_data = [["Agent", "Status", "Elapsed", "Summary"]]
+            for event in execution_trace:
+                if event.get("type") != "agent":
+                    continue
+                trace_data.append([
+                    str(event.get("agent") or event.get("node") or "Agent"),
+                    str(event.get("status", "")),
+                    f"{float(event.get('elapsed_ms') or 0):.0f} ms",
+                    str(event.get("summary", "")),
+                ])
+            if len(trace_data) > 1:
+                trace_table = Table(trace_data, colWidths=[34 * mm, 22 * mm, 22 * mm, 92 * mm], repeatRows=1)
+                trace_table.setStyle(TableStyle([
+                    ("BACKGROUND", (0, 0), (-1, 0), HexColor("#1E40AF")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), white),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, -1), 8),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("GRID", (0, 0), (-1, -1), 0.5, HexColor("#D1D5DB")),
+                ]))
+                story.append(trace_table)
+
         # Red flags
         red_flags = result.get("red_flags", [])
         if red_flags:
@@ -290,11 +327,18 @@ def generate_pdf_report(result: dict) -> bytes:
             story.append(Paragraph("What This Means for You", styles["SectionHeader"]))
             story.append(Paragraph(patient_exp, styles["BodyTextCustom"]))
 
-        # Disclaimer
-        story.append(Spacer(0, 8 * mm))
-        story.append(Paragraph(result.get("disclaimer", ""), styles["SmallCaption"]))
+        # Keep the disclaimer in a page footer so it cannot strand a mostly
+        # empty trailing page when the report content ends near a page break.
+        disclaimer = result.get("disclaimer", "") or "AegisMed is clinical decision support and does not replace independent clinical judgment."
 
-        doc.build(story)
+        def draw_footer(canvas, _doc):
+            canvas.saveState()
+            canvas.setFont("Helvetica", 8)
+            canvas.setFillColor(HexColor("#6B7280"))
+            canvas.drawString(25 * mm, 11 * mm, disclaimer[:220])
+            canvas.restoreState()
+
+        doc.build(story, onFirstPage=draw_footer, onLaterPages=draw_footer)
         return buffer.getvalue()
 
     except ImportError:

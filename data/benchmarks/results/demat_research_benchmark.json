@@ -1,0 +1,172 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-06T05:47:23.407175+00:00",
+    "total_cases": 200,
+    "max_triage_rounds": 2,
+    "stopping_entropy_bits": 0.8,
+    "diseases_modeled": 15,
+    "questions_available": 12
+  },
+  "arm1_demat": {
+    "top1_accuracy": 0.98,
+    "top3_accuracy": 1.0,
+    "top5_accuracy": 1.0,
+    "mean_initial_entropy": 2.8464,
+    "mean_final_entropy": 1.3178,
+    "mean_entropy_reduction": 1.5286,
+    "entropy_reduction_pct": 53.7,
+    "mean_brier_score": 0.2005,
+    "expected_calibration_error": 0.2451,
+    "mean_questions_asked": 1.92,
+    "mean_latency_ms": 0.37
+  },
+  "arm2_single_pass": {
+    "top1_accuracy": 0.93,
+    "top3_accuracy": 0.975,
+    "top5_accuracy": 1.0,
+    "mean_entropy": 2.8464,
+    "mean_brier_score": 0.5296,
+    "expected_calibration_error": 0.5528,
+    "mean_latency_ms": 0.1
+  },
+  "statistical_comparison": {
+    "mcnemar_chi2": 4.5,
+    "mcnemar_p_value": 0.033895,
+    "demat_advantage_pairs": 14,
+    "ablation_advantage_pairs": 4,
+    "top1_absolute_delta": 5.0
+  },
+  "category_breakdown": {
+    "Endocrine": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0,
+      "delta_pct": 0.0
+    },
+    "Neurological": {
+      "total": 26,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0,
+      "delta_pct": 0.0
+    },
+    "Cardiovascular": {
+      "total": 28,
+      "demat_top1": 0.8571,
+      "ablation_top1": 0.7143,
+      "delta_pct": 14.3
+    },
+    "Respiratory": {
+      "total": 42,
+      "demat_top1": 1.0,
+      "ablation_top1": 0.8571,
+      "delta_pct": 14.3
+    },
+    "Gastrointestinal": {
+      "total": 26,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0,
+      "delta_pct": 0.0
+    },
+    "Psychiatric": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0,
+      "delta_pct": 0.0
+    },
+    "Dermatological": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0,
+      "delta_pct": 0.0
+    },
+    "Musculoskeletal": {
+      "total": 26,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0,
+      "delta_pct": 0.0
+    },
+    "Urinary": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0,
+      "delta_pct": 0.0
+    }
+  },
+  "condition_breakdown": {
+    "Type 2 Diabetes": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "Migraine": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "Cardiovascular Disease": {
+      "total": 14,
+      "demat_top1": 1.0,
+      "ablation_top1": 0.4286
+    },
+    "Respiratory Infection": {
+      "total": 14,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "GERD": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "Neurological Disorder": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "Anxiety Disorder": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "Hypertension": {
+      "total": 14,
+      "demat_top1": 0.7143,
+      "ablation_top1": 1.0
+    },
+    "Pneumonia": {
+      "total": 14,
+      "demat_top1": 1.0,
+      "ablation_top1": 0.5714
+    },
+    "Gastroenteritis": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "Asthma": {
+      "total": 14,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "Eczema": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "Back Pain": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "Urinary Tract Infection": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    },
+    "Osteoarthritis": {
+      "total": 13,
+      "demat_top1": 1.0,
+      "ablation_top1": 1.0
+    }
+  }
+}

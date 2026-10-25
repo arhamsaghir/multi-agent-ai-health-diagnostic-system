@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  History, 
-  Search, 
+import {
+  History,
+  Search,
   Filter,
   Download,
   Trash2,
@@ -13,61 +13,12 @@ import {
   Activity,
   Calendar,
   FileText,
-  AlertCircle
+  AlertCircle,
+  Loader2,
+  RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface DiagnosisRecord {
-  id: string;
-  date: string;
-  condition: string;
-  severity: "critical" | "high" | "moderate" | "low";
-  confidence: number;
-  symptoms: string;
-}
-
-const mockRecords: DiagnosisRecord[] = [
-  {
-    id: "1",
-    date: "2024-01-15",
-    condition: "Cardiovascular Disease",
-    severity: "high",
-    confidence: 0.85,
-    symptoms: "Chest pain, shortness of breath",
-  },
-  {
-    id: "2",
-    date: "2024-01-14",
-    condition: "Respiratory Infection",
-    severity: "moderate",
-    confidence: 0.78,
-    symptoms: "Cough, fever, chills",
-  },
-  {
-    id: "3",
-    date: "2024-01-12",
-    condition: "Type 2 Diabetes",
-    severity: "moderate",
-    confidence: 0.68,
-    symptoms: "Excessive thirst, frequent urination",
-  },
-  {
-    id: "4",
-    date: "2024-01-10",
-    condition: "Migraine",
-    severity: "low",
-    confidence: 0.72,
-    symptoms: "Headache, light sensitivity",
-  },
-  {
-    id: "5",
-    date: "2024-01-08",
-    condition: "Common Cold",
-    severity: "low",
-    confidence: 0.92,
-    symptoms: "Runny nose, sore throat",
-  },
-];
+import { fetchHistory, mockHistoryRecords, type DiagnosisRecord } from "@/lib/api";
 
 const severityConfig = {
   critical: { color: "#DC2626", bg: "#FEF2F2" },
@@ -77,11 +28,31 @@ const severityConfig = {
 };
 
 export function DiagnosisHistory() {
+  const [records, setRecords] = useState<DiagnosisRecord[]>(mockHistoryRecords);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [severityFilter, setSeverityFilter] = useState<string>("all");
   const [expandedRecord, setExpandedRecord] = useState<string | null>(null);
 
-  const filteredRecords = mockRecords.filter((record) => {
+  const loadHistory = async () => {
+    setIsLoading(true);
+    try {
+      const data = await fetchHistory();
+      if (data && data.length > 0) {
+        setRecords(data);
+      }
+    } catch (err) {
+      console.error("Failed to load history:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  const filteredRecords = records.filter((record) => {
     const matchesSearch = record.condition.toLowerCase().includes(searchQuery.toLowerCase()) ||
       record.symptoms.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesSeverity = severityFilter === "all" || record.severity === severityFilter;
@@ -89,11 +60,11 @@ export function DiagnosisHistory() {
   });
 
   const stats = {
-    total: mockRecords.length,
-    critical: mockRecords.filter((r) => r.severity === "critical").length,
-    high: mockRecords.filter((r) => r.severity === "high").length,
-    moderate: mockRecords.filter((r) => r.severity === "moderate").length,
-    low: mockRecords.filter((r) => r.severity === "low").length,
+    total: records.length,
+    critical: records.filter((r) => r.severity === "critical").length,
+    high: records.filter((r) => r.severity === "high").length,
+    moderate: records.filter((r) => r.severity === "moderate").length,
+    low: records.filter((r) => r.severity === "low").length,
   };
 
   return (
@@ -112,10 +83,21 @@ export function DiagnosisHistory() {
             View and manage past diagnosis records
           </p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
-          <Download size={18} />
-          Export
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={loadHistory}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-3 py-2 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg text-neutral-700 dark:text-neutral-300 text-sm transition-colors"
+            title="Refresh history from database"
+          >
+            <RefreshCw size={16} className={cn(isLoading && "animate-spin text-primary-600")} />
+            Sync
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors">
+            <Download size={18} />
+            Export
+          </button>
+        </div>
       </div>
 
       {/* Stats Cards */}

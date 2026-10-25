@@ -1,0 +1,15 @@
+# ONNX export toolchain (Phase 4.2 — CPU inference deployment)
+#
+# Install into the project environment before running
+# scripts/deploy/export_onnx.py:
+#
+#   uv pip install --python venv/bin/python -r scripts/deploy/requirements-onnx.txt
+#
+# onnxscript is required by the torch.export (dynamo) ONNX path. The export
+# script currently uses the TorchScript exporter (dynamo=False) because the
+# dynamo path needs an onnxscript build matching the installed torch
+# version, which is not pinned in this environment.
+
+onnx==1.19.0
+onnxscript==0.3.1
+onnxruntime==1.30.0

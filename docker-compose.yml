@@ -1,29 +1,80 @@
-version: "3.9"
+# AegisMed on-prem deployment — Next.js portal + FastAPI multi-agent backend
+#
+# Start:  docker compose up -d --build
+# Check:  docker compose ps
+# Logs:   docker compose logs -f api
+#
+# The browser reaches the API through the frontend's /api/backend proxy
+# route, so the API port is published on loopback only. On a hospital LAN
+# expose the frontend (3000) and leave 8000 private.
 
 services:
   api:
-    build: .
-    container_name: health-diagnostic-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aegismed-backend:latest
+    container_name: aegismed-api
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     volumes:
       - ./data:/app/data
       - ./models:/app/models
       - ./logs:/app/logs
-    env_file: .env
+    env_file:
+      - .env
     environment:
-      - APP_ENV=production
-    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+      APP_ENV: production
+      LOG_LEVEL: INFO
+      ENFORCE_API_KEY: "true"
+      CORS_ORIGINS: "http://localhost:3000,http://127.0.0.1:3000"
+      # LLM gateway. Off by default so the container talks to OpenRouter
+      # directly with OPENROUTER_API_KEY. Set USE_OMNIROUTE=true and point
+      # OMNIROUTE_BASE_URL at a gateway to route through it instead —
+      # inside a container "localhost" is the container itself, not the host.
+      USE_OMNIROUTE: "${USE_OMNIROUTE:-false}"
+      OMNIROUTE_BASE_URL: "${OMNIROUTE_BASE_URL:-http://host.docker.internal:20128/v1}"
+    extra_hosts:
+      # Lets host.docker.internal resolve on Linux hosts (Docker Desktop
+      # provides it natively).
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
 
   frontend:
-    build: .
-    container_name: health-diagnostic-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Browser-side base URL: same-origin proxy route.
+        NEXT_PUBLIC_API_URL: /api/backend
+    image: aegismed-frontend:latest
+    container_name: aegismed-frontend
     ports:
-      - "8501:8501"
-    depends_on:
-      - api
+      - "3000:3000"
     environment:
-      - API_URL=http://api:8000
-    command: streamlit run frontend/app.py --server.port 8501 --server.address 0.0.0.0
+      BACKEND_URL: http://api:8000
+      API_KEY: ${SECRET_KEY}
+      NODE_ENV: production
+      # Extra browser origins the proxy accepts besides the portal's own
+      # (set when a reverse proxy rewrites the Host header).
+      ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-}"
+    depends_on:
+      api:
+        condition: service_healthy
     restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
