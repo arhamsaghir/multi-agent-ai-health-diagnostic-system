@@ -90,7 +90,15 @@ class OpenRouterClient:
                     max_tokens=max_tokens,
                     timeout=timeout,
                 )
-                return response.choices[0].message.content.strip()
+                # Some free-tier models answer with a null content block
+                # (empty completion or reasoning-only response). Treat that
+                # as a failed candidate instead of raising AttributeError.
+                content = response.choices[0].message.content
+                if content is None or not content.strip():
+                    last_error = ValueError("Model returned an empty completion")
+                    logger.warning(f"Model {m} returned no content, attempting next candidate if available...")
+                    continue
+                return content.strip()
             except Exception as e:
                 last_error = e
                 logger.warning(f"Model {m} failed ({e}), attempting next candidate if available...")
