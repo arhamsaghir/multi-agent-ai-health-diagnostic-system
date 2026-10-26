@@ -1,8 +1,9 @@
 """RAG Agent — Retrieval-Augmented Generation for medical knowledge.
 
 Uses FAISS + sentence-transformers to retrieve relevant medical literature,
-guidelines, and disease information, then synthesizes using Nemotron 3 Super
-via OpenRouter (free tier, 120B parameters).
+guidelines, and disease information, then synthesizes the retrieved passages
+with the configured LLM (OpenRouter/OmniRoute), falling back to the raw
+retrieved text when no LLM is reachable.
 """
 
 from typing import Any, Optional
@@ -12,6 +13,7 @@ import numpy as np
 
 from src.agents.base import BaseAgent
 from src.data.embedding import EmbeddingModel
+from src.utils.redaction import safe_error, text_fingerprint
 from config import settings
 
 
@@ -19,7 +21,7 @@ class RAGAgent(BaseAgent):
     """RAG-based medical knowledge retrieval agent."""
 
     name = "rag_agent"
-    description = "FAISS + Nemotron 3 Super — Medical knowledge retrieval and synthesis"
+    description = "FAISS + sentence-transformers — Medical knowledge retrieval and LLM synthesis"
 
     def __init__(self):
         super().__init__()
@@ -63,15 +65,15 @@ class RAGAgent(BaseAgent):
             self.log("error", f"Failed to load FAISS store: {e}")
 
     def _init_rag_client(self):
-        """Initialize OpenRouter client for knowledge synthesis using Nemotron 3 Super."""
+        """Initialize the LLM client used for knowledge synthesis."""
         if self.rag_client is not None:
             return
         try:
             from src.llm.openrouter_client import OpenRouterClient
             self.rag_client = OpenRouterClient()
-            self.log("info", "OpenRouter client initialized for RAG synthesis (Nemotron 3 Super 120B)")
+            self.log("info", f"LLM client initialized for RAG synthesis ({self.rag_client.default_model})")
         except Exception as e:
-            self.log("warning", f"OpenRouter client not available, using fallback: {e}")
+            self.log("warning", f"LLM client not available, using fallback: {safe_error(e)}")
             self.rag_client = None
 
     async def run(self, input_data: dict) -> dict:
@@ -93,7 +95,7 @@ class RAGAgent(BaseAgent):
             return {"error": "No query or symptoms provided", "relevant_docs": [], "knowledge": ""}
 
         search_query = query or " ".join(symptoms)
-        self.log("info", f"RAG retrieval for: {search_query[:100]}")
+        self.log("info", f"RAG retrieval query {text_fingerprint(search_query)}")
 
         results = []
         knowledge = ""
@@ -107,15 +109,15 @@ class RAGAgent(BaseAgent):
             results = self._fallback_knowledge(search_query)
             knowledge = results[0].get("content", "") if results else ""
 
-        # Synthesize knowledge using OpenRouter (Nemotron 3 Super) if available
+        # Synthesize knowledge with the configured LLM if one is reachable
         if self.rag_client and results:
             try:
-                self.log("info", "Synthesizing RAG results with OpenRouter — Nemotron 3 Super 120B")
+                self.log("info", f"Synthesizing RAG results with {self.rag_client.default_model}")
                 synthesized = self.rag_client.synthesize_knowledge(search_query, results)
                 if synthesized and "Error" not in synthesized[:20]:
                     knowledge = synthesized
             except Exception as e:
-                self.log("warning", f"OpenRouter synthesis failed, using raw knowledge: {e}")
+                self.log("warning", f"LLM synthesis failed, using raw knowledge: {safe_error(e, search_query)}")
 
         return {
             "relevant_docs": results,
@@ -123,7 +125,7 @@ class RAGAgent(BaseAgent):
             "num_sources": len(results),
             "query": search_query,
             "agent": self.name,
-            "synthesis_method": "openrouter/nemotron-3-super-120b" if self.rag_client else "fallback",
+            "synthesis_method": self.rag_client.default_model if self.rag_client else "fallback",
         }
 
     def _search_faiss(self, query: str, top_k: int = 5) -> list[dict]:

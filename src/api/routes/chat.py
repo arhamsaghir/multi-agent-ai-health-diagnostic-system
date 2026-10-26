@@ -8,6 +8,7 @@ import uuid
 from loguru import logger
 
 from src.llm.openai_client import OpenAIClient
+from src.utils.redaction import safe_error
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -131,7 +132,7 @@ Previous conversation context:"""
 
         # Fallback to local clinical advisory if external LLM rate-limited or unavailable
         if not response_text or response_text.startswith("Error generating response:"):
-            logger.warning(f"LLM generation failed ({response_text[:80]}), falling back to clinical advisory knowledge base")
+            logger.warning("LLM generation failed — falling back to clinical advisory knowledge base")
             msg_lower = request.message.lower()
             fallback_knowledge = {
                 "pneumonia": (
@@ -202,7 +203,7 @@ Previous conversation context:"""
             safety_message=safety_message,
         )
     except Exception as e:
-        logger.error(f"Chat message failed: {e}")
+        logger.error(f"Chat message failed: {safe_error(e, request.message)}")
         raise HTTPException(status_code=500, detail=f"Chat failed: {str(e)}")
 
 

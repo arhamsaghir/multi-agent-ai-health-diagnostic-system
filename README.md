@@ -29,7 +29,8 @@ The project now features a **modern Next.js 16 + React 19 frontend** with:
 │                                                                     │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐   │
 │  │ NLP Agent│  │Vision    │  │RAG Agent │  │Prediction Agent  │   │
-│  │(BioBERT) │  │(ResNet50)│  │(FAISS)   │  │(GradientBoosting)│   │
+│  │(Clinical │  │(ResNet)  │  │(FAISS)   │  │(GradientBoosting)│   │
+│  │   NLP)   │  │          │  │          │  │                  │   │
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────────┬─────────┘   │
 │       │              │             │                  │             │
 │       ▼              ▼             ▼                  ▼             │
@@ -48,15 +49,15 @@ The project now features a **modern Next.js 16 + React 19 frontend** with:
 
 | Layer | Technology |
 |---|---|
-| **Orchestration** | LangGraph (agent routing), DEMAT (evidence arbitration), EN-SCAF (risk bounding) |
-| **LLMs** | OpenRouter free-tier + Gemini fallback, rule-based synthesis when offline |
-| **Deep Learning** | PyTorch (CPU), ResNet-18/50 (vision), BioBERT (NLP) |
-| **RAG** | FAISS vector store, 500 provenance-bearing medical records, 25-query evaluation |
+| **Orchestration** | LangGraph `StateGraph` (agent routing), DEMAT (evidence arbitration), EN-SCAF (risk bounding) |
+| **LLMs** | OpenRouter/OmniRoute free-tier + Gemini fallback, rule-based synthesis when offline |
+| **Deep Learning** | PyTorch (CPU), ResNet (vision), optional biomedical NER checkpoint (NLP) |
+| **RAG** | FAISS vector store, 500 provenance-bearing passages from 9 guideline sources, 25-query evaluation |
 | **ML Models** | scikit-learn GradientBoosting (4 disease models), rule-based fallback |
 | **Frontend** | Next.js 16 + React 19 + TypeScript + Tailwind CSS v4 |
 | **Animations** | Framer Motion (scroll-triggered, staggered) |
 | **Charts** | Recharts (confidence visualization) |
-| **Voice** | OpenAI Whisper API (speech-to-text) |
+| **Voice** | OpenAI Whisper API (speech-to-text, optional) |
 | **API** | FastAPI (diagnosis, chat, vision, SSE stream, PDF report, FHIR R4) |
 | **Interoperability** | HL7 FHIR R4 (`fhir.resources` 8.3.0) — Bundle in/out |
 | **Deployment** | Docker + Compose (Next.js standalone + FastAPI, CPU-only, non-root) |
@@ -212,7 +213,23 @@ The UI includes a **Demo Mode** toggle that uses pre-computed results for instan
 |---|---|---|
 | OpenRouter | All LLM calls (free-tier models) | openrouter.ai |
 | OpenAI | Whisper (voice-to-text) — optional | platform.openai.com |
-| HuggingFace | BioBERT model downloads — optional | huggingface.co |
+| HuggingFace | Optional biomedical NER checkpoint — only when `ENABLE_BIOBERT_NER=true` | huggingface.co |
+
+### Service authentication
+
+The clinical API is protected by a service API key that is **enforced by
+default**. Clients send it as an `X-API-Key` header; the browser portal never
+sees it, because the Next.js proxy attaches it server-side.
+
+| Setting | Default | Effect |
+|---|---|---|
+| `ENFORCE_API_KEY` | `true` | Require a valid key on every non-public endpoint |
+| `SECRET_KEY` | *(empty)* | The key itself — must be set outside development |
+| `ALLOW_INSECURE_DEV` | `true` | Development-only bypass; ignored outside `APP_ENV=development` |
+
+In production the service refuses to start unless `SECRET_KEY` is set and
+`ENFORCE_API_KEY` is on, and the interactive OpenAPI docs are disabled.
+Set `ALLOW_INSECURE_DEV=false` to require the key even in development.
 
 ## Testing
 
@@ -262,24 +279,36 @@ with rule-based risk scoring.
 
 ### Model Performance
 
-| Model | Training Data | Validation Metric | Result |
-|---|---|---|---|
-| Vision (ResNet-50) | 4,500 synthetic X-rays (15 classes) | Validation Loss | 0.0562 |
-| Prediction (GradientBoosting) | 500 synthetic patient records | Accuracy per disease | 85-92% |
-| NLP (BioBERT) | Medical symptom corpus | F1 Score | 0.87 |
-| RAG (FAISS) | 10 medical knowledge documents | Retrieval Accuracy | 90% |
+Every number below is reproducible from an artifact in this repository. The
+artifact that produced each metric is named in the last column.
+
+| Model | Training Data | Validation Metric | Result | Artifact |
+|---|---|---|---|---|
+| Vision (ResNet) | 4,500 synthetic X-rays (15 classes) | Validation loss | 0.0562 (reported at training time; no artifact retained) | `scripts/train_vision_model.py` |
+| Prediction (GradientBoosting) | 500 synthetic patient records | Accuracy per disease | cardiovascular 90%, respiratory 96%, diabetes 99%, neurological 91% | `models/prediction_xgboost_metadata.json` |
+| RAG (FAISS) | 500 passages from 9 guideline sources | Top-5 hit rate, 25-query evaluation | 100% | `data/knowledge/guidelines/rag_eval.json` |
+| NLP (clinical patterns) | Rule-based clinical pattern catalogue | — | No accuracy benchmark is published; extraction is deterministic and covered by unit tests | `tests/unit/test_nlp_agent.py` |
+
+**Not measured:** there is no published accuracy or F1 figure for the NLP
+extractor, and the vision validation loss above is a training-time report
+rather than a re-runnable evaluation. The `data/benchmark_results.json` file
+covers a synthetic 200-case knowledge-base lookup (100% top-1 by
+construction) and is not a clinical accuracy measure.
 
 ### Agent Coverage
 
 | Agent | Function | Status |
 |---|---|---|
-| Orchestrator | Task planning & routing | ✅ Production |
-| NLP | Symptom extraction, severity assessment | ✅ Production |
-| Vision | Chest X-ray anomaly detection (15 conditions) | ✅ Production |
-| RAG | Medical guideline retrieval | ✅ Production |
-| Prediction | Disease risk scoring (4 models) | ✅ Production |
-| Voice | Speech-to-text transcription | ✅ Production |
-| Synthesis | Report generation (LLM + fallback) | ✅ Production |
+| Orchestrator | Task planning & routing (LangGraph `StateGraph`) | ✅ Active |
+| NLP | Symptom extraction, severity assessment | ✅ Active — deterministic patterns; biomedical NER model is optional and off by default (`ENABLE_BIOBERT_NER`) |
+| Vision | Chest X-ray anomaly detection (15 conditions) | ✅ Active — checkpoint architecture is detected at load time (ResNet-18 or ResNet-50) |
+| RAG | Medical guideline retrieval | ✅ Active — falls back to raw retrieved passages when no LLM is reachable |
+| Prediction | Disease risk scoring (4 models) | ✅ Active — scikit-learn GradientBoosting via joblib, rule-based fallback |
+| Voice | Speech-to-text transcription | ⚙️ Optional — requires an OpenAI API key |
+| Synthesis | Report generation (LLM + fallback) | ✅ Active — LLM when a provider is reachable, rule-based report otherwise |
+
+`GET /health` reports the live state of every agent and model instead of
+advertising a fixed "all active" list.
 
 ### System Capabilities
 - **5 demo scenarios** covering cardiovascular, respiratory, metabolic, neurological, and infectious conditions
@@ -292,14 +321,15 @@ with rule-based risk scoring.
 
 ## Known Limitations
 
-1. **XGBoost Segfault**: The XGBoost model may crash on macOS/Python 3.13 during loading. The system handles this gracefully by falling back to scikit-learn GradientBoosting with rule-based risk scoring.
-2. **CPU Inference Speed**: Full pipeline execution takes 2-5 minutes on CPU due to BioBERT loading and LLM latency. Use **Demo Mode** for instant results.
+1. **Legacy XGBoost Artifacts**: The shipped risk models are scikit-learn `GradientBoostingClassifier` estimators in joblib files whose names still carry the `xgboost` prefix, and `scripts/train_prediction_model.py` still trains with XGBoost. XGBoost checkpoints can crash on macOS/Python 3.13 during unpickling; the agent falls back to rule-based scoring when a model cannot be loaded.
+2. **CPU Inference Speed**: Full pipeline execution takes 2-5 minutes on CPU due to model loading and LLM latency. Use **Demo Mode** for instant results.
 3. **Synthetic Vision Data**: The vision model was trained on procedurally generated X-ray images (4,500 images, 15 classes) for prototype validation. Production use requires real medical imaging data (e.g., NIH ChestX-ray14).
 4. **Free-Tier LLM Latency**: OpenRouter free-tier models may have variable response times. The system implements 30-second timeouts with automatic fallback to rule-based synthesis.
 5. **SQLite Persistence**: Diagnosis history is persisted to SQLite through the `./data` volume. A multi-instance deployment needs PostgreSQL for patient records and audit trails.
 6. **Voice API Dependency**: Voice transcription requires an OpenAI API key. Without it, the voice tab shows a configuration message.
-7. **No TLS or Portal Authentication**: The container stack publishes the portal on port 3000 with no TLS termination and no user authentication. Deploy it behind the hospital's reverse proxy and access control.
+7. **No TLS or Portal Login**: The API enforces a service API key by default (see [API Keys](#api-keys)), but the container stack publishes the portal on port 3000 with no TLS termination and no end-user authentication. Deploy it behind the hospital's reverse proxy and access control.
 8. **No Clinical Validation**: The deployment mechanism is not evidence of clinical efficacy. Retrospective validation under IRB approval (Phase 4.3) is still outstanding, and TensorRT INT8 quantization is `BLOCKED: GPU host` with no measured numbers.
+9. **Unverified Metrics in Legacy Reports**: `FULL_PROJECT_REPORT.md` still cites a vision validation loss and an NLP F1 score that no artifact in this repository reproduces. The table above lists only metrics backed by a stored artifact.
 
 ## Future Work
 

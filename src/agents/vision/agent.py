@@ -81,7 +81,7 @@ class VisionAgent(BaseAgent):
     """Medical image analysis agent using a fine-tuned ResNet."""
 
     name = "vision_agent"
-    description = "CNN / ResNet — Tumor / anomaly detection from medical images"
+    description = "CNN / ResNet — Chest X-ray anomaly classification across 15 classes"
 
     DISEASE_CLASSES = [
         "Atelectasis", "Cardiomegaly", "Effusion", "Infiltration",

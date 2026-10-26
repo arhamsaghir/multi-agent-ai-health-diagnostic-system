@@ -27,14 +27,28 @@ interface StepState {
   summary?: string;
 }
 
-const STEP_ORDER: Array<{ node: string; agent: string; model: string; icon: typeof Brain }> = [
-  { node: "triage", agent: "DEMAT Active Triage", model: "Entropy Minimization", icon: Activity },
-  { node: "symptoms", agent: "NLP Agent", model: "BioBERT / Clinical NLP", icon: Brain },
-  { node: "image", agent: "Vision Agent", model: "ResNet / ChestX-ray14", icon: Eye },
-  { node: "knowledge", agent: "RAG Agent", model: "FAISS Vector Store", icon: Database },
-  { node: "risk", agent: "Prediction Agent", model: "GradientBoosting / XGBoost", icon: TrendingUp },
-  { node: "synthesis", agent: "Synthesis Agent", model: "LLM Synthesis", icon: Sparkles },
+// Node order and icons only. The agent name and the model/technique label
+// come from the backend lifecycle event, so the stepper always shows what
+// the running pipeline actually used instead of a hardcoded claim.
+const STEP_ORDER: Array<{ node: string; icon: typeof Brain }> = [
+  { node: "triage", icon: Activity },
+  { node: "symptoms", icon: Brain },
+  { node: "image", icon: Eye },
+  { node: "knowledge", icon: Database },
+  { node: "risk", icon: TrendingUp },
+  { node: "synthesis", icon: Sparkles },
 ];
+
+// Fallback display names, used only until the first event for a node
+// arrives. These name the agent, not the model behind it.
+const NODE_LABELS: Record<string, string> = {
+  triage: "DEMAT Active Triage",
+  symptoms: "NLP Agent",
+  image: "Vision Agent",
+  knowledge: "RAG Agent",
+  risk: "Prediction Agent",
+  synthesis: "Synthesis Agent",
+};
 
 const AGENT_BY_NODE: Record<string, (typeof STEP_ORDER)[number]> = Object.fromEntries(
   STEP_ORDER.map((s) => [s.node, s])
@@ -68,8 +82,8 @@ function deriveSteps(events: AgentProgressEvent[]): StepState[] {
 
     return {
       node: meta.node,
-      agent: meta.agent,
-      model: meta.model,
+      agent: last?.agent ?? NODE_LABELS[meta.node] ?? meta.node,
+      model: last?.model ?? "",
       status,
       elapsedMs: last?.elapsed_ms,
       summary: last?.summary,

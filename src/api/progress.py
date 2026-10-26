@@ -11,15 +11,11 @@ from typing import Any, AsyncGenerator, Callable, Optional
 
 from loguru import logger
 
-# Agent display metadata for stepper events
-AGENT_META = {
-    "triage":     {"agent": "DEMAT Active Triage", "model": "Entropy Minimization"},
-    "symptoms":   {"agent": "NLP Agent",            "model": "BioBERT / Clinical NLP"},
-    "image":      {"agent": "Vision Agent",         "model": "ResNet (ChestX-ray14)"},
-    "knowledge":  {"agent": "RAG Agent",            "model": "FAISS Vector Store"},
-    "risk":       {"agent": "Prediction Agent",     "model": "GradientBoosting / XGBoost"},
-    "synthesis":  {"agent": "Synthesis Agent",      "model": "LangGraph Orchestrator"},
-}
+from src.agents.display import NODE_DISPLAY
+
+# Agent display metadata for stepper events — single source of truth in
+# src/agents/display.py, shared with the orchestrator.
+AGENT_META = NODE_DISPLAY
 
 ProgressCallback = Callable[[dict], None]
 

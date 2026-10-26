@@ -2,6 +2,29 @@ import { DiagnosisResult } from "@/components/diagnosis/DiagnosisResults";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+export interface SystemHealth {
+  status: string;
+  environment: string;
+  version: string;
+  authentication: string;
+  agents: Record<string, string>;
+  models: Record<string, string>;
+  response_time_ms: number;
+}
+
+/** Fetch live backend status. Returns null when the backend is unreachable. */
+export async function fetchSystemHealth(): Promise<SystemHealth | null> {
+  try {
+    const response = await fetch(`${API_BASE}/health`, { cache: "no-store" });
+    if (!response.ok) {
+      return null;
+    }
+    return (await response.json()) as SystemHealth;
+  } catch {
+    return null;
+  }
+}
+
 export interface PatientHistory {
   age: number;
   bmi: number;

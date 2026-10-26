@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Stethoscope,
@@ -18,11 +19,12 @@ import {
   CheckCircle2,
   FileCheck
 } from "lucide-react";
+import { fetchSystemHealth, type SystemHealth } from "@/lib/api";
 
 const agents = [
   {
     name: "NLP Agent",
-    model: "BioBERT / Clinical NLP",
+    model: "Clinical NLP (patterns + optional NER)",
     role: "Extracts symptoms, duration, and clinical severity from natural language narratives.",
     icon: Brain,
     color: "from-blue-500 to-indigo-600",
@@ -31,8 +33,8 @@ const agents = [
   },
   {
     name: "Vision Agent",
-    model: "ResNet-50 (NIH ChestX-ray14)",
-    role: "Deep learning scan classifier detecting 15 pulmonary and cardiac pathologies.",
+    model: "ResNet (synthetic X-ray training set)",
+    role: "Scan classifier over 15 pulmonary and cardiac classes trained on procedurally generated X-rays.",
     icon: Eye,
     color: "from-purple-500 to-pink-600",
     border: "border-purple-200 dark:border-purple-900/50",
@@ -49,7 +51,7 @@ const agents = [
   },
   {
     name: "Prediction Agent",
-    model: "GradientBoosting / XGBoost",
+    model: "GradientBoosting Risk Models",
     role: "Calculates disease risk factors from demographics, vitals, and family history.",
     icon: TrendingUp,
     color: "from-amber-500 to-orange-600",
@@ -58,7 +60,7 @@ const agents = [
   },
   {
     name: "Synthesis Agent",
-    model: "LangGraph Orchestrator",
+    model: "LLM Synthesis (rule-based fallback)",
     role: "Aggregates multi-agent outputs, enforces emergency rules, and generates final differentials.",
     icon: Sparkles,
     color: "from-rose-500 to-red-600",
@@ -103,6 +105,20 @@ const capabilities = [
 ];
 
 export default function Home() {
+  const [health, setHealth] = useState<SystemHealth | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetchSystemHealth().then((result) => {
+      if (active) {
+        setHealth(result);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 pb-12">
       {/* Hero Section */}
@@ -122,8 +138,8 @@ export default function Home() {
           </h1>
 
           <p className="text-sm sm:text-base lg:text-lg text-primary-100/90 leading-relaxed">
-            A cooperative multi-agent healthcare platform combining NLP symptom extraction,
-            ResNet-50 medical imaging, FAISS vector search, and XGBoost clinical risk assessment.
+            A cooperative multi-agent healthcare platform combining clinical NLP symptom extraction,
+            ResNet medical imaging, FAISS vector search, and GradientBoosting clinical risk assessment.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
@@ -226,10 +242,17 @@ export default function Home() {
               Five specialized agents coordinated via LangGraph state machine
             </p>
           </div>
-          <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-            <CheckCircle2 size={14} />
-            All Subsystems Active
-          </span>
+          {health ? (
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+              <CheckCircle2 size={14} />
+              Backend {health.status} · auth {health.authentication}
+            </span>
+          ) : (
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 px-3 py-1.5 rounded-full border border-amber-200 dark:border-amber-800">
+              <Activity size={14} />
+              Backend status unavailable
+            </span>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
