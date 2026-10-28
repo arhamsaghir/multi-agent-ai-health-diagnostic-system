@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Page Not Found — National Medical Commission</title>
+    <meta name="description" content="National Medical Commission — A statutory body under the Ministry of Health &amp; Family Welfare">
+    <link rel="shortcut icon" href="https://nmc.org.in/img/favicon.png">
+    <link rel="icon" type="image/png" href="https://nmc.org.in/img/favicon.png">
+    <link rel="stylesheet" href="/css/frontend.css">
+    <style>
+        .govbar-tooltip{position:relative}
+        .govbar-tooltip::after{content:attr(data-tooltip);position:absolute;top:calc(100% + 8px);right:0;width:190px;background:#fffbe6;color:#1a2332;font-size:12px;line-height:1.4;font-weight:600;padding:8px 10px;border:1px solid #f0d97a;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.18);opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s;z-index:1000;text-align:center}
+        .govbar-tooltip::before{content:'';position:absolute;top:100%;right:16px;border:6px solid transparent;border-bottom-color:#fffbe6;opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s;z-index:1001}
+        .govbar-tooltip:hover::after,.govbar-tooltip:hover::before{opacity:1;visibility:visible}
+        .page-utility-bar{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:6px 24px;font-size:13px;background:#fff;border-bottom:1px solid #e5eaf1}
+        .page-utility-bar a{color:#0b5595;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+        .page-utility-bar a:hover{text-decoration:underline}
+        .page-utility-sep{color:#c3cede}
+        /* Bhashini language widget in the gov bar: make only the trigger button visible on the dark navy background */
+        .govbar-right .bhashini-plugin-container{display:flex;align-items:center;min-width:28px;height:100%}
+        .govbar-right .bhashini-dropdown-btn,
+        .govbar-right .bhashini-dropdown-btn *{color:#fff !important;fill:#fff}
+        .govbar-right .bhashini-dropdown-btn img,
+        .govbar-right .bhashini-dropdown-btn svg{filter:brightness(0) invert(1);max-height:22px;width:auto}
+        .govbar-right .bhashini-dropdown-content,
+        .govbar-right .bhashini-dropdown-content *{color:#102a4c !important}
+    </style>
+</head>
+<body>
+
+
+<div class="govbar">
+    <div class="govbar-left">
+        <div class="india-flag">
+            <div class="if-saffron"></div>
+            <div class="if-white"><div class="if-chakra"></div></div>
+            <div class="if-green"></div>
+        </div>
+        <a href="https://www.india.gov.in/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">भारत सरकार | Government of India</a>
+    </div>
+    <div class="govbar-right">
+        <a href="https://nmc.org.in" style="font-size:13px;opacity:.7;color:inherit;text-decoration:none" aria-label="Home">&#8962;</a>
+        <div class="govbar-sep"></div>
+        <a class="govbar-link" href="https://application.nmc.org.in/nmc-helpdesk/raise-ticket" target="_blank" rel="noopener">IT Help Desk</a>
+        <div class="govbar-sep"></div>
+        <div class="bhashini-plugin-container"></div>
+        <div class="govbar-sep"></div>
+        <a class="govbar-link govbar-tooltip" href="https://employee.nmc.org.in/ActivitiWebClient/login" target="_blank" rel="noopener" data-tooltip="Please ensure that you are logged into VPN">Employee Corner</a>
+        <div class="govbar-sep"></div>
+        <button class="acc-btn acc-sm" onclick="nmcFontSize('sm',this)" title="Decrease font size">A-</button>
+        <button class="acc-btn acc-md acc-active" onclick="nmcFontSize('md',this)" title="Normal font size">A</button>
+        <button class="acc-btn acc-lg" onclick="nmcFontSize('lg',this)" title="Increase font size">A+</button>
+    </div>
+</div>
+
+
+<header class="site-header">
+
+    
+    <div class="sh-left">
+        <div class="sh-left-top">
+        
+        <div class="sh-govt-emblem">
+            <img src="https://nmc.org.in/images/emblem-black.svg" alt="Government of India Emblem" style="height:80px;width:auto;display:block">
+        </div>
+        <div class="sh-vbar"></div>
+        
+        <a href="https://nmc.org.in" style="display:block;line-height:0">
+            <img class="sh-nmc-seal" src="https://nmc.org.in/images/new_logo_2.png" alt="National Medical Commission">
+            <strong>राष्ट्रीय आयुर्विज्ञान आयोग<br>
+                        <span>NATIONAL MEDICAL COMMISSION</span>
+                        <small style="text-transform: uppercase;"> A statutory body under the Ministry of Health &amp; Family Welfare</small>
+                      </strong>
+        </a>
+        </div>
+        <!-- <div class="sh-tagline">A statutory body under the Ministry of Health &amp; Family Welfare, Government of India</div> -->
+    </div>
+
+    
+    <div class="sh-partners">
+        
+        <div class="sh-partner-chip">
+            <a href="#" target="_blank" rel="noopener" aria-label="International Day of Yoga">
+                <img src="https://nmc.org.in/images/yoga-day.png" alt="International Day of Yoga" class="sh-yoga-logo">
+            </a>
+        </div>
+        <div class="sh-partner-sep"></div>
+        <div class="sh-partner-chip">
+            <a href="https://nmc.org.in/storage/new/WFMECertificateofRecognitionStatus.pdf" target="_blank" rel="noopener" aria-label="WFME">
+                <img src="https://nmc.org.in/images/wfme.png" alt="WFME" class="sh-wfme-logo">
+            </a>
+        </div>
+        <div class="sh-partner-sep"></div>
+        <div class="sh-partner-chip">
+            <a href="https://search.wdoms.org/?_gl=1*1nx11tv*_ga*MTMwMjI3NTE2My4xNzY4OTA4MjE0*_ga_R5BJZG5EYE*czE3Njg5MDgyMTQkbzEkZzAkdDE3Njg5MDgyMTQkajYwJGwwJGgw" target="_blank" rel="noopener" aria-label="WDMS">
+                <div class="sh-chip-logo sh-chip-wdms">WDMS</div>
+                <div class="sh-chip-text">World Directory<br>Medical Schools</div>
+            </a>
+        </div>
+    </div>
+
+</header>
+
+
+
+
+<nav class="site-nav">
+    <div class="nav-container">
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+        </button>
+        <ul id="mainNav">
+            <li class="menu-item-has-children">
+                <a href="/page/about-nmc" target="_self" >
+            About NMC
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/about-nmc-introduction" target="_self" >
+            Introduction
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/about-nmc-functions-of-nmc" target="_self" >
+            Functions of NMC
+        </a>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            Composition of NMC
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/about-nmc-composition-of-nmc-composition" target="_self" >
+            Composition
+        </a>
+            </li>
+    <li class="">
+                <a href="/about-nmc/incumbency-commission" target="_self" >
+            Incumbency of the Commission
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="/page/about-nmc-autonomous-boards" target="_self" >
+            Autonomous Boards
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/about-nmc-autonomous-boards-under-graduate-medical-education-board" target="_self" >
+            Under-Graduate Medical Education Board
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/about-nmc-autonomous-boards-post-graduate-medical-education-board" target="_self" >
+            Post-Graduate Medical Education Board
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/about-nmc-autonomous-boards-medical-assessment-rating-board" target="_self" >
+            Medical Assessment &amp; Rating Board
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/about-nmc-autonomous-boards-ethics-medical-registration-board" target="_self" >
+            Ethics &amp; Medical Registration Board
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            Medical Advisory Council
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/about-nmc-medical-advisory-council-composition-of-mac" target="_self" >
+            Composition Of MAC
+        </a>
+            </li>
+    <li class="">
+                <a href="/about-nmc/medical-advisory-council" target="_self" >
+            Members of Medical Advisory Council
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="">
+                <a href="/about-nmc/details-of-officers" target="_self" >
+            Details of Officers
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/about-nmc-contact-us" target="_self" >
+            Contact Us
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            NMC Act
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2F210357_NMC_Act-1-1.pdf&amp;title=NMC%20Act%2C%202019%20English" target="_self" >
+            NMC Act, 2019 English
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FH201930NMCAct2019hindi-2-1.pdf&amp;title=NMC%20Act%2C%202019%20Hindi" target="_self" >
+            NMC Act, 2019 Hindi
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FFAQ_NMCACT_pdf-1-1.pdf&amp;title=FAQ%20on%20NMC%20Act%2C%202019" target="_self" >
+            FAQ on NMC Act, 2019
+        </a>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            Erstwhile MCI Acts &amp; Amendments
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/nmc-act-erstwhile-mci-acts-amendments-the-indian-medical-degree-act-1916" target="_self" >
+            The Indian Medical Degree Act, 1916
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/nmc-act-erstwhile-mci-acts-amendments-the-indian-medical-council-act-1956" target="_self" >
+            The Indian Medical Council Act, 1956
+        </a>
+            </li>
+    <li class="">
+                <a href="/first-schedule-of-imc-act" target="_self" >
+            The First Schedule of IMC Act
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/nmc-act-erstwhile-mci-acts-amendments-the-second-schedule-of-imc-act" target="_self" >
+            The Second Schedule of IMC Act
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/nmc-act-erstwhile-mci-acts-amendments-the-third-schedule-of-imc-act" target="_self" >
+            The Third Schedule of IMC Act
+        </a>
+            </li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-indian-medical-council-rules-1957" target="_self" >
+            Rules and Regulation
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/rules-regulations-rules-regulations-nmc" target="_self" >
+            Rules &amp; Regulations, NMC
+        </a>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            Rules &amp; Regulations of Erstwhile MCI
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-indian-medical-council-rules-1957" target="_self" >
+            Indian Medical Council Rules, 1957
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-post-graduate-committee-rules-1961" target="_self" >
+            Post Graduate Committee Rules, 1961
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-students-admitted-in-excess-regulations-1997" target="_self" >
+            Students Admitted in Excess Regulations, 1997
+        </a>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-graduate-medical-education-regulations-1997" target="_self" >
+            Graduate Medical Education Regulations, 1997
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2F19GraduateMedicalEducationRegulations1997Amendment04112019-2.pdf&amp;title=Graduate%20Medical%20Education%20Regulations%201997%20%28Amendment%20Dated%2004.11.2019%20%28UGMEB%29" target="_self" >
+            Graduate Medical Education Regulations 1997 (Amendment Dated 04.11.2019 (UGMEB)
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-the-mci-conduct-of-election-regulations-1998" target="_self" >
+            The MCI (Conduct of Election) Regulations, 1998
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-teachers-eligibility-qualifications-1998" target="_self" >
+            Teachers Eligibility Qualifications, 1998
+        </a>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-establishment-of-medical-college-regulations-1999" target="_self" >
+            Establishment of Medical College Regulations, 1999
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2F2EstablishmentofMedicalCollegeRegulationsAmendment2022NMC-2.pdf&amp;title=Establishment%20of%20Medical%20College%20Regulation%2C%28Amendment%29%2C%202020%20Dated%2028.10.2020%20%28MARB%29" target="_self" >
+            Establishment of Medical College Regulation,(Amendment), 2020 Dated 28.10.2020 (MARB)
+        </a>
+            </li>
+    <li class="">
+                <a href="http://Establishment%20of%20Medical%20College%20Regulation,(Amendment),%202020%20Dated%2028.10.2020%20(MARB)" target="_self" >
+            Establishment Of Medical College Regulations (Amendment), 2022 Dated 13.12.2022 (MARB)
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            Minimum Standard Requirement Regulations, 1999
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FMinimum-Standard-Requirements-for-50-Admissions-3.pdf&amp;title=Minimum%20requirement%20for%2050%20admissions" target="_self" >
+            Minimum requirement for 50 admissions
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FMinimum-Standard-Requirements-for-100-Admissions-2.pdf&amp;title=Minimum%20requirement%20for%20100%20admissions" target="_self" >
+            Minimum requirement for 100 admissions
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FMinimum-Standard-Requirements-for-150-Admissions-1.pdf&amp;title=Minimum%20requirement%20for%20150%20admissions" target="_self" >
+            Minimum requirement for 150 admissions
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FSTANDARD-FOR-200-1.pdf&amp;title=Minimum%20requirement%20for%20200%20admissions" target="_self" >
+            Minimum requirement for 200 admissions
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FSTANDARD-FOR-250-1.pdf&amp;title=Minimum%20requirement%20for%20250%20admissions" target="_self" >
+            Minimum requirement for 250 admissions
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FLOILOPRenewal-1.pdf&amp;title=Phasewise%20requirements%20for%20LOI%2C%20LOP%2C%20renewals" target="_self" >
+            Phasewise requirements for LOI, LOP, renewals
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-mci-regulations-2000" target="_self" >
+            MCI Regulations, 2000
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-opening-of-a-new-or-higher-course-of-study-2000" target="_self" >
+            Opening of a New or Higher Course of Study, 2000
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-pg-medical-education-regulations-2000" target="_self" >
+            P.G. Medical Education Regulations, 2000
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-screening-test-regulations-2002" target="_self" >
+            Screening Test Regulations, 2002
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-eligibility-certificate-regulations-2002" target="_self" >
+            Eligibility Certificate Regulations, 2002
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-code-of-medical-ethics-regulations-2002" target="_self" >
+            Code of Medical Ethics Regulations, 2002
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-election-of-students-union-regulations-2009" target="_self" >
+            Election of Students Union Regulations, 2009
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rules-regulations-rules-regulations-of-erstwhile-mci-prevention-of-ragging-regulation-2009" target="_self" >
+            Prevention of Ragging Regulation, 2009
+        </a>
+            </li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            Information Desk
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/information-desk-college-and-course-search" target="_self" >
+            College and Course Search
+        </a>
+            </li>
+    <li class="">
+                <a href="/information-desk/indian-medical-register" target="_self" >
+            Indian Medical Register
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/information-desk-state-medical-councils" target="_self" >
+            State Medical Councils
+        </a>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            For Students to Study in India
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/information-desk-for-students-to-study-in-india-list-of-college-teaching-mbbs" target="_self" >
+            List of College Teaching MBBS
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/information-desk-for-students-to-study-in-india-list-of-college-teaching-pg-courses" target="_self" >
+            List of College Teaching PG Courses
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="/page/information-desk-for-students-to-study-abroad" target="_self" >
+            For Students to Study Abroad
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="general-information" target="_self" >
+            General Information
+        </a>
+            </li>
+    <li class="">
+                <a href="equivalence-of-foreign-medical-qualification" target="_self" >
+            Equivalence of Foreign Medical Qualification
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            For Colleges
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/information-desk-for-colleges-ug-curriculum" target="_self" >
+            UG Curriculum
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/information-desk-for-colleges-pg-curriculum" target="_self" >
+            PG Curriculum
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/information-desk-for-colleges-procedure-to-start-new-college" target="_self" >
+            Procedure to Start New College
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/information-desk-for-colleges-national-faculty-development-programme" target="_self" >
+            National Faculty Development Programme
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/information-desk-for-colleges-to-start-a-new-courseincrease-of-seats" target="_self" >
+            To Start a New Course/Increase of Seats
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/information-desk-for-colleges-fees-for-various-inspection" target="_self" >
+            Fees for Various Inspection
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="">
+                <a href="/download-application-forms-nmc" target="_self" >
+            Download application form, NMC
+        </a>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            Circulars/Public Notices
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/circulars-notices-nmc" target="_self" >
+            Circulars/Public Notices, NMC
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/information-desk-circularspublic-notices-circularspublic-notices-erstwhile-mci" target="_self" >
+            Circulars/Public Notices, Erstwhile MCI
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="">
+                <a href="#" target="_self" >
+            Declaration of Assets and Liabilities under NMC Act, 2019 and regulations thereunder
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/information-desk-nap-amr-national-action-plan-on-antimicrobial-resistance" target="_self" >
+            NAP-AMR (National Action Plan on Antimicrobial Resistance)
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="https://nmcsite.php-staging.com/#" target="_self" >
+            Media Room
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/media-room-news-and-event-nmc" target="_self" >
+            News and Event, NMC
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/media-room-news-and-event-erstwhile-mci" target="_self" >
+            News and Event, Erstwhile MCI
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            E-GAZETTE
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/e-gazette-nmc" target="_self" >
+            E-Gazette NMC
+        </a>
+            </li>
+    <li class="">
+                <a href="/egazette-mci" target="_self" >
+            E-Gazette MCI
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="/page/photo-gallery" target="_self" >
+            Photo Gallery
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/photo-gallery/08th-meeting-of-medical-advisory-council-21042026" target="_self" >
+            08th Meeting of Medical Advisory Council (21/04/2026)
+        </a>
+            </li>
+    <li class="">
+                <a href="/photo-gallery/cyber-safety-awareness-session-17012025" target="_self" >
+            Cyber Safety Awareness Session, 17.01.2025
+        </a>
+            </li>
+    <li class="">
+                <a href="/photo-gallery/vigilance-awareness-campaign-week-2024" target="_self" >
+            Vigilance Awareness Campaign &amp; Week, 2024
+        </a>
+            </li>
+    <li class="">
+                <a href="/photo-gallery/integrity-pledge-06112023" target="_self" >
+            Integrity Pledge, 06.11.2023
+        </a>
+            </li>
+    <li class="">
+                <a href="/photo-gallery/vasant-utsav-at-nmc" target="_self" >
+            Vasant Utsav at NMC
+        </a>
+            </li>
+    <li class="">
+                <a href="/photo-gallery/integrity-pledge" target="_self" >
+            Integrity Pledge
+        </a>
+            </li>
+    <li class="">
+                <a href="/photo-gallery/activities-in-ugmeb" target="_self" >
+            Activities In UGMEB
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            RTI
+        </a>
+                    <ul class="sub-menu">
+                <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            National Medical Commision(HQ)
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FOrder-reg-CPIOs-and-FAAs-in-NMC_0001-2.pdf&amp;title=CPIO%20Order" target="_self" >
+            CPIO Order
+        </a>
+            </li>
+    <li class="">
+                <a href="#" target="_self" >
+            Transfer And Posting
+        </a>
+            </li>
+    <li class="">
+                <a href="#" target="_self" >
+            Miscellaneous
+        </a>
+            </li>
+    <li class="">
+                <a href="#" target="_self" >
+            Minutes Of Meetings
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FOffice-order-CPIO-transfer-2.pdf&amp;title=Details%20of%20CPIOs%20and%20First%20Appellate%20Authorities%20in%20NMC%2FBoards" target="_self" >
+            Details of CPIOs and First Appellate Authorities in NMC/Boards
+        </a>
+            </li>
+    <li class="">
+                <a href="#" target="_self" >
+            Ethics And Medical Registration Board
+        </a>
+            </li>
+    <li class="">
+                <a href="#" target="_self" >
+            Work Allocation
+        </a>
+            </li>
+    <li class="">
+                <a href="#" target="_self" >
+            Medical Assessment Rating Board
+        </a>
+            </li>
+    <li class="">
+                <a href="#" target="_self" >
+            Post Graduate Medical Education Board
+        </a>
+            </li>
+    <li class="">
+                <a href="#" target="_self" >
+            Under Graduate Medical Education Board
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/rti-right-to-information" target="_self" >
+            Right to Information
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            Employees Corner
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/employees-corner/posh-act-2013-composition-icc" target="_self" >
+            Posh Act 2013, and Composition of ICC Under Post Act, 2013
+        </a>
+            </li>
+    <li class="">
+                <a href="https://shebox.wcd.gov.in/" target="_self" >
+            SHEBOX
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="/page/publications" target="_self" >
+            Publications
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FAnnual-Report-of-National-Medical-Commision-2024-25-English-version_compressed_compressed_11zon-2.pdf&amp;title=NMC%20ANNUAL%202024_25_ENGLISH" target="_self" >
+            NMC ANNUAL 2024_25_ENGLISH
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FAnnual-Report-of-National-Medical-Commission-2024-25-Hindi-version-1.pdf&amp;title=NMC%20ANNUAL%202024_25_HINDI" target="_self" >
+            NMC ANNUAL 2024_25_HINDI
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FNMC_ANNUAL_2023_24_ENGLISH-2.pdf&amp;title=NMC%20ANNUAL%202023_24_ENGLISH" target="_self" >
+            NMC ANNUAL 2023_24_ENGLISH
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FNMC_ANNUAL_2023_24_HINDI-1.pdf&amp;title=NMC%20ANNUAL%202023_24_HINDI" target="_self" >
+            NMC ANNUAL 2023_24_HINDI
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FNMC-ANNUAL-2022-23_ENGLISH_compressed.pdf&amp;title=NMC%20ANNUAL%202022-23_ENGLISH" target="_self" >
+            NMC ANNUAL 2022-23_ENGLISH
+        </a>
+            </li>
+    <li class="">
+                <a href="https://nmc.org.in/document-viewer?file=https%3A%2F%2Fnmc.org.in%2FNMC-ANNUAL-2022-23_HINDI.pdf&amp;title=NMC%20ANNUAL%202022-23_HINDI" target="_self" >
+            NMC ANNUAL 2022-23_HINDI
+        </a>
+            </li>
+    <li class="">
+                <a href="/publications/e-compendium-2020-2023" target="_self" >
+            E-Compendium of NMC 2020-2023
+        </a>
+            </li>
+    <li class="">
+                <a href="/publications/e-compendium-2024" target="_self" >
+            E-Compendium of NMC 2024
+        </a>
+            </li>
+            </ul>
+            </li>
+    <li class="menu-item-has-children">
+                <a href="#" target="_self" >
+            Annual Declaration Form
+        </a>
+                    <ul class="sub-menu">
+                <li class="">
+                <a href="/page/ug-msmer-2025-26" target="_self" >
+            UG - MSMER (2025-26)
+        </a>
+            </li>
+    <li class="">
+                <a href="/page/ug-msmer-2024-25" target="_self" >
+            UG - MSMER (2024-25)
+        </a>
+            </li>
+            </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+
+<div class="crumb-band">
+    <div class="container">
+        <nav class="crumb-nav" aria-label="Breadcrumb">
+            <a class="crumb-link" href="https://nmc.org.in">
+                <span class="crumb-home-icon">&#8962;</span> Home
+            </a>
+            <span class="crumb-sep">&#10095;</span>
+            <span class="crumb-current">Page Not Found</span>
+        </nav>
+    </div>
+</div>
+
+<div class="e404-wrap">
+    <div class="e404-card">
+        <div class="e404-code">404</div>
+        <div class="e404-divider"></div>
+        <div class="e404-icon">&#128269;</div>
+        <h1 class="e404-title">Page Not Found</h1>
+        <p class="e404-msg">The page you are looking for may have been moved, renamed, or is temporarily unavailable.</p>
+        <div class="e404-actions">
+            <a class="e404-btn e404-btn--primary" href="https://nmc.org.in">&#8962; Go to Homepage</a>
+            <a class="e404-btn e404-btn--secondary" href="https://nmc.org.in/whats-new">&#128276; What's New</a>
+        </div>
+        <div class="e404-links">
+            <span class="e404-links-label">Quick links:</span>
+            <a href="https://nmc.org.in/page/contact-us">Contact Us</a>
+            <span class="e404-dot">&#8226;</span>
+            <a href="https://nmc.org.in/page/grievances">Grievances</a>
+            <span class="e404-dot">&#8226;</span>
+            <a href="https://nmc.org.in/page/faq">FAQ</a>
+            <span class="e404-dot">&#8226;</span>
+            <a href="https://nmc.org.in/page/related-links">Related Links</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<footer>
+        <div class="footer-links-bar">
+                    <a href="https://nmc.org.in/page/related-links">Related Links</a>
+                    <a href="https://nmc.org.in/page/grievances">Grievances</a>
+                    <a href="https://nmc.org.in/page/tenders">Tenders</a>
+                    <a href="https://nmc.org.in/page/faq">FAQ</a>
+                    <a href="https://nmc.org.in/page/contact-us">Contact Us</a>
+            </div>
+        <div class="footer-bottom">
+        <span class="footer-copyright">&#169; 2020&ndash;2026 <strong>National Medical Commission</strong>. All Rights Reserved.</span>
+        <a class="footer-twitter" href="https://twitter.com/NMC_bharat" target="_blank" rel="noopener">
+            <span class="ft-x-icon">&#x1D54F;</span> Follow @NMC_bharat
+        </a>
+        <div class="footer-legal">
+            <a href="https://nmc.org.in/page/disclaimer">Disclaimer</a>
+            <span class="footer-legal-sep">|</span>
+            <a href="https://nmc.org.in/page/terms-of-use">Terms of Use</a>
+        </div>
+    </div>
+</footer>
+
+<script src="/js/frontend.js"></script>
+<script async src="https://translation-plugin.bhashini.co.in/v3/website_translation_utility.js" defer
+    data-preferred-language="hi">
+    </script>
+</body>
+</html>

@@ -1,0 +1,1730 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta name="title" content="404 :: National Health Mission"/>
+	<meta name="keywords" content="Ministry of Health & Family Welfare-Government of India, Department, Health, Government, Govt, India, Delhi, Family, Welfare, Child, Mother, Disease, Heart, Eye, Ear, Blind"/>
+	<meta name="description" content="Ministry of Health & Family Welfare-Government of India"/>
+	<meta name="author" content="Ministry of Health & Family Welfare-Government of India"/>
+	<title>404 :: National Health Mission</title>
+	<link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
+	<script type="applisalonion/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+	<link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+	<!-- Custom Theme files -->
+	<link href="css/style.css" rel='stylesheet' type='text/css' />
+	<link href="css/custom.css" rel='stylesheet' type='text/css' />
+	   <script type="text/javascript" src="js/jquery-4.0.0.js"></script>
+	<!--/web-font-->
+	<link href='//fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
+	<!--/script-->
+	<script type="text/javascript">
+		jQuery(document).ready(function($) {
+			$(".scroll").click(function(event){
+				event.preventDefault();
+				$('html,body').animate({scrollTop:$(this.hash).offset().top},900);
+			});
+			$("table").addClass('table table-bordered');
+		});
+	</script>
+	<script src="js/toggle.js"></script>
+	<!--NIC Search-->
+<link rel="icon" type="image/ico" href="images/favicon.ico"/>
+<link rel="stylesheet" href="js/nic/jquery.ui.theme.css">
+<link rel="stylesheet" href="js/nic/jquery.ui.autocomplete.css">
+<script type="text/javascript" src="js/nic/jquery.ui.core.js"></script>
+<script type="text/javascript" src="js/nic/custom_result.js"></script>
+<script type="text/javascript" src="js/nic/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="js/nic/jquery.ui.autocomplete.js"></script>
+<script type="text/javascript" src="js/nic/jquery.ui.position.js"></script>
+<script  type="text/javascript" src="js/nic/auto.js"> </script>
+<!--
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  
+  -->
+<script>
+	$(document).ready(function()
+	{
+		$('[data-toggle="tooltip"]').tooltip();   
+		$("#q").keyup(function()
+		{
+			if(event.keyCode==13)
+			{
+				modifySettings('q');
+			}
+		});
+		$("#searchbtn").click(function()
+		{
+			modifySettings('q');
+			//alert("clicked");
+		});
+	});
+	//<![CDATA[
+	settings = new Array();
+	settings["searchServer"] = "http://goisas.nic.in";
+	settings["textBoxId"] = "q";
+	settings["callBackFunction"]="callBack";
+	loadSuggestionControls(settings);
+	function callBack()
+	{
+		settings["q"]=document.getElementById('q').value;
+		settings["count"] = "10";
+		settings["site"] = "mohfw.nic.in";
+		loadResultControls(settings);
+	}
+	settings = new Array();
+	settings["searchServer"] = "http://goisas.nic.in";
+	settings["textBoxId"] = "q";
+	settings["q"]="";
+	settings["site"] = "mohfw.nic.in";
+	loadResultControls(settings);
+	function modifySettings(key1)
+	{
+		if(document.getElementById('q').value != null)
+		{
+			$('.article-post, .top_banner, .hide-for-search').hide();
+			$('#result_area').remove();
+			$('.main-header').after('<div class="search_full"><div class="container"><div class="row"><div id="result_area" class="col-md-12" align="left"></div></div></div></div>');
+			$("#result_area").show();
+			settings[key1]=document.getElementById('q').value;
+			settings["count"] = "10";
+			settings["site"] = "mohfw.nic.in";
+			loadResultControls(settings);
+		}
+
+	}
+</script>
+
+
+
+
+<script type="text/javascript" src="js/jquery.validate.js"></script>
+	<script type="text/javascript">
+		jQuery(document).ready(function($) {
+		
+			$("#frm2p").validate({rules:{subject:{required:true},name:{required:true,specialChars:true},addr:{required:true,specialChars:true},mobile:{required:true,number:true,maxlength:12},email:{required:true,email:true},comments:{required:true,specialChars:true},days:{required:true,number:true},T3:{required:true}},messages:{subject:{required:"Please enter subject"},name:{required:"Please enter your name",specialChars:"Sorry, but the following characters\n\r\n\r@ ! $ % ^ & * # ( ) [ ] \\ { + } ` ~ = &gt; &lt; | \n\r\n\rare not allowed!\n"},addr:{required:"Please enter your address",specialChars:"Sorry, but the following characters\n\r\n\r@ ! $ % ^ & * # ( ) [ ] \\ { + } ` ~ = &gt; &lt; | \n\r\n\rare not allowed!\n"},mobile:{required:"Please enter your mobile number",number:"Please enter only number",maxlength:"Please enter max 12 number only"},email:{required:"Please enter your email",email:"Please enter valid email"},comments:{required:"Please enter your query detail",specialChars:"Sorry, but the following characters\n\r\n\r@ ! $ % ^ & * # ( ) [ ] \\ { + } ` ~ = &gt; &lt; | \n\r\n\rare not allowed!\n"},days:{required:"Please enter how many days",number:"Please enter days in numeric"},T3:{required:"Please enter security code"}}});
+			var mikExp=/[$\\,\'\\:\;\/\\.\\<\\>\\!\\@\\\#%\^\&\*\(\)\[\]\+\_\{\}\`\~\=\|]/;$.validator.addMethod("specialChars",function(e,t){var n=e;if(n.search(mikExp)!=-1){return false}return true},"Sorry, but the following characters\n\r\n\r@ ! $ % ^ & * # ( ) [ ] \\ { + } ` ~ = &gt; &lt; | \n\r\n\rare not allowed!\n")
+		});
+		function rdo_act1(id){
+				if(id=="1")
+					document.getElementById('repval').style.display="block";
+				else
+					document.getElementById('repval').style.display="none";
+					document.getElementById('days').value="";
+			}
+	</script>
+ </head>
+<body>
+	<!--start-home-->
+
+	<div class="main-header" id="house">
+		<!--header-top-->
+		<div class="header-strip">
+	<div class="container">
+		<div class="row top-up-head">
+		<div class="col-md-3 col-xs-7">
+			<p class="location">
+				<a id="skip-1" class="scroll" href="#skip-nav">Skip Navigation</a>
+			</p>
+			<p class="location screen-padding">
+				<a {title="Sitemap" href="sitemap.php?lang=1">Sitemap</a>
+			</p>
+			<p class="location screen-padding">
+								<a class="mainlink resizefont" {title="हिंदी" href="404.php?lang=2">हिंदी</a>
+							</p>
+		</div>
+		<div class="col-md-5">
+			<!--<div class="input-group add-on">
+				<input {title="Search" type="text" name="q" id="q" class="form-control searchtxttxt ui-autocomplete-input" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true" />
+				<div class="input-group-btn">
+					<button class="btn btn-default searchbtnbtn" type="submit" name="Update" id="searchbtn"></button>
+				</div>
+			</div>-->
+			
+			<div class="search-container">
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search...">
+        <button onclick="searchContent()"><img src="../images/icons/search.png"></button> 
+    </div>
+
+    <div class="result-info" id="resultInfo"></div>
+
+    <div id="results"></div>
+
+</div> 
+		</div>
+		<div class="col-md-4  col-xs-5 social-icons">
+		  <div class="accessibility-toolbar">
+  
+    <button onclick="increaseFont()">A+</button>
+    <button onclick="decreaseFont()">A-</button>
+    <button onclick="toggleDarkMode()">🌙</button>
+    <button onclick="toggleContrast()">⚡</button>
+    <button onclick="resetAccessibility()">Reset</button>
+  </div>
+		</div>
+	
+		<div class="clearfix"></div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+const websiteData = [
+
+{
+    title:"Home Page",
+    link:"nhm.gov.in",
+    content:"Welcome to the healthcare webinar management portal and AI powered medical education system."
+},
+
+{
+    title:"About Us",
+    link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=456&lid=685",
+    content:"We develop government healthcare portals, webinar systems, and educational platforms."
+},
+
+{
+	title:"NHM",
+	link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=445&lid=38",
+	content:"Overview section of the National Health Mission covering its two sub-missions, NRHM and NUHM"
+},
+{
+	title: "National Rural Health Mission (NRHM)",
+	link: "https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=969&lid=49",
+	content: "The National Rural Health Mission, a sub-mission of NHM aimed at providing accessible, affordable and quality healthcare to rural populations"
+},
+{	title:"National Urban Health Mission (NUHM)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=970&lid=137",
+	content:"The National Urban Health Mission, a sub-mission of NHM focused on improving health services for the urban poor"
+},
+{
+	title:"Brochure on thematic areas under NUHM",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1494&lid=439",
+	content:"Brochure outlining the key thematic areas covered under the National Urban Health Mission"
+},
+
+{
+	title:"Community Processes under NUHM",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1495&lid=597",
+	content:"Details on community-level processes and structures implemented under NUHM"
+},
+{	
+	title:"Gazette Notification on NUHM",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1497&lid=159",
+	content:"Official Gazette notification announcing the National Urban Health Mission"
+},
+{
+	title:"NUHM Manuals/Registers",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1498&lid=648",
+	content:"Operational manuals and registers used for NUHM implementation and reporting"
+},
+
+{
+	title:"NUHM Contact",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1499&lid=600",
+	content:"Contact details for queries related to the National Urban Health Mission"
+},
+{	
+	title:"NUHM Guidelines",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1500&lid=329",
+	content:"Operational guidelines governing implementation of the National Urban Health Mission"
+ },
+ 
+{
+	title:"Institutional Mechanism",
+	link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=456&lid=685",
+	content:"Governance and institutional mechanisms set up to steer and review the National Health Mission"
+},
+{
+	title:"Empowered Programme Committee (EPC)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1292&lid=194",
+	content:"Institutional mechanism committee empowered to approve and oversee NHM programme implementation"
+},
+{
+	title:"Mission Steering Group (MSG)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1293&lid=193",
+	content:"Apex institutional mechanism responsible for steering policy direction of the National Health Mission"
+ },
+{
+	title:"NHM in State",
+	link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=36&lid=40",
+	content:"Section covering state-level implementation of NHM, including state annual plans and innovation summits"
+ },
+ 
+{	
+	title:"NHM Components",
+	link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=353&lid=444",
+	content:"Overview of the core components of the National Health Mission: RMNCAH+N, Health Systems Strengthening, NCD and CD control programmes, and infrastructure maintenance"
+},
+{
+	title:"RMNCAH+N",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=794&lid=168",
+	content:"[Verified] Reproductive, Maternal, Newborn, Child, Adolescent Health and Nutrition strategy, launched in 2013 following the Call to Action Summit, built on a continuum-of-care lifecycle approach to reduce maternal and child mortality and morbidity"
+ },
+ 
+{
+	title:"Adolescent Health",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=818&lid=221",
+	content:"Adolescent health component under RMNCAH+N, also referred to as Rashtriya Kishor Swasthya Karyakram (RKSK), covering the 10-19 years age group"
+},
+{
+	title:"Contact RKSK",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=950&lid=397",
+	content:"Contact details for the Rashtriya Kishor Swasthya Karyakram (Adolescent Health) division"
+},
+{
+	title:"IEC/BCC for RKSK",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=952&lid=395",
+	content:"Information, Education and Communication / Behaviour Change Communication materials for the adolescent health programme"
+},
+{	
+	title:"Menstrual Hygiene Scheme (MHS)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1021&lid=391",
+	content:"Scheme promoting menstrual hygiene awareness and sanitary napkin distribution among adolescent girls"
+},
+{
+	title:"Revised Guidelines for Menstrual Hygiene Scheme",
+	link:"https://nhm.gov.in/showfile.php?lid=393",
+	content:"PDF guidelines document with revised operational details of the Menstrual Hygiene Scheme"
+},
+ { 
+	title:"Success Stories (Menstrual Hygiene Scheme)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1100&lid=392",
+	content:"Success stories highlighting impact of the Menstrual Hygiene Scheme at state/district level"
+},
+{ 
+	title:"DO letter on Updated Menstrual Hygiene Scheme (Supreme Court direction)",
+	link:"https://nhm.gov.in/showlink.php?id=860",
+	content:"Demi-official letter regarding updates to the Menstrual Hygiene Scheme in compliance with the Hon'ble Supreme Court's direction"
+},
+{ 
+	title:"Training Material RKSK",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1023&lid=394",
+	content:"Training materials for health workers implementing the Rashtriya Kishor Swasthya Karyakram"
+},
+{ 
+    title:"Weekly Iron Folic Acid Supplementation (WIFS)",
+    link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1024&lid=388",
+    content:"Programme providing weekly iron and folic acid supplements to adolescents to combat anaemia"
+},
+{
+	title:"Job Aids (WIFS)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1101&lid=389",
+	content:"Job aid materials supporting field-level implementation of WIFS"
+},
+{
+	title:"Manual  Formats for WIFS",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1102&lid=390",
+	content:"Operational manual and reporting formats for the WIFS programme"
+},
+{ 
+	title:"Supportive Supervision Checklists (RKSK)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1103&lid=396",
+	content:"Checklists used for supportive supervision of adolescent health programme activities"
+},
+{ 
+	title:"Adolescent Friendly Health Centers (AFHCs)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1247&lid=421",
+	content:"Dedicated health centers designed to provide adolescent-friendly health services"
+},
+{ 
+	title:"Manual / Formats for AFHCs",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1253&lid=387",
+	content:"Operational manual and formats used for running Adolescent Friendly Health Centers"
+},
+{ 
+	title:"Peer Education Programme",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1249&lid=493",
+	content:"Programme training adolescent peer educators to spread health awareness among peers"
+},
+{ 
+	title:"Reporting Format (Peer Education Programme)",
+	link:"https://nhm.gov.in/showfile.php?lid=663",
+	content:"Excel reporting format used for the Peer Education Programme"
+},
+{ 
+   title:"School Health & Wellness Programme",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1384&lid=746",
+	content:"Programme integrating health and wellness services into school settings for adolescents"
+},
+{ 
+    title:"Guidelines for School Health & Wellness Programme",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1385&lid=747",
+	content:"Operational guidelines for implementing the School Health & Wellness Programme"
+},
+{ 
+    title:"Training Materials - School Health & Wellness Programme",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1386&lid=748",
+	content:"Training resources for health workers and teachers under the School Health & Wellness Programme"
+},  
+{ 
+	title:"IEC Material - School Health & Wellness Programme",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1388&lid=749",
+	content:"Information, Education and Communication material for the School Health & Wellness Programme"
+},
+{ 
+	title:"Guidelines for RKSK",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1387&lid=153",
+	content:"Operational guidelines for the Rashtriya Kishor Swasthya Karyakram (Adolescent Health Programme)"
+},
+{ 
+	title:"Menstrual Hygiene Policy",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1531&lid=859",
+	content:"National policy document on menstrual hygiene management"
+},
+{ 
+	title:"My Health World",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1533&lid=861",
+	content:"Health education initiative/guide book for children and adolescents, including 'My Health World' concept booklets"
+ },
+{ 
+	title:"Child Health",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=819&lid=219",
+	content:"Child health component under RMNCAH+N covering newborn and child survival interventions, including Rashtriya Bal Swasthya Karyakram (RBSK)"
+},
+{ 
+	title:"Family Planning",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=821&lid=222",
+	content:"Family planning component under RMNCAH+N linking reproductive health services and contraceptive access"
+},
+{ 
+	title:"Annual Reports (Family Planning)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=957&lid=405",
+	content:"Annual reports covering progress under the Family Planning programme"
+},
+{ 
+	title:"Contact - FP",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=959&lid=404",
+	content:"Contact details for the Family Planning division"
+},
+{ 
+	title:"IEC Material - FP",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=960&lid=401",
+	content:"Information, Education and Communication material for the Family Planning programme"
+},
+{ 
+	title:"Implementation of directions of Hon'ble Supreme Court (FP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=961&lid=471",
+	content:"Documentation on implementation of Supreme Court directions relevant to family planning services"
+},
+{ 
+	title:"Manual / Formats (FP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=962&lid=416",
+	content:"Operational manuals and reporting formats for the Family Planning programme"
+},
+{ 
+	title:"Schemes/Guidelines - FP",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=963&lid=470",
+	content:"Schemes and guidelines governing Family Planning service delivery"
+},
+{ 
+	title:"Virtual Training Modules (FP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1371&lid=741",
+	content:"Online/virtual training modules for Family Planning service providers"
+ },
+ 
+{ 
+	title:"Maternal Health",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=822&lid=218",
+	content:"Maternal health component under RMNCAH+N addressing reduction of maternal mortality through schemes like JSY, JSSK, LaQshya and PMSMA"
+},
+{ 
+	title:"Contact - MH",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=837&lid=307",
+	content:"Contact details for the Maternal Health division"
+},
+{ 
+	title:"DAKSHATA Implementation Package",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=838&lid=449",
+	content:"Training and quality-improvement package aimed at building skills of providers to improve quality of intrapartum and immediate postpartum care"
+},
+{ 
+	title:"Additional Planning Resources (DAKSHATA)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=852&lid=458",
+	content:"Supplementary planning resources for DAKSHATA implementation"
+},
+{ 
+	title:"Budgeting Templates for Dakshata Implementation",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=853&lid=457",
+	content:"Budgeting templates to support state-level DAKSHATA roll-out"
+},
+{ 
+	title:"Dakshata 3 days Training",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=854&lid=453",
+	content:"Three-day training module under the DAKSHATA programme"
+},
+{ 
+	title:"Dakshata Operational Guidelines",
+	link:"https://nhm.gov.in/showfile.php?lid=450",
+	content:"PDF operational guidelines document for the DAKSHATA programme"
+},
+{ 
+	title:"Dakshata - 5 days ToT",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=856&lid=452",
+	content:"Five-day Training of Trainers module under the DAKSHATA programme"
+},
+{ 
+	title:"District Level Sensitization Meeting Package",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=857&lid=451",
+	content:"Meeting package materials for district-level sensitization on DAKSHATA"
+},
+
+{ 
+	title:"GoI Recommended Casesheets, LR Register, Reporting Tool",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=858&lid=459",
+	content:"Government of India recommended case-sheets, labour room register, and reporting tools for maternal health"
+},
+{ 
+	title:"Mentoring Obstetric Drills Package",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=859&lid=455",
+	content:"Package for mentoring and conducting obstetric emergency drills"
+},
+{ 
+	title:"Periodic Assessment Templates (DAKSHATA)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=860&lid=456",
+	content:"Templates for periodic quality assessment under the DAKSHATA programme"
+},
+{ 
+	title:"Guidelines - MH",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=839&lid=377",
+	content:"Operational guidelines for the Maternal Health programme"
+},
+{ 
+	title:"IEC Material - MH",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=840&lid=279",
+	content:"Information, Education and Communication material for Maternal Health"
+},
+{ 
+	title:"Janani Suraksha Yojana (JSY)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=841&lid=309",
+	content:"Conditional cash transfer scheme promoting institutional delivery among poor pregnant women under NHM"
+},
+{ 
+	title:"Concurrent Assessment - JSY",
+	link:"https://nhm.gov.in/showfile.php?lid=315",
+	content:"PDF report on concurrent assessment of the Janani Suraksha Yojana scheme"
+},
+
+{ 
+	title:"Guidelines Of JSY",
+	link:"https://nhm.gov.in/showfile.php?lid=420",
+	content:"PDF operational guidelines for the Janani Suraksha Yojana scheme"
+},
+{ 
+	title:"Janani-Shishu Suraksha Karyakram",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=842&lid=308",
+	content:"Scheme assuring free and cashless services to pregnant women and sick neonates accessing public health institutions"
+},
+{ 
+	title:"Guidelines  JSSK",
+	link:"https://nhm.gov.in/showlink.php?id=474",
+	content:"Official guidelines document for the Janani Shishu Suraksha Karyakram"
+},
+
+{ 
+	title:"IEC Materials JSSK",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=845&lid=312",
+	content:"Information, Education and Communication materials for the JSSK scheme"
+},
+{ 
+	title:"Labour Room Quality Improvement Initiative LaQshya",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1307&lid=690",
+	content:"Initiative aimed at improving quality of care in labour rooms and maternity operation theatres to reduce preventable maternal and newborn mortality"
+},
+{ 
+	title:"Pradhan Mantri Surakshit Matritva Abhiyan (PMSMA)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1308&lid=689",
+	content:"Scheme providing free, comprehensive antenatal checkups to pregnant women on the 9th of every month"
+},
+{ 
+	title:"Immunization",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=824&lid=220",
+	content:"Immunization component under RMNCAH+N covering routine and pulse polio immunization programmes"
+},
+{ 
+	title:"Contact  Immunization",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=943&lid=382",
+	content:"Contact details for the Immunization division"
+},
+{ 
+	title:"Guidelines  Immunization",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=944&lid=378",
+	content:"Operational guidelines for routine and special immunization activities"
+},
+{ 
+	title:"Pulse Polio Immunization",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=945&lid=343",
+	content:"National programme conducting periodic pulse polio immunization rounds to maintain polio-free status"
+},
+{ 
+	title:"Routine Immunization",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=946&lid=342",
+	content:"Universal Immunization Programme providing routine vaccination to children and pregnant women"
+},
+{ 
+	title:"Manual  Formats Immunization",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=947&lid=379",
+	content:"Operational manuals and reporting formats for the Immunization programme"
+},
+
+{ 
+	title:"Report  Immunization",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1211&lid=656",
+	content:"Progress reports related to the Immunization programme"
+},
+{ 
+	title:"Aspirational District & Blocks Program",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=967&lid=587",
+	content:"Programme prioritizing high-impact health interventions in aspirational districts and blocks identified by NITI Aayog"
+},
+{ 
+	title:"Nutrition",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1446&lid=796",
+	content:"Nutrition component under RMNCAH+N covering anaemia, child wasting, and micronutrient deficiency interventions"
+},
+{ 
+	title:"Anaemia Mukt Bharat AMB",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1448&lid=797",
+	content:"Flagship programme to reduce the prevalence of anaemia across the life cycle through a 6x6x6 strategy"
+},
+{ 
+	title:"Guidelines - AMB",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1455&lid=804",
+	content:"Operational guidelines for the Anaemia Mukt Bharat programme"
+},
+{ 
+	title:"Training Materials - AMB",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1456&lid=805",
+	content:"Training resources for health workers implementing Anaemia Mukt Bharat"
+},
+{ 
+	title:"Dashboard Link - AMB",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1457&lid=806",
+	content:"Link to the monitoring dashboard for the Anaemia Mukt Bharat programme"
+},
+{ 
+	title:"Nutrition Rehabilitation Center NRC",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1449&lid=798",
+	content:"Facility-based units for management of children with severe acute malnutrition"
+},
+{ 
+	title:"Guidelines - NRC",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1459&lid=808",
+	content:"Operational guidelines for running Nutrition Rehabilitation Centers"
+},
+{ 
+	title:"Training Materials - NRC",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1460&lid=809",
+	content:"Training materials for staff at Nutrition Rehabilitation Centers"
+},
+{ 
+	title:"Mothers' Absolute Affection MAA",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1450&lid=799",
+	content:"Programme to promote, protect and support breastfeeding practices nationwide"
+},
+{ 
+	title:"Guidelines - MAA",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1461&lid=810",
+	content:"Operational guidelines for the Mothers' Absolute Affection breastfeeding programme"
+},
+{ 
+	title:"Training Materials - MAA",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1462&lid=811",
+	content:"Training materials for the MAA breastfeeding promotion programme"
+},
+{ 
+	title:"CLMC and LMU (Comprehensive Lactation Management Centre  Lactation Management Unit)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1451&lid=800",
+	content:"Human milk banking units supporting feeding of vulnerable newborns"
+},
+  
+{ 
+	title:"Guidelines - LMU",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1463&lid=812",
+	content:"Operational guidelines for Lactation Management Units / human milk banks"
+},
+{ 
+	title:"Vitamin A Supplementation",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1452&lid=801",
+	content:"Programme providing periodic Vitamin A supplementation to children to prevent deficiency"
+},
+
+{ 
+	title:"Guidelines - Vitamin A",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1464&lid=813",
+	content:"Operational guidelines for the Vitamin A Supplementation programme"
+},
+{ 
+	title:"Contact - Nutrition",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1453&lid=802",
+	content:"Contact details for the Nutrition division"
+},
+{ 
+	title:"National Deworming Day (NDD)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1454&lid=803",
+	content:"Biannual programme administering deworming tablets to children and adolescents nationwide"
+},
+{ 
+	title:"Guidelines - NDD",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1458&lid=807",
+	content:"Operational guidelines for the National Deworming Day programme"
+ },
+{ 
+	title:"Infrastructure Maintenance",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1040&lid=345",
+	content:"NHM component dealing with maintenance and upkeep of public health infrastructure"
+ }, 
+{ 
+	title:"Non Communicable Disease Control Programmes",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1041&lid=614",
+	content:"NHM component addressing prevention and control of non-communicable diseases such as cancer, diabetes, cardiovascular disease, mental health and oral health"
+},
+{ 
+	title:"National Mental Health Programme (NMHP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1043&lid=359",
+	content:"National programme for prevention, treatment and rehabilitation of mental illness, integrated with primary healthcare"
+},
+{ 
+	title:"National Mental Health Policy",
+	link:"https://nhm.gov.in/showfile.php?lid=237",
+	content:"PDF document of India's National Mental Health Policy"
+},
+{ 
+	title:"IEC Material - NMHP",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1116&lid=473",
+	content:"Information, Education and Communication material for the National Mental Health Programme"
+},
+{ 
+	title:"National Mental Health Programme (Detail)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1117&lid=353",
+	content:"Detailed information on the implementation and components of the National Mental Health Programme"
+},
+{ 
+	title:"Training Manuals (NMHP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1118&lid=472",
+	content:"Training manuals for healthcare workers under the National Mental Health Programme"
+},
+{ 
+	title:"Guideline (NMHP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1119&lid=361",
+	content:"Operational guidelines for the National Mental Health Programme"
+},
+{ 
+	title:"National Oral Health Programme (NOHP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1044&lid=608",
+	content:"National programme aimed at improving oral health status and reducing the burden of oral diseases"
+},
+{
+	title:"National Programme for Control of Blindness & Visual Impairment (NPCBVI)",
+	link:"https://nhm.gov.in/showlink.php?id=233",
+	content:"National programme to reduce the prevalence of blindness and provide eye care services"
+},
+{ 
+	title:"National Programme for Healthcare of Elderly (NPHCE)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1046&lid=605",
+	content:"Programme providing dedicated, accessible healthcare services for the elderly population"
+},
+{ 
+	title:"National Programme for Palliative Care (NPPC)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1047&lid=609",
+	content:"Programme providing palliative care services for patients with chronic, life-limiting illnesses"
+},
+{ 
+	title:"National Programme for Prevention & Control of Cancer, Diabetes, Cardiovascular Diseases & Stroke (NPCDCS)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1048&lid=604",
+	content:"Flagship programme for prevention, early detection and management of major non-communicable diseases"
+},
+{ 
+	title:"National Programme for Prevention & Management of Burn Injuries (NPPMBI)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1050&lid=610",
+	content:"Programme focused on prevention and management of burn injuries"
+},
+{ 
+	title:"National Programme for the Prevention & Control of Deafness (NPPCD)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1051&lid=606",
+	content:"Programme aimed at prevention and early identification of hearing impairment and deafness"
+},
+{ 
+	title:"National Tobacco Control Programme (NTCP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1052&lid=607",
+	content:"National programme to reduce tobacco consumption and its associated health, social and economic burden"
+},
+{ 
+	title:"Acts/Rules/Regulations (NTCP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1120&lid=635",
+	content:"Legal acts, rules and regulations governing tobacco control in India"
+},
+{ 
+	title:"Circular/Advisory (NTCP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1121&lid=639",
+	content:"Circulars and advisories issued under the National Tobacco Control Programme"
+},
+{ 
+	title:"FAQs (NTCP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1122&lid=640",
+	content:"Frequently asked questions regarding tobacco control regulations and the NTCP"
+},
+{ 
+	title:"Guidelines/Manuals (NTCP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1123&lid=637",
+	content:"Operational guidelines and manuals for the National Tobacco Control Programme"
+},
+{ 
+	title:"Achievements (NTCP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1124&lid=641",
+	content:"Key achievements and milestones of the National Tobacco Control Programme"
+},
+{ 
+	title:"Survey & Report (NTCP)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1125&lid=638",
+	content:"Survey data and reports related to tobacco use and control in India"
+},
+{ 
+	title:"WHO Framework Convention on Tobacco Control (WHO FCTC)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1126&lid=636",
+	content:"Information on India's commitments under the WHO Framework Convention on Tobacco Control"
+},
+{ 
+	title:"Other Non Communicable Disease Control Programmes",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1053&lid=615",
+	content:"Additional NCD-related programmes including iodine deficiency, fluorosis control, and organ transplant coordination"
+},
+{
+	title:"National Iodine Deficiency Disorders Control Programme",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1054&lid=230",
+	content:"Programme aimed at controlling iodine deficiency disorders through universal salt iodization and monitoring"
+},
+{ 
+	title:"National Programme for Prevention & Control of Fluorosis (NPPCF)",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1055&lid=611",
+	content:"Programme for prevention, early detection and management of fluorosis"
+},
+{ 
+	title:"National Organ Tissue and Transplant Organization (NOTTO)",
+	link:"https://nhm.gov.in/showlink.php?id=642",
+	content:"National apex body for coordination and networking of organ and tissue procurement and distribution in India"
+},
+{ 
+	title:"Communicable Disease Control Programme",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1056&lid=616",
+	content:"NHM component addressing prevention and control of communicable diseases including leprosy, TB, vector-borne diseases and disease surveillance"
+},
+{ 
+	title:"National Leprosy Eradication Programme (NLEP)",
+	link:"https://nhm.gov.in/showlink.php?id=234",
+	content:"National programme aimed at eliminating leprosy as a public health problem in India"
+},
+{ 
+	title:"Integrated Disease Surveillance Programme (IDSP)",
+	link:"https://nhm.gov.in/showlink.php?id=619",
+	content:"Decentralized, state-based surveillance programme for early detection and response to disease outbreaks"
+},
+
+{ 
+	title:"National Vector Borne Disease Control Programme (NVBDCP)",
+	link:"https://nhm.gov.in/showlink.php?id=617",
+	content:"National programme for prevention and control of vector-borne diseases including malaria, dengue, and filariasis"
+},
+{ 
+	title:"Revised National Tuberculosis Control Programme (RNTCP)",
+	link:"https://nhm.gov.in/showlink.php?id=618",
+	content:"National programme for diagnosis, treatment and control of tuberculosis across India"
+},
+{ 
+	title:"Health Systems Strengthening",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1213&lid=167",
+	content:"NHM component focused on strengthening health infrastructure, human resources, supply chains, and referral systems"
+},
+{ 
+	title:"Blood Services and Blood Disorders",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1214&lid=498",
+	content:"Component addressing blood transfusion services and management of blood disorders"
+},
+{ 
+	title:"Comprehensive Primary Health Care",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1215&lid=481",
+	content:"Strategy delivering comprehensive primary healthcare services through Health and Wellness Centres"
+},
+{ 
+	title:"District Hospital Strengthening",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1216&lid=584",
+	content:"Component focused on upgrading and strengthening district hospitals' infrastructure and services"
+},
+
+{ 
+	title:"ERS/Patient Transport Service",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1217&lid=189",
+	content:"Emergency Response and Patient Transport Service providing ambulance and transport facilities"
+},
+{ 
+	title:"Free Drugs & Diagnostics Service Initiative",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1218&lid=192",
+	content:"Initiative ensuring free essential drugs and diagnostic services at public health facilities"
+},
+{ 
+	title:"Human Resource",
+	link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1219&lid=191",
+	content:"Component addressing recruitment, training and management of human resources for health under NHM"
+},
+{ 
+	title:"Infrastructure",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1220&lid=190",
+content:"Component addressing development and upgrade of public health infrastructure under NHM"
+},
+
+  { title:"Mobile Medical Unit (MMUs)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1221&lid=188",
+content:"Mobile units providing healthcare services to underserved and remote areas"
+},
+  { title:"Other Health Systems Strengthening",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1222&lid=643",
+content:"Additional health systems strengthening initiatives including biomedical equipment management and PPP"
+},
+
+  { title:"Biomedical Equipment Management & Maintenance Program",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1224&lid=586",
+content:"Programme for systematic management and maintenance of biomedical equipment in health facilities"
+},
+  { title:"Public Private Partnership (Health Systems)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1225&lid=585",
+content:"Information on public-private partnership models adopted to strengthen health systems"
+},
+  { title:"Gram Panchayat Development Plans",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1367&lid=735",
+content:"Guidance for integrating health priorities into Gram Panchayat development planning"
+},
+  { title:"Tribal Health",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1223&lid=496",
+content:"Component addressing healthcare delivery and challenges specific to tribal populations"
+ },
+   { title:"State Annual Plan",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=449&lid=53",
+content:"Section covering state-level annual planning processes and financing mechanisms under NHM"
+},
+  { title:"ECRP-II",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1376&lid=742",
+content:"Emergency COVID Response Package Phase II under the State Annual Plan, supporting health system preparedness"
+},
+  { title:"State NHM PIPs & ROPs",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1377&lid=744",
+content:"State Programme Implementation Plans and Records of Proceedings approved under NHM"
+},
+  { title:"XV - FC Grants for Health",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1442&lid=793",
+content:"15th Finance Commission grants allocated for strengthening health infrastructure and services"
+}, 
+  { title:"Innovation Summit",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=450&lid=435",
+content:"National Summit series showcasing good, replicable practices and innovations in public healthcare systems across India"
+},
+  { title:"2nd National Summit - Shimla",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1148&lid=645",
+content:"Second National Summit on Good, Replicable Practices and Innovations in Public Healthcare Systems, held in Shimla (July 2015)"
+},
+  { title:"3rd National Summit - Tirupati",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1149&lid=646",
+content:"Third National Summit on Good, Replicable Practices and Innovations in Public Healthcare Systems, held in Tirupati, Andhra Pradesh (Aug 2016)"
+},
+  { title:"4th National Summit - Indore",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1150&lid=647",
+content:"Fourth National Summit on Good, Replicable Practices and Innovations in Public Healthcare Systems, held in Indore, Madhya Pradesh (July 2017)"
+},
+  { title:"5th National Summit - Assam",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1151&lid=588",
+content:"Fifth National Summit on Good & Replicable Practices and Innovations in Public Healthcare Systems, held in Assam"
+},
+  { title:"6th National Summit - Gujarat",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1335&lid=715",
+content:"Sixth National Summit on Good & Replicable Practices and Innovations in Public Healthcare Systems, held in Gujarat"
+},
+  { title:"7th National Summit - New Delhi",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1370&lid=739",
+content:"Seventh National Summit on Good & Replicable Practices and Innovations in Public Healthcare Systems, held in New Delhi"
+},
+  { title:"9th National Summit - Puri, Odisha",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1487&lid=838",
+content:"Ninth National Summit on Innovation and Replicable Practices in Public Healthcare, held in Puri, Odisha"
+},
+  { title:"8th National Summit",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1505&lid=843",
+content:"Eighth National Summit on Good, Replicable Practices and Innovations in Public Healthcare Systems"
+},
+  { title:"10th National Summit - Chandigarh",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1529&lid=858",
+content:"Tenth National Summit on Innovation and Inclusivity - Best Practices Shaping India's Health Future, held in Chandigarh"
+ },
+
+  { title:"Monitoring",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=174&lid=41",
+content:"Section covering monitoring mechanisms for NHM, including Common Review Missions and Joint Review Missions"
+},
+  { title:"Monitoring Reports",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=112&lid=205",
+content:"Periodic reports related to monitoring of NHM programme performance"
+},
+  { title:"Common Review Mission (CRM)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=795&lid=195",
+content:"Annual review mechanism conducted to monitor progress and performance of the National Health Mission across states"
+},
+  { title:"10th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=825&lid=448",
+content:"Reports and findings from the 10th Common Review Mission of NHM"
+},
+  { title:"9th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=834&lid=215",
+content:"Reports and findings from the 9th Common Review Mission of NHM"
+},
+  { title:"1st to 8th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1141&lid=644",
+content:"Archive of reports from the 1st through 8th Common Review Missions of NHM"
+},
+  { title:"1st Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1143&lid=207",
+content:"Reports and findings from the 1st Common Review Mission of NHM"
+},
+  { title:"2nd Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1144&lid=208",
+content:"Reports and findings from the 2nd Common Review Mission of NHM"
+},
+  { title:"3rd Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1145&lid=209",
+content:"Reports and findings from the 3rd Common Review Mission of NHM"
+},
+  { title:"4th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1146&lid=210",
+content:"Reports and findings from the 4th Common Review Mission of NHM"
+},
+  { title:"5th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1147&lid=211",
+content:"Reports and findings from the 5th Common Review Mission of NHM"
+},
+  { title:"6th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1485&lid=212",
+content:"Reports and findings from the 6th Common Review Mission of NHM"
+},
+  { title:"7th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1503&lid=213",
+content:"Reports and findings from the 7th Common Review Mission of NHM"
+},
+  { title:"8th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=1527&lid=214",
+content:"Reports and findings from the 8th Common Review Mission of NHM"
+},
+  { title:"11th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1212&lid=657",
+content:"Reports and findings from the 11th Common Review Mission of NHM"
+},
+  { title:"12th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1246&lid=660",
+content:"Reports and findings from the 12th Common Review Mission of NHM"
+},
+  { title:"13th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1382&lid=745",
+content:"Reports and findings from the 13th Common Review Mission of NHM"
+},
+
+  { title:"14th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1411&lid=767",
+content:"Reports and findings from the 14th Common Review Mission of NHM"
+},
+  { title:"15th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1502&lid=842",
+content:"Reports and findings from the 15th Common Review Mission of NHM"
+},
+  { title:"16th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1504&lid=837",
+content:"Reports and findings from the 16th Common Review Mission of NHM"
+},
+  { title:"17th Common Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1528&lid=857",
+content:"Reports and findings from the 17th Common Review Mission of NHM (2025)"
+},
+  { title:"International Advisory Panel",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1236&lid=203",
+content:"Panel of international experts providing advisory support for monitoring and reviewing NHM"
+},
+  { title:"Joint Review Mission",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1237&lid=201",
+content:"Joint review mechanism, often involving development partners, to assess NHM programme implementation"
+ },
+{ title:"Communitisation",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=37&lid=42",
+content:"Section covering community participation mechanisms under NHM, including ASHA workers and Village Health Committees"
+},
+  { title:"Community Action",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=148&lid=224",
+content:"Communitisation initiative promoting community participation and accountability in health service delivery"
+},
+  { title:"Organisational Responsibilities and Timeframe (Community Action)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=171&lid=247",
+content:"Outline of organisational responsibilities and timeframes for community-based monitoring activities"
+},
+  { title:"Role of Civil Society Organisations in Facilitating Community Based Monitoring",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=172&lid=246",
+content:"Information on the role of civil society organisations in supporting community-based health monitoring"
+},
+  { title:"Suggested Broad Process of Initial Facilitation and Capacity Development",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=173&lid=244",
+content:"Suggested process framework for facilitation and capacity development under community action"
+},
+  { title:"Suggested Outline of the Community Based Monitoring Activity",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=174&lid=245",
+content:"Outline framework describing how community-based monitoring activities should be structured"
+},
+  { title:"Community Action for Health",
+link:"https://nhm.gov.in/showlink.php?id=304",
+content:"External resource on Community Action for Health, an NHM mechanism for citizen participation in health governance"
+},
+  { title:"Village Health Sanitation & Nutrition Committee (VHSNC)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=149&lid=225",
+content:"Village-level committee responsible for planning and monitoring health, sanitation and nutrition activities under NHM"
+},
+  { title:"About Accredited Social Health Activist (ASHA)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=150&lid=226",
+content:"Overview of ASHA workers, community health volunteers who serve as a link between the community and the public health system"
+},
+  { title:"ASHA Support Mechanism",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=176&lid=249",
+content:"Details on the institutional support mechanism, incentives and supervision structure for ASHA workers"
+},
+  { title:"Flow Chart (ASHA Support Mechanism)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=181&lid=254",
+content:"Flow chart describing the ASHA support and supervision mechanism structure"
+},
+  { title:"Success Of ASHA",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=182&lid=256",
+content:"Success stories and impact highlights of the ASHA programme"
+},
+  { title:"Supporting Mechanism (ASHA)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=183&lid=255",
+content:"Details of mechanisms supporting ASHA workers in their community health roles"
+},
+  { title:"List of Drugs being provided in ASHA Kit",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=177&lid=250",
+content:"List of essential drugs and supplies provided to ASHA workers as part of their community health kit"
+},
+  { title:"National ASHA Mentoring Group",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=178&lid=251",
+content:"National-level group responsible for mentoring, guidance and oversight of the ASHA programme"
+},
+  { title:"ASHA Orders & Guidelines",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=179&lid=253",
+content:"Official orders and guidelines issued for the implementation of the ASHA programme"
+},
+  { title:"ASHA Resources",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=180&lid=252",
+content:"Resource materials supporting ASHA programme implementation, including training modules and reports"
+},
+  { title:"ASHA Training Modules",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=184&lid=257",
+content:"Training modules used to build the capacity of ASHA workers"
+},
+  { title:"ASHA Reports & Studies",
+link:"https://nhm.gov.in/index1.php?lang=1&level=3&sublinkid=185&lid=258",
+content:"Reports and research studies evaluating the performance and impact of ASHA workers"
+},
+  { title:"Village Health Nutrition Day (VHND)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=152&lid=228",
+content:"Monthly outreach event held at the village level to deliver maternal and child health and nutrition services"
+},
+  { title:"Rogi Kalyan Samities (RKS)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=153&lid=229",
+content:"Patient welfare committees responsible for managing the affairs of public hospitals and health facilities under NHM"
+ },
+  { title:"RTI",
+link:"https://nhm.gov.in/showlink.php?id=428",
+content:"Right to Information section providing access to RTI-related information and procedures for NHM"
+},
+  { title:"RTI (Section)",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=355&lid=454",
+content:"Right to Information landing page for the National Health Mission"
+ },
+  { title:"Resources",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=39&lid=43",
+content:"Resource section containing reports, publications, presentations, guidelines, and statistics related to NHM"
+},
+  { title:"12th Five Year Plan & HLEG",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=191&lid=267",
+content:"Documents related to the 12th Five Year Plan for health and the High Level Expert Group report on Universal Health Coverage"
+},
+  { title:"12th Five Year Plan - Health",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=201&lid=269",
+content:"Health chapter and details of the 12th Five Year Plan of India"
+},
+  { title:"High Level Expert Group (HLEG)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1244&lid=270",
+content:"Report and recommendations of the High Level Expert Group on Universal Health Coverage for India"
+},
+  { title:"NHM Guidelines",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=197&lid=136",
+content:"Compilation of operational and programmatic guidelines issued under the National Health Mission"},
+
+  { title:"Constitution of Rogi Kalyan Samities",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1078&lid=145",
+content:"Guidelines on the constitution and functioning of Rogi Kalyan Samities at health facilities"
+},
+  { title:"Convergence Plan between NACP and DOHFW",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1079&lid=150",
+content:"Convergence plan between the National AIDS Control Programme and Department of Health & Family Welfare"
+},
+  { title:"Executive Summary of PRI and HFW Programmes",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1080&lid=146",
+content:"Executive summary describing convergence between Panchayati Raj Institutions and Health & Family Welfare programmes"
+},
+  { title:"Family Planning Guidelines",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1081&lid=152",
+content:"Comprehensive guidelines governing the Family Planning programme under NHM"
+},
+  { title:"Infection Management and Environment Plan (IMEP)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1083&lid=151",
+content:"Guidelines for infection control and environmental management at health facilities"
+},
+  { title:"Intersectoral Convergence between DWCD and DHFW",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1084&lid=149",
+content:"Plan for intersectoral convergence between the Department of Women & Child Development and Department of Health & Family Welfare"
+},
+  { title:"National Guidelines on Prevention, Management and Control of RTIs/STIs",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1085&lid=148",
+content:"National guidelines on prevention, management and control of Reproductive Tract Infections and Sexually Transmitted Infections"
+},
+
+  { title:"NRHM/RCH - II Guidelines",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1152&lid=303",
+content:"Guidelines for the National Rural Health Mission and Reproductive & Child Health Programme Phase II"
+},
+  { title:"Rural Health Statistics (RHS)",
+link:"https://nhm.gov.in/showlink.php?id=266",
+content:"Statistical data and reports on rural health infrastructure and indicators in India"
+},
+  { title:"Reports & Publications",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1161&lid=649",
+content:"NHM resource section containing key reports and publications"
+},
+  { title:"Directory of Innovation Of Health Sector",
+link:"https://nhm.gov.in/showfile.php?lid=273",
+content:"PDF directory compiling innovations in the health sector under NHM"
+},
+  { title:"Five Years of NHM 2009-2014",
+link:"https://nhm.gov.in/showfile.php?lid=264",
+content:"PDF report summarizing achievements of NHM during 2009-2014"
+},
+  { title:"Four Years of NRHM 2005-2009",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1164&lid=271",
+content:"Report summarizing achievements of the National Rural Health Mission during 2005-2009"
+},
+  { title:"Evaluation Study of NRHM in 7 States",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1169&lid=275",
+content:"Evaluation study assessing NRHM implementation outcomes across 7 states"
+},
+  { title:"Task Group Reports",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1245&lid=227",
+content:"Reports prepared by various task groups constituted under NHM"
+},
+  { title:"Annual Report MOHFW",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1254&lid=651",
+content:"Annual reports of the Ministry of Health & Family Welfare, Government of India"
+},
+  { title:"Proceeding of the Central Council of Health & Family Welfare",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1255&lid=274",
+content:"Proceedings and minutes of meetings of the Central Council of Health & Family Welfare"
+},
+  { title:"Booklet on Universal Health Coverage (UHC)",
+link:"https://nhm.gov.in/showfile.php?lid=711",
+content:"PDF booklet explaining the concept and progress of Universal Health Coverage in India"
+},
+  { title:"Comprehensive National Nutrition Survey (2016-18) Reports",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1332&lid=713",
+content:"Reports from the Comprehensive National Nutrition Survey conducted in India during 2016-18"
+},
+  { title:"Health System Strengthening Conditionality Report of States 2018-19",
+link:"https://nhm.gov.in/showfile.php?lid=714",
+content:"PDF report assessing states' compliance with health system strengthening conditionalities for 2018-19"
+},
+  { title:"Presentations",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1304&lid=688",
+content:"NHM resource section containing official presentations on various programmes and initiatives"
+ },
+ 
+  { title:"CPHC & UHC",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=471&lid=723",
+content:"Section on Comprehensive Primary Health Care and Universal Health Coverage initiatives under NHM"
+ },
+  { title:"OM & Orders",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=416&lid=549",
+content:"Section containing official memoranda and orders issued across all NHM components"
+},
+  { title:"Innovation Summit+ (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=798&lid=553",
+content:"Official orders and memoranda related to the Innovation Summit"
+},
+  { title:"RMNCH+A+ (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=805&lid=557",
+content:"Official orders and memoranda related to Reproductive, Maternal, Newborn, Child and Adolescent Health"
+},
+  { title:"NHM Finance - FMG",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1039&lid=166",
+content:"Financial Management Group orders, circulars and guidelines under NHM"
+},
+  { title:"NUHM Orders/letters",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1159&lid=161",
+content:"Official orders and letters issued under the National Urban Health Mission"
+},
+  { title:"Health Systems Strengthening+ (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1174&lid=655",
+content:"Official orders related to the Health Systems Strengthening component"
+},
+  { title:"Ambulances / MMUs+ (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1175&lid=551",
+content:"Official orders related to ambulance services and Mobile Medical Units"
+},
+  { title:"Comprehensive Primary Health Care+ (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1176&lid=555",
+content:"Official orders related to Comprehensive Primary Health Care implementation"
+},
+  { title:"Human Resources+ (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1177&lid=554",
+content:"Official orders related to human resources for health under NHM"
+},
+  { title:"Infrastructure+ (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1178&lid=556",
+content:"Official orders related to health infrastructure development"
+},
+  { title:"Free Drugs (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1318&lid=697",
+content:"Official orders related to the Free Drugs Service Initiative"
+},
+  { title:"Asha - Incentives (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1364&lid=732",
+content:"Official orders related to ASHA worker incentive schemes"
+},
+  { title:"State Annual Plan+ (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1235&lid=659",
+content:"Official orders related to State Annual Plan processes"
+},
+  { title:"NCD (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1320&lid=698",
+content:"Official orders related to Non Communicable Disease control programmes"
+},
+  { title:"EPC/MSG/CRM (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1328&lid=707",
+content:"Official orders and memoranda related to EPC, Mission Steering Group, and Common Review Mission"
+},
+  { title:"COVID-19 (OM & Orders)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1339&lid=720",
+content:"Official memoranda and orders related to COVID-19 response under NHM"
+},
+  { title:"India COVID-19 ER&HSP Package",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1365&lid=733",
+content:"Orders related to the India COVID-19 Emergency Response and Health System Preparedness Package"
+ },
+  { title:"Media",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=41&lid=45",
+content:"Media section featuring newsletters, photo gallery, and archived NHM content"
+},
+  { title:"Photo Gallery",
+link:"https://nhm.gov.in/showlink.php?id=135",
+content:"Photo gallery showcasing NHM events, programmes and activities"
+},
+  { title:"Newsletters",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=206&lid=277",
+content:"Periodic newsletters published by the National Health Mission"
+},
+  { title:"Archives",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1241&lid=620",
+content:"Archived media and historical content related to NHM"
+},
+  { title:"Old Presentations",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1242&lid=280",
+content:"Archive of older presentations published under NHM"
+},
+  { title:"CPHC & UHC (Archives)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1467&lid=723",
+content:"Archived content related to Comprehensive Primary Health Care and Universal Health Coverage"
+ },
+  { title:"HWC Portal",
+link:"https://nhm.gov.in/showlink.php?id=661",
+content:"Link to the Health and Wellness Centre Portal supporting Comprehensive Primary Health Care delivery"
+ }, 
+  { title:"Contact Us",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=1&lid=1",
+content:"Contact information section for the National Health Mission"
+},
+  { title:"MoHFW Officials List",
+link:"https://nhm.gov.in/showlink.php?id=50",
+content:"Directory of officials at the Ministry of Health & Family Welfare"
+},
+  { title:"States/UTs Official",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=23&lid=51",
+content:"Contact list of official NHM representatives across States and Union Territories"
+},
+  { title:"Web Information Manager",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=203&lid=23",
+content:"Contact details of the Web Information Manager responsible for the NHM website"
+ },
+  { title:"Reproductive (Quick Link)",
+link:"https://nhm.gov.in/showlink.php?id=175",
+content:"Quick link to information on Reproductive health services under NHM"
+},
+  { title:"Janani Shishu Suraksha Karyakaram (Quick Link)",
+link:"https://nhm.gov.in/showlink.php?id=178",
+content:"Quick link to the Janani Shishu Suraksha Karyakaram scheme page"
+},
+  { title:"Rashtriya Kishor Swasthya Karyakram (Quick Link)",
+link:"https://nhm.gov.in/showlink.php?id=180",
+content:"Quick link to the Rashtriya Kishor Swasthya Karyakram (Adolescent Health) programme page"
+},
+  { title:"India Newborn Action Plan (Quick Link)",
+link:"https://nhm.gov.in/showlink.php?id=181",
+content:"Quick link to India's Newborn Action Plan aimed at ending preventable newborn deaths"
+ },
+  { title:"Health Systems Strengthening (Footer Menu)",
+link:"https://nhm.gov.in/index4.php?lang=1&level=0&linkid=145&lid=167",
+content:"Standalone footer-menu landing page for the Health Systems Strengthening component"
+},
+  { title:"Comprehensive Primary Health Care (Footer Menu)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=806&lid=481",
+content:"Footer-menu link to Comprehensive Primary Health Care information"
+},
+  { title:"Human Resource (Footer Menu)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=807&lid=191",
+content:"Footer-menu link to Human Resource for Health information"
+},
+  { title:"Infrastructure (Footer Menu)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=808&lid=190",
+content:"Footer-menu link to Health Infrastructure information"
+},
+  { title:"Asha - Incentives (Footer Menu)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=1&sublinkid=1363&lid=732",
+content:"Footer-menu link to ASHA incentive scheme information"
+},
+  { title:"Rashtriya Bal Swasthya Karyakram (RBSK)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=4&sublinkid=1190&lid=583",
+content:"Child health screening and early intervention programme covering birth defects, deficiencies, diseases and developmental delays - 'From survival to healthy survival'"
+},
+  { title:"Rashtriya Kishor Swasthya Karyakram (RKSK)",
+link:"https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=818&lid=221",
+content:"Adolescent health programme launched by the Ministry of Health & Family Welfare for the age group of 10-19 years"
+}
+
+
+ 
+];
+
+function highlightText(text, keyword){
+
+    let regex = new RegExp(keyword, "gi");
+
+    return text.replace(regex, function(match){
+        return "<mark>" + match + "</mark>";
+    });
+
+}
+
+function searchContent(){
+
+    let keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+
+    let resultsDiv = document.getElementById("results");
+
+    let resultInfo = document.getElementById("resultInfo");
+
+    resultsDiv.innerHTML = "";
+
+    if(keyword === ""){
+
+        resultInfo.innerHTML = "Please enter search keyword";
+        return;
+
+    }
+
+    let found = 0;
+
+    websiteData.forEach(function(page){
+
+        if(
+            page.title.toLowerCase().includes(keyword) ||
+            page.content.toLowerCase().includes(keyword)
+        ){
+
+            found++;
+
+            resultsDiv.innerHTML += `
+
+            <div class="result-item">
+
+                <h3>
+                    <a href="${page.link}">
+                        ${highlightText(page.title, keyword)}
+                    </a>
+                </h3>
+
+                <p>
+                    ${highlightText(page.content, keyword)}
+                </p>
+
+            </div>
+
+            `;
+
+        }
+
+    });
+
+    resultInfo.innerHTML = found + " result(s) found";
+
+    if(found === 0){
+
+        resultsDiv.innerHTML = `
+            <div class="no-result">
+                No matching result found
+            </div>
+        `;
+
+    }
+
+}
+
+document.getElementById("searchInput")
+.addEventListener("keypress", function(event){
+
+    if(event.key === "Enter"){
+        searchContent();
+    }
+
+});
+
+</script>
+
+
+  <script>
+    let currentFontSize = 16;
+
+    function increaseFont() {
+      currentFontSize += 2;
+      document.body.style.fontSize = currentFontSize + "px";
+    }
+
+    function decreaseFont() {
+      currentFontSize -= 2;
+
+      if (currentFontSize < 12) {
+        currentFontSize = 12;
+      }
+
+      document.body.style.fontSize = currentFontSize + "px";
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+
+      // remove contrast if active
+      document.body.classList.remove("high-contrast");
+    }
+
+    function toggleContrast() {
+      document.body.classList.toggle("high-contrast");
+
+      // remove dark mode if active
+      document.body.classList.remove("dark-mode");
+    }
+
+    function resetAccessibility() {
+      currentFontSize = 16;
+
+      document.body.style.fontSize = "16px";
+      document.body.classList.remove("dark-mode");
+      document.body.classList.remove("high-contrast");
+    }
+  </script>		<!--//header-top-->
+
+		<!--header-middle-->
+		﻿<div class="header-middle">
+	<div class="container">
+	<div class="row">
+		<div class="col-lg-2 col-md-3 col-3">
+			
+				<img src="/include/logo.png" alt="National Health mission logo" class="emblem-img">
+			
+		</div>
+		<div class="col-lg-9 col-md-6 col-6">
+		<div class="header-top for-dynamic-css-header">
+    <nav class="navbar navbar-expand-lg navbar-default navbar-light">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+       
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+      </div> 
+        
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="top-menu">
+          <nav class="menu menu--francisco">
+
+
+            <ul class="nav navbar-nav menu__list ">
+                                                        <li class="menu__item"><a class="menu__link" href="https://nhm.gov.in/" title="Home (Alt + Shift + a)" target="_blank" accesskey="a">Home</a>
+                                                    </li>
+                                                  <li class="menu__item dropdown"><a title="About Us (Alt + Shift + b)" href="/index4.php?lang=1&amp;level=0&amp;linkid=555&amp;lid=862" accesskey="b" class="menu__link">About Us</a>
+                                                  </li>
+                                                  <li class="menu__item dropdown"><a title="Institutional Mechanism (Alt + Shift + c)" href="/index4.php?lang=1&amp;level=0&amp;linkid=456&amp;lid=685" accesskey="c" class="menu__link">Institutional Mechanism</a>
+                                                    <ul class="dropdown-menu">
+                                                                  <li class="dropdown-header" ><a  title="Empowered Programme Committee" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1292&amp;lid=194" >Empowered Programme Committee</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Mission Steering Group" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1293&amp;lid=193" >Mission Steering Group</a></li>
+                                                                </ul>
+                                                  </li>
+                                                  <li class="menu__item dropdown"><a title="NHM Components (Alt + Shift + d)" href="/index4.php?lang=1&amp;level=0&amp;linkid=353&amp;lid=444" accesskey="d" class="menu__link">NHM Components</a>
+                                                    <ul class="dropdown-menu">
+                                                                  <li class="dropdown-header" ><a  title="RMNCAH+N" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=794&amp;lid=168" >RMNCAH+N</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Health Systems Strengthening" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1213&amp;lid=167" >Health Systems Strengthening</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Non Communicable Disease Control Programmes" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1041&amp;lid=614" >Non Communicable Disease Control Programmes</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Communicable Disease Control Programme" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1056&amp;lid=616" >Communicable Disease Control Programme</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Infrastructure Maintenance" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1040&amp;lid=345" >Infrastructure Maintenance</a></li>
+                                                                </ul>
+                                                  </li>
+                                                  <li class="menu__item dropdown"><a title="State Annual Plan (Alt + Shift + e)" href="/index4.php?lang=1&amp;level=0&amp;linkid=449&amp;lid=53" accesskey="e" class="menu__link">State Annual Plan</a>
+                                                    <ul class="dropdown-menu">
+                                                                  <li class="dropdown-header" ><a  title="State NHM PIPs & ROPs" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1377&amp;lid=744" >State NHM PIPs & ROPs</a></li>
+                                                                            <li class="dropdown-header" ><a  title="ECRP-II" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1376&amp;lid=742" >ECRP-II</a></li>
+                                                                            <li class="dropdown-header" ><a  title="XV- FC Grants for Health" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1442&amp;lid=793" >XV- FC Grants for Health</a></li>
+                                                                </ul>
+                                                  </li>
+                                                  <li class="menu__item dropdown"><a title="Innovation Summit (Alt + Shift + f)" href="/index4.php?lang=1&amp;level=0&amp;linkid=450&amp;lid=435" accesskey="f" class="menu__link">Innovation Summit</a>
+                                                    <ul class="dropdown-menu">
+                                                                  <li class="dropdown-header" ><a  title="10th National Summit, Chandigarh" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1529&amp;lid=858" >10th National Summit, Chandigarh</a></li>
+                                                                            <li class="dropdown-header" ><a  title="9th National Summit- Puri, Odisha" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1487&amp;lid=838" >9th National Summit- Puri, Odisha</a></li>
+                                                                            <li class="dropdown-header" ><a  title="8th National Summit" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1505&amp;lid=843" >8th National Summit</a></li>
+                                                                            <li class="dropdown-header" ><a  title="7th-National Summit on Good & Replicable Practices and Innovations in Public Healthcare Systems-New Delhi" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1370&amp;lid=739" >7th-National Summit on Good & Replicable Practices and Innovations in Public Healthcare Systems-New Delhi</a></li>
+                                                                            <li class="dropdown-header" ><a  title="6th-National Summit on Good & Replicable Practices and Innovations in Public Healthcare Systems-Gujarat" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1335&amp;lid=715" >6th-National Summit on Good & Replicable Practices and Innovations in Public Healthcare Systems-Gujarat</a></li>
+                                                                            <li class="dropdown-header" ><a  title="5th-National Summit on Good & Replicable Practices and Innovations in Public Healthcare Systems-Assam" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1151&amp;lid=588" >5th-National Summit on Good & Replicable Practices and Innovations in Public Healthcare Systems-Assam</a></li>
+                                                                            <li class="dropdown-header" ><a  title="4th National Summit on Good, Replicable Practices & Innovations in Public Healthcare Systems-Indore" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1150&amp;lid=647" >4th National Summit on Good, Replicable Practices & Innovations in Public Healthcare Systems-Indore</a></li>
+                                                                            <li class="dropdown-header" ><a  title="3rd National Summit on Good, Replicable Practices & Innovations in Public Healthcare Systems-Tirupati" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1149&amp;lid=646" >3rd National Summit on Good, Replicable Practices & Innovations in Public Healthcare Systems-Tirupati</a></li>
+                                                                            <li class="dropdown-header" ><a  title="2nd National Summit on Good,Replicable Practices & innovations in Public Healthcare Systems-Shimla" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1148&amp;lid=645" >2nd National Summit on Good,Replicable Practices & innovations in Public Healthcare Systems-Shimla</a></li>
+                                                                </ul>
+                                                  </li>
+                                                  <li class="menu__item dropdown"><a title="Monitoring (Alt + Shift + g)" href="/index4.php?lang=1&amp;level=0&amp;linkid=174&amp;lid=41" accesskey="g" class="menu__link">Monitoring</a>
+                                                    <ul class="dropdown-menu">
+                                                                  <li class="dropdown-header" ><a  title="Common Review Mission" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=795&amp;lid=195" >Common Review Mission</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Monitoring Reports" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=112&amp;lid=205" >Monitoring Reports</a></li>
+                                                                            <li class="dropdown-header" ><a  title="International Advisory Panel" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1236&amp;lid=203" >International Advisory Panel</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Joint Review Mission" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1237&amp;lid=201" >Joint Review Mission</a></li>
+                                                                </ul>
+                                                  </li>
+                                                  <li class="menu__item dropdown"><a title="Communitisation (Alt + Shift + h)" href="/index4.php?lang=1&amp;level=0&amp;linkid=37&amp;lid=42" accesskey="h" class="menu__link">Communitisation</a>
+                                                    <ul class="dropdown-menu">
+                                                                  <li class="dropdown-header" ><a  title="Community Action" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=148&amp;lid=224" >Community Action</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Village Health Sanitation & Nutrition Committee" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=149&amp;lid=225" >Village Health Sanitation & Nutrition Committee</a></li>
+                                                                            <li class="dropdown-header" ><a  title="About Accredited Social Health Activist (ASHA)" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=150&amp;lid=226" >About Accredited Social Health Activist (ASHA)</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Village Health Nutrition Day" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=152&amp;lid=228" >Village Health Nutrition Day</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Rogi Kalyan Samities" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=153&amp;lid=229" >Rogi Kalyan Samities</a></li>
+                                                                </ul>
+                                                  </li>
+                                                  <li class="menu__item dropdown"><a title="Resources (Alt + Shift + i)" href="/index4.php?lang=1&amp;level=0&amp;linkid=39&amp;lid=43" accesskey="i" class="menu__link">Resources</a>
+                                                    <ul class="dropdown-menu">
+                                                                  <li class="dropdown-header" ><a  title="Reports & Publications." href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1161&amp;lid=649" >Reports & Publications.</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Presentations" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1304&amp;lid=688" >Presentations</a></li>
+                                                                            <li class="dropdown-header" ><a  title="NHM Guidelines" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=197&amp;lid=136" >NHM Guidelines</a></li>
+                                                                          <li class="dropdown-header"><a href="https://hmis.mohfw.gov.in/#!/" title="Rural Health Statistics (RHS)" >Rural Health Statistics (RHS)</a></li>
+                                                                          <li class="dropdown-header" ><a  title="12th Five Year Plan & HLEG" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=191&amp;lid=267" >12th Five Year Plan & HLEG</a></li>
+                                                                </ul>
+                                                  </li>
+                                                  <li class="menu__item dropdown"><a title="OM & Orders (Alt + Shift + j)" href="/index4.php?lang=1&amp;level=0&amp;linkid=416&amp;lid=549" accesskey="j" class="menu__link">OM & Orders</a>
+                                                    <ul class="dropdown-menu">
+                                                                  <li class="dropdown-header" ><a  title="India COVID-19 ER&HSP Package" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1365&amp;lid=733" >India COVID-19 ER&HSP Package</a></li>
+                                                                            <li class="dropdown-header" ><a  title="COVID-19" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1339&amp;lid=720" >COVID-19</a></li>
+                                                                            <li class="dropdown-header" ><a  title="EPC/MSG/CRM" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1328&amp;lid=707" >EPC/MSG/CRM</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Health Systems Strengthening+" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1174&amp;lid=655" >Health Systems Strengthening+</a></li>
+                                                                            <li class="dropdown-header" ><a  title="State Annual Plan+" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1235&amp;lid=659" >State Annual Plan+</a></li>
+                                                                            <li class="dropdown-header" ><a  title="NCD" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1320&amp;lid=698" >NCD</a></li>
+                                                                            <li class="dropdown-header" ><a  title="NHM Finance - FMG" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1039&amp;lid=166" >NHM Finance - FMG</a></li>
+                                                                            <li class="dropdown-header" ><a  title="Innovation Summit+" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=798&amp;lid=553" >Innovation Summit+</a></li>
+                                                                            <li class="dropdown-header" ><a  title="RMNCH+A+" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=805&amp;lid=557" >RMNCH+A+</a></li>
+                                                                            <li class="dropdown-header" ><a  title="NUHM Orders/letters" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1159&amp;lid=161" >NUHM Orders/letters</a></li>
+                                                                </ul>
+                                                  </li>
+                                                  <li class="menu__item dropdown"><a title="Media (Alt + Shift + k)" href="/index4.php?lang=1&amp;level=0&amp;linkid=41&amp;lid=45" accesskey="k" class="menu__link">Media</a>
+                                                    <ul class="dropdown-menu">
+                                                                  <li class="dropdown-header" ><a  title="Newsletters" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=206&amp;lid=277" >Newsletters</a></li>
+                                                                          <li class="dropdown-header"><a href="photogallery.php" title="Photo Gallery" >Photo Gallery</a></li>
+                                                                          <li class="dropdown-header" ><a  title="Archives" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=1241&amp;lid=620" >Archives</a></li>
+                                                                </ul>
+                                                  </li>
+                                                  <li class="menu__item dropdown"><a title="Contact Us (Alt + Shift + l)" href="/index4.php?lang=1&amp;level=0&amp;linkid=1&amp;lid=1" accesskey="l" class="menu__link">Contact Us</a>
+                                                    <ul class="dropdown-menu">
+                                                                  <li class="dropdown-header" ><a  title="Web Information Manager" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=203&amp;lid=23" >Web Information Manager</a></li>
+                                                                          <li class="dropdown-header"><a href="https://www.mohfw-dohfw.gov.in/static/uploads/2026/07/3b8dd0f4b4f64d08b6f586075ca4ec77.pdf" title="MoHFW Officials List" >MoHFW Officials List</a></li>
+                                                                          <li class="dropdown-header" ><a  title="States/UTs Official" href="/index1.php?lang=1&amp;level=1&amp;sublinkid=23&amp;lid=51" >States/UTs Official</a></li>
+                                                                </ul>
+                                                  </li>
+                                    </ul>
+          </nav>
+        </div>
+      </div>
+      <!-- /.navbar-collapse -->
+    </nav>
+    <div class="clearfix"></div>
+
+</div>
+</div>
+
+		<!--<div class="col-md-7 title-area">
+			<center>
+				<h1><span>राष्ट्रीय स्वास्थ्य मिशन</span></h1>
+				<h1><span style="letter-spacing:3px;margin-bottom: -40px;">National Health Mission</span></h1>
+			</center>
+		</div>-->
+			
+		
+		<div class="col-lg-1 col-md-3 col-3">
+			<!--<div class="col-sm-4">
+				<center>
+					<div class="india-flag"><img src="images/logo/india_flag.jpg" alt="" width="60" height="44"></div>
+				</center>
+			</div>
+			<div class="col-sm-6">
+				<div class="emblem-img"><img src="images/logo/emblem_back.png" alt=""></div>
+			</div>-->
+			
+			<div class="home_logo_left "><img src="https://nhm.gov.in/images/logo/logo.jpg" alt=""></div>
+		</div>
+		<!--<div class="col-md-2">
+			<center>
+                <a href="https://www.mohfw.gov.in/"><img src="/images/coronavirus/coronavirus.gif" class="header-margin" width="100%" style="
+    margin-top: 1rem;"></a>
+			</center>
+		</div>--> 
+	</div>
+</div>
+</div>
+<div id="skip-nav"></div>  		<!--//header-middle-->
+
+		<!--menu-bar-nav-->
+		
+<!--<marquee width="100%" direction="left" height="" style="background: #872977;color: #ffffff;padding:5px;font-size: 12px;letter-spacing: 0.5px;font-weight: 600;transition: color 0.3s; margin-bottom:-7px">
+  <a href="https://mohfw.gov.in/sites/default/files/Swasth%20Nari%20Sashakt%20Parivar%20Abhiyaan.mp4" target="_blank" style="color:#fff"><span style="font-size: 12px;">"Swasth Nari, Sashakt Parivar Abhiyaan"</span></a>
+  
+</marquee>-->
+
+          <div class="header-top generated-nav-background">
+        <div class="container">
+          <div class="breadcrumb"><a href="index.php">Home</a>
+            &nbsp;&raquo;&nbsp;<a href='' title='404'>404</a>   
+          </div>
+        </div>
+      </div>
+      		<!--//menu-bar-nav-->
+	</div>
+	<!--//header-top-->
+	<!--/single-->
+	<div class="single">
+		<div class="container">
+		<div class="row">
+		<div class="article-post w3l">
+				<script type='text/javascript'>window.location="index.php"</script>
