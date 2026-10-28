@@ -1,0 +1,1373 @@
+                        BOARD OF GOVERNORS
+             In supersession of the Medical Council of India
+
+
+
+
+           Telemedicine Practice Guidelines
+   Enabling Registered Medical Practitioners to Provide Healthcare Using
+                              Telemedicine
+
+
+
+
+[This constitutes Appendix 5 of the Indian Medical Council (Professional Conduct, Etiquette and
+                                                                       Ethics Regulation, 2002]
+
+
+
+
+                                25 March 2020
+These Guidelines have been prepared
+   in partnership with NITI Aayog
+
+
+
+
+                 2
+                                       TABLE OF CONTENT
+S. No.   Description                                                                   Page No.
+         Background                                                                        7
+  1.     Definitions                                                                      10
+              Definition of Telemedicine
+              Definition of Telehealth
+              Definition of Registered Medical Practitioner
+
+         Scope of Telemedicine
+
+         RMP’s are entitled to Practice Telemedicine
+
+         Telemedicine Applications
+              Mode of Communication
+              Timing of Information Transmitted
+              Purpose of the consultation
+              Individuals involved
+  2.     Technology Used/ Mode of Communications                                         14
+             Video, Audio, Text
+
+  3.     Guidelines for Telemedicine in India                                            16
+            Elements specific to Telemedicine
+             Appropriateness of Telemedicine
+             Identification of RMP and the patient
+             Appropriateness of technology/Mode of Telemedicine
+             Patient Consent
+             Patient Evaluation
+             Patient Management: Health education, counseling and medication
+            Duties and responsibilities of RMP in general
+             Medical Ethics, Data Privacy & Confidentiality
+             Documentation and Digital Records of Consultation
+             Fee for Telemedicine
+
+  4.     Framework for Telemedicine                                                      25
+             Patient to Registered Medical Practitioner
+             Care Giver to Registered Medical Practitioner
+             Patient to RMP through Health Worker at a Sub Center or any
+               peripheral center
+             Registered Medical Practitioner to another RMP / Specialist
+
+  5.     Guidelines for Technology Platforms enabling Telemedicine                       33
+  6.     Special Responsibilities of Board of Governors (BoG) in supersession to MCI     34
+  7.     Figures (Teleconsultation flow charts 1-3)                                      35
+  8.     Annexures                                                                       43
+             1. Drug List
+             2. Sample Prescription Format
+
+                                                 3
+This page is intentionally left blank
+
+
+
+
+                 4
+TELEMEDICINE
+
+    ‘The delivery of health care services, where distance is a critical factor, by all
+    health care professionals using information and communication technologies
+    for the exchange of valid information for diagnosis, treatment and prevention
+    of disease and injuries, research and evaluation, and for the continuing
+    education of health care providers, all in the interests of advancing the health
+    of individuals and their communities.’
+
+
+
+
+TELEHEALTH
+
+    ‘The delivery and facilitation of health and health-related services including
+    medical care, provider and patient education, health information services,
+    and   self-care   via   telecommunications      and    digital   communication
+    technologies.’
+
+
+
+
+REGISTERED MEDICAL PRACTITIONER
+
+
+    ‘A Registered Medical Practitioner [RMP] is a person who is enrolled in the
+    State Medical Register or the Indian Medical Register under the Indian
+    Medical Council Act 1956.’ [IMC Act, 1956]
+
+
+                                        5
+This page is intentionally left blank
+
+
+
+
+               6
+Background
+
+Telemedicine: An Enabler of Healthcare Access and Affordability
+
+There are a number of benefits of telemedicine. It increases timely access to appropriate interventions
+including faster access and access to services that may not otherwise be available.
+
+In India, providing In-person healthcare is challenging, particularly given the large geographical distances and
+limited resources. One of the major advantages of telemedicine can be for saving of cost and effort especially
+of rural patients, as they need not travel long distances for obtaining consultation and treatment. In this type
+of scenario, telemedicine can provide an optimal solution for not just providing timely and faster access. It
+would also reduce financial costs associated with travel. It also reduces the inconvenience/impact to family
+and caregivers and social factors. Telemedicine can play a particularly important role in cases where there is
+no need for the patient to physically see the RMP (or other medical professional), e.g. for regular, routine
+check-ups or continuous monitoring. Telemedicine can reduce the burden on the secondary hospitals.
+
+With telemedicine, there is higher likelihood of maintenance of records and documentation hence
+minimalizes the likelihood of missing out advice from the doctor other health care staff. Conversely, the
+doctor has an exact document of the advice provided via tele-consultation. Written documentation increases
+the legal protection of both parties. Telemedicine provides patient’s safety, as well as health workers safety
+especially in situations where there is risk of contagious infections. There are a number of technologies that
+can be used in telemedicine, which can help patients adhere better to their medication regimens and manage
+their diseases better. Telemedicine can also enable the availability of vital parameters of the patient available
+to the physician with the help of medical devices such as blood pressure, blood glucose, etc management.
+
+Disasters and pandemics pose unique challenges to providing health care. Though telemedicine will not solve
+them all, it is well suited for scenarios in which medical practitioners can evaluate and manage patients. A
+telemedicine visit can be conducted without exposing staff to viruses/infections in the times of such
+outbreaks. Telemedicine practice can prevent the transmission of infectious diseases reducing the risks to
+both health care workers and patients. Unnecessary and avoidable exposure of the people involved in
+delivery of healthcare can to be avoided using telemedicine and patients can be screened remotely. It can
+provide rapid access to medical practitioners who may not be immediately available in person. In addition, it
+makes available extra working hands to provide physical care at the respective health institutions. Thus,
+health systems that are invested in telemedicine are well positioned to ensure that patients with Covid-19
+kind of issues receive the care they need.
+
+The government is committed to providing equal access to quality care to all and digital health is a critical
+enabler for the overall transformation of the health system. Hence, mainstreaming telemedicine in health
+systems will minimize inequity and barriers to access. India’s digital health policy advocates use of digital
+tools for improving the efficiency and outcome of the healthcare system and lays significant focus on the use
+of telemedicine services, especially in the Health and Wellness Centers at the grassroots level wherein a mid-
+level provider/health worker can connect the patients to the doctors through technology platforms in
+providing timely and best possible care.
+
+                                                       7
+However, there has been concern on the practice of telemedicine. Lack of clear guidelines has created
+significant ambiguity for registered medical professionals, raising doubts on the practice of telemedicine. The
+2018 judgement of the Hon’ble High Court of Bombay had created uncertainty about the place and legitimacy
+of telemedicine because an appropriate framework does not exist.
+
+In India, till now there was no legislation or guidelines on the practice of telemedicine, through video, phone,
+Internet based platforms (web/chat/apps etc). The existing provisions under the Indian Medical Council Act,
+1956, the Indian Medical Council (Professional Conduct, Etiquette and Ethics Regulation 2002), Drugs
+&Cosmetics Act, 1940 and Rules 1945, Clinical Establishment (Registration and Regulation) Act, 2010,
+Information Technology Act, 2000 and the Information Technology (Reasonable Security Practices and
+Procedures and Sensitive Personal Data or Information) Rules 2011 primarily govern the practice of medicine
+and information technology. Gaps in legislation and the uncertainty of rules pose a risk for both the doctors
+and their patients.
+
+There are some countries that have put in legislative measures and some countries, which follow non-
+legislative measures such as guidelines to practice telemedicine. In some countries guidelines are treated as
+professional norms that need to be followed by medical practitioners. We reviewed these other guidelines
+and consulted to put together these guidelines to enable medical practitioners to practice telemedicine.
+
+Telemedicine will continue to grow and be adopted by more healthcare practitioners and patients in a wide
+variety of forms, and these practice guidelines will be a key enabler in fostering its growth.
+
+Purpose
+
+The purpose of these guidelines is to give practical advice to doctors so that all services and models of care
+used by doctors and health workers are encouraged to consider the use of telemedicine as a part of normal
+practice. These guidelines will assist the medical practitioner in pursuing a sound course of action to provide
+effective and safe medical care founded on current information, available resources, and patient needs to
+ensure patient and provider safety.
+
+These telemedicine guidelines will help realize the full potential of these advancements in technology for
+health care delivery. It provides norms and protocols relating to physician-patient relationship; issues of
+liability and negligence; evaluation, management and treatment; informed consent; continuity of care;
+referrals for emergency services; medical records; privacy and security of the patient records and exchange
+of information; prescribing; and reimbursement; health education and counseling.
+
+These guidelines will provide information on various aspects of telemedicine including information on
+technology platforms and tools available to medical practitioners and how to integrate these technologies
+to provide health care delivery. It also spells out how technology and transmission of voice, data, images and
+information should be used in conjunction with other clinical standards, protocols, policies and procedures
+for the provision of care. Where clinically appropriate, telemedicine is a safe, effective and a valuable
+modality to support patient care.
+Like any other technology, the technology used for telemedicine services can be abused. It has some risks,
+drawbacks and limitations, which can be mitigated through appropriate training, enforcement of standards,
+protocols and guidelines,
+                                                       8
+These guidelines should be used in conjunction with the other national clinical standards, protocols, policies
+and procedures.
+
+
+
+
+                                                      9
+1.      Telemedicine: Definitions and Applications
+
+1.1     DEFINITIONS                                                                                              .
+
+1.1.1   Definition of Telemedicine
+        World Health Organization defines telemedicine as
+
+         “The delivery of health-care services, where distance is a critical factor, by all health-care
+        professionals using information and communications technologies for the exchange of valid
+        information for diagnosis, treatment and prevention of disease and injuries, research and evaluation,
+        and the continuing education of health-care workers, with the aim of advancing the health of
+        individuals and communities.”
+
+1.1.2   Definition of Telehealth
+        NEJM Catalyst defines telehealth as “The delivery and facilitation of health and health-related
+        services including medical care, provider and patient education, health information services, and self-
+        care via telecommunications and digital communication technologies.”
+
+        In general, telemedicine is used to denote clinical service delivered by a Registered medical
+        practitioner while telehealth is a broader term of use of technology for health and health related
+        services including telemedicine.
+
+1.1.3   Definition of Registered Medical Practitioner (RMP)
+        For the purpose of this document a ‘Registered Medical Practitioner’ is defined as a person who is
+        enrolled in the State Medical Register or the Indian Medical Register under the IMC Act 1956.
+
+1.2     SCOPE                                                                                                .
+
+        Within the broad paradigm of telemedicine, these guidelines will be published under the IMC Act
+        and are for privileged access only. These guidelines are designed to serve as an aid and tool to enable
+        RMPs to effectively leverage Telemedicine to enhance healthcare service and access to all
+         The guidelines are meant for RMPs under the IMC Act 1956
+         The guidelines cover norms and standards of the RMP to consult patients via telemedicine
+         Telemedicine includes all channels of communication with the patient that leverage Information
+            Technology platforms, including Voice, Audio, Text & Digital Data exchange
+
+        EXCLUSIONS:
+        The guidelines specifically explicitly exclude the following:
+         Specifications for hardware or software, infrastructure building & maintenance
+         Data management systems involved; standards and interoperability
+         Use of digital technology to conduct surgical or invasive procedures remotely
+         Other aspects of telehealth such as research and evaluation and continuing education of health-
+            care workers
+         Does not provide for consultations outside the jurisdiction of India
+                                                       10
+1.3    REGISTERED MEDICAL PRACTITIONERS ARE ENTITLED TO PRACTICE TELEMEDICIN: ALL OF THEM
+WILL TAKE AN ONLINE COURSE ON PRACTICE OF TELEMEDICINE .
+
+1.3.1   A Registered Medical Practitioner is entitled to provide telemedicine consultation to patients from
+        any part of India
+
+1.3.2   RMPs using telemedicine shall uphold the same professional and ethical norms and standards as
+        applicable to traditional in-person care, within the intrinsic limitations of telemedicine
+
+1.3.3   To enable all those RMPs who would want to practice telemedicine get familiar with these Guidelines
+        as well as with the process and limitations of telemedicine practice:
+                  An online program will be developed and made available by the Board of Governors in
+                    supersession of Medical Council of India.
+                  All registered medical practitioners intending to provide online consultation need to
+                    complete a mandatory online course within 3 years of its notification.
+                  In the interim period, the principles mentioned in these guidelines need to be followed.
+                  Thereafter, undergoing and qualifying such a course, as prescribed, will be essential prior
+                    to practice of telemedicine.
+
+1.4     TELEMEDICINE APPLICATIONS                                                                            .
+
+1.4.1   Tools for Telemedicine
+        RMP may use any telemedicine tool suitable for carrying out technology-based patient consultation
+        e.g. telephone, video, devices connected over LAN, WAN, Internet, mobile or landline phones, Chat
+        Platforms like WhatsApp, Facebook Messenger etc., or Mobile App or internet based digital
+        platforms for telemedicine or data transmission systems like Skype/ email/ fax etc.
+
+        Irrespective of the tool of communication used, the core principles of telemedicine practice remain
+        the same.
+
+1.4.2   Telemedicine applications can be classified into four basic types, according to the mode of
+        communication, timing of the information transmitted, the purpose of the consultation and the
+        interaction between the individuals involved—be it RMP-to-patient / caregiver, or RMP to RMP.
+.
+        1.4.2.1 According to the Mode of Communication
+         Video (Telemedicine facility, Apps, Video on chat platforms, Skype/Face time etc.)
+         Audio (Phone, VOIP, Apps etc.)
+         Text Based:
+            o Telemedicine chat based applications (specialized telemedicine smartphone Apps, Websites,
+                other internet-based systems etc.)
+            o General messaging/ text/ chat platforms (WhatsApp, Google Hangouts, Facebook
+                Messenger etc.)
+            o Asynchronous (email/ Fax etc.)
+
+
+
+                                                     11
+        1.4.2.2 According to timing of information transmitted
+                                                         Asynchronous exchange of relevant
+Real time Video/audio/text interaction
+                                                                    information
+                                                       Transmission of summary of patient
+                                                       complaints and supplementary data
+                                                       including images, lab reports and/or
+Video/audio/text for exchange of relevant
+                                                       radiological investigations between
+information for diagnosis, medication and health
+                                                       stakeholders. Such data can be
+education and counseling
+                                                       forwarded to different parties at any
+                                                       point of time and thereafter accessed
+                                                       per convenience/need
+
+
+        1.4.2.3 According to the purpose of the consultation
+        For Non-Emergency consult:
+
+        First consult with any RMP for
+                                                           Follow-up consult with the same
+         diagnosis/treatment/health
+                                                                        RMP
+            education/ counseling
+                                                          Patients may use this service for
+                                                          follow up consultation on his
+    Patients may consult with an RMP for
+                                                          ongoing treatment with the same
+    diagnosis and treatment of her
+                                                          RMP who prescribed the
+    condition or for health education and
+                                                          treatment in an earlier in-person
+    counseling
+                                                          consult.
+
+
+
+
+Emergency consult for immediate assistance or first aid etc.
+    In case alternative care is not present, tele-consultation might be the only way to provide timely care.
+      In such situations, RMPs may provide consultation to their best judgement. Telemedicine services
+      should however be avoided for emergency care when alternative in-person care is available, and
+      telemedicine consultation should be limited to first aid, life-saving measure, counseling and advice
+      on referral.
+
+
+       In all cases of emergency, the patient must be advised for an in-person interaction with an RMP at
+        the earliest.
+
+
+
+
+                                                     12
+             1.4.2.4 According to the individuals involved
+
+
+
+                             Patient to RMP                                     Caregiver to RMP
+
+                                                                   Telemedicine services may connect Care
+              Telemedicine services may connect patients
+                                                                   givers to an RMP, under certain conditions
+              to an RMP
+                                                                   as detailed in Framework (Section 4)
+
+
+
+
+                               RMP to RMP                                    Health worker to RMP
+
+                                                                   A Health Worker 1 can facilitate a
+                                                                   consultation session for a patient with an
+              RMP may use telemedicine services to
+                                                                   RMP. In doing so, the former can help take
+              discuss with other RMPs issues of care of
+                                                                   history, examine the patient and convey
+              one or more patients, or to disseminate
+                                                                   the     findings.    They     can     also
+              knowledge
+                                                                   explain/reinforce the advice given by the
+                                                                   RMP to the patient.
+
+
+
+
+1
+ Nurse, Allied Health Professional, Mid-level health provider, ANM or any other health worker designated by an
+appropriate authority
+                                                        13
+2.   Technology Used & Mode of Communications
+
+     Multiple technologies can be used to deliver telemedicine consultation. There are 3 primary modes:
+     Video, Audio, or Text (chat, messaging, email, fax etc.) Each one of these technology systems has
+     their respective strengths, weaknesses and contexts, in which, they may be appropriate or
+     inadequate to deliver a proper diagnosis.
+
+     It is therefore important to understand the strengths, benefits as well as limitations of different
+     technologies. Broadly, though telemedicine consultation provides safety to the RMP from contagious
+     conditions, it cannot replace physical examination that may require palpation, percussion or
+     auscultation; that requires physical touch and feel. Newer technologies may improve this drawback.
+
+                  STRENGTHS AND LIMITATIONS OF VARIOUS MODES OF COMMUNICATION
+
+          Mode                       Strengths                              Limitations
+      VIDEO:              Closest to an in person-consult,       Is dependent on high quality
+      Telemedicine         real time interaction                   internet connection at both ends,
+      facility,           Patient identification is easier        else will lead to a sub optimal
+      Apps,               RMP can see the patient and             exchange of information
+      Video on chat        discuss with the caregiver             Since there is a possibility of
+      platforms,          Visual cues can be perceived            abuse/ misuse, ensuring privacy of
+      Facetime etc.       Inspection of patient can be            patients in video consults is
+                           carried out                             extremely important
+
+
+
+
+      AUDIO:              Convenient and fast                    Non-verbal cues may be missed
+      Phone,              Unlimited reach                        Not suitable for conditions that
+      VOIP,               Suitable for urgent cases               require a visual inspection (e.g.
+      Apps etc.           No     separate      infrastructure     skin, eye or tongue examination),
+                           required                                or physical touch
+                          Privacy ensured
+                          Real-time interaction.                 Patient identification needs to be
+                                                                   clearer, greater chance of
+                                                                   imposters representing the real
+                                                                   patient
+
+      TEXT BASED:         Convenient and quick                   Besides the visual and physical
+      Specialized         Documentation & Identification          touch, text-based interactions also
+      Chat     based       may be an integral feature of the       miss the verbal cues
+      Telemedicine         platform                               Difficult to establish rapport with
+      Smartphone          Suitable for urgent cases, or           the patient.
+      Apps,     SMS,       follow-ups, second opinions
+      Websites,            provided RMP has enough
+                           context from other sources,
+                                                 14
+messaging            No     separate    infrastructure      Cannot be sure of identity of the
+systems e.g.          required,                               doctor or the patient
+WhatsApp,            Can be real time
+Google
+Hangouts, FB
+Messenger
+ASYNCHRONO           Convenient and easy to document        Not a real time interaction, so just
+US:                  No specific app or download             one-way context is available,
+Email                 requirement                             relying solely on the articulation by
+Fax,                 Images, data, reports readily           the patient
+recordings etc.       shared                                 Patient identification is document
+                     No     separate    infrastructure       based only and difficult to confirm
+                      required                               Non-verbal cues are missed
+                     More useful when accompanied           There may be delays because the
+                      with test reports and follow up         Doctor may not see the mail
+                      and second opinions                     immediately
+
+
+
+
+                                           15
+3.      Guidelines for Telemedicine in India
+        The professional judgment of a Registered Medical Practitioner should be the guiding principle for
+        all telemedicine consultations: An RMP is well positioned to decide whether a technology-based
+        consultation is sufficient or an in-person review is needed. Practitioner shall exercise proper
+        discretion and not compromise on the quality of care. Seven elements need to be considered before
+        beginning any telemedicine consultation (see panel)
+
+                                 Seven Elements to be considered before
+                                 any telemedicine consultation
+                                 1     Context
+                                 2     Identification of RMP and Patient
+                                 3     Mode of Communication
+                                 4     Consent
+                                 5     Type of Consultation
+                                 6     Patient Evaluation
+                                 7     Patient Management
+
+
+
+3.1     TELEMEDICINE SHOULD BE APPROPRIATE AND SUFFICIENT AS PER CONTEXT                                     .
+
+3.1.1   The Registered Medical Practitioners should exercise their professional judgment to decide whether
+        a telemedicine consultation is appropriate in a given situation or an in-person consultation is needed
+        in the interest of the patient. They should consider the mode/technologies available and their
+        adequacy for a diagnosis before choosing to proceed with any health education or counseling or
+        medication. They should be reasonably comfortable that telemedicine is in the patient’s interest
+        after taking a holistic view of the given situation.
+3.1.2   Complexity of Patient’s health condition
+        Every patient/case/medical condition may be different, for example, a new patient may present with
+        a simple complaint such as headache while a known patient of Diabetes may consult for a follow-
+        up with emergencies such as Diabetic Ketoacidosis. The RMP shall uphold the same standard of care
+        as in an in-person consultation but within the intrinsic limits of telemedicine.
+
+
+3.2     IDENTIFICATION OF THE REGISTERED MEDICAL PRACTITIONER AND THE PATIENT IS REQUIRED                    .
+
+3.2.1   Telemedicine consultation is should not be anonymous: both patient and the RMP need to know
+        each other’s identity.
+3.2.2   An RMP should verify and confirm patient’s identity by name, age, address, email ID, phone number,
+        registered ID or any other identification as may be deemed to be appropriate. The RMP should
+        ensure that there is a mechanism for a patient to verify the credentials and contact details of the
+        RMP.
+
+
+
+
+                                                     16
+3.2.3   For issuing a prescription, the RMP needs to explicitly ask the age of the patient, and if there is any
+        doubt, seek age proof. Where the patient is a minor, after confirming the age, tele consultation
+        would be allowed only if the minor is consulting along-with an adult whose identity needs to be
+        ascertained.
+3.2.4   An RMP should begin the consultation by informing the patient about his/her name and
+        qualifications.
+3.2.5   Every RMP shall display the registration number accorded to him/her by the State Medical
+        Council/MCI, on prescriptions, website, electronic communication (WhatsApp/ email etc.) and
+        receipts etc. given to his/her patients
+
+3.3     MODE OF TELEMEDICINE                                                                                                        .
+
+3.3.1   Multiple technologies can be used to deliver telemedicine consultations. All these technology
+        systems have their respective strengths, weaknesses and contexts in which they may be appropriate
+        or inadequate in order to deliver proper care.
+
+3.3.2   Primarily there are 3 modes: Video, Audio or Text (chat, images, messaging, email, fax etc.). Their
+        strengths, limitations and appropriateness as detailed in Section 2 need to be considered by the
+        RMP.
+
+3.3.3   There may be situations where in order to reach a diagnosis and to understand the context better; a
+        real-time consultation may be preferable over an asynchronous exchange of information. Similarly,
+        there would be conditions where an RMP could require hearing the patient speak, therefore, a voice
+        interaction may be preferred than an email or text for a diagnosis. There are also situations where
+        the RMP needs to visually examine the patient and make a diagnosis. In such a case, the RMP could
+        recommend a video consultation. Considering the situation, using his/her best judgment, an RMP
+        may decide the best technology to use to diagnose and treat.
+
+
+3.4     PATIENT CONSENT                                                                                                             .
+
+
+Patient consent is necessary for any telemedicine consultation. The consent can be Implied or explicit
+depending on the following situations:
+
+3.4.1   If, the patient initiates the telemedicine consultation, then the consent is implied2.
+
+3.4.2   An Explicit patient consent is needed if:
+        A Health worker, RMP or a Caregiver initiates a Telemedicine consultation.
+
+
+        2
+            Implied Consent: In an in-person consultation, it is assumed the patient has consented to the consult by his/her actions.
+        When the patient walks in an OPD, the consent for the consultation is taken as implied. Like an in-person consultation, for
+        most of the tele-consultations the consent can be assumed to be implied because the patient has initiated the consultation.
+
+
+
+                                                                 17
+3.4.3   An Explicit consent can be recorded in any form. Patient can send an email, text or audio/video
+        message. Patient can state his/her intent on phone/video to the RMP (e.g. “Yes, I consent to avail
+        consultation via telemedicine” or any such communication in simple words). The RMP must record
+        this in his patient records.
+
+
+3.5     EXCHANGE OF INFORMATION FOR PATIENT EVALUATION                                                       P
+
+RMPs must make all efforts to gather sufficient medical information about the patient’s condition before
+making any professional judgment.
+
+3.5.1   Patient’s Information
+
+            -   An RMP would use his/her professional discretion to gather the type and extent of patient
+                information (history/examination findings/Investigation reports/past records etc.) required
+                to be able to exercise proper clinical judgement.
+            -   This information can be supplemented through conversation with a healthcare
+                worker/provider and by any information supported by technology-based tools.
+            -   If the RMP feels that the information received is inadequate, then he/she can request for
+                additional information from the patient. This information may be shared in real time or
+                shared later via email/text, as per the nature of such information. For example, an RMP may
+                advise some laboratory or/and radiological tests to the patient. In such instances, the consult
+                may be considered paused and can be resumed at the rescheduled time. An RMP may
+                provide health education as appropriate at any time.
+            -   Telemedicine has its own set of limitations for adequate examination. If a physical
+                examination is critical information for consultation, RMP should not proceed until a
+                physical examination can be arranged through an in-person consult. Wherever necessary,
+                depending on professional judgement of the RMP, he/she shall recommend:
+
+                -   Video consultation
+                -   Examination by another RMP/ Health Worker ;
+                -   In-person consultation
+
+        -   The information required may vary from one RMP to another based on his/her professional
+            experience and discretion and for different medical conditions based on the defined clinical
+            standards and standard treatment guidelines.
+        -   RMP shall maintain all patient records including case history, investigation reports, images, etc.
+            as appropriate.
+
+
+
+
+                                                     18
+3.6      TYPES OF CONSULTATION: FIRST CONSULT/ FOLLOW-UP CONSULT                                               .
+
+There are two types of patient consultations, namely, first consult and the follow-up consult.
+An RMP may have only a limited understanding of the patient seeking teleconsultation for the first time,
+when there have been no prior in-person consultation. However, if the first consult happens to be via
+video, RMP can make a much better judgment and hence can provide much better advice including additional
+medicines, if indicated.
+On the other hand, if a patient has been seen in-person earlier by the RMP, then it is possible to be more
+comprehensive in managing the patient.
+
+
+
+3.6.1    First Consult means
+                  The patient is consulting with the RMP for the first time; or
+                  The patient has consulted with the RMP earlier, but more than 6 months have lapsed
+                     since the previous consultation; or
+                  The patient has consulted with the RMP earlier, but for a different health condition
+
+3.6.2     Follow-Up Consult(s) means
+                   The patient is consulting with the same RMP within 6 months of his/her previous in-
+                      person consultation and this is for continuation of care of the same health condition.
+                      However,
+it will not be considered a follow up if:
+
+
+                   There are new symptoms that are not in the spectrum of the same health condition;
+                    and/or
+                   RMP does not recall the context of previous treatment and advice
+
+
+3.7     PATIENT MANAGEMENT: HEALTH EDUCATION, COUNSELING & MEDICATION                                          .
+
+3.7.1    If the condition can be appropriately managed via telemedicine, based on the type of consultation,
+         then the RMP may proceed with a professional judgement to:
+
+                          o Provide Health Education as appropriate in the case; and/or
+                          o Provide Counseling related to specific clinical condition; and/or
+                          o Prescribe Medicines
+
+
+3.7.2    Health Education: An RMP may impart health promotion and disease prevention messages. These
+         could be related to diet, physical activity, cessation of smoking, contagious infections and so on.
+         Likewise, he/ she may give advice on immunizations, exercises, hygiene practices, mosquito control
+         etc
+
+
+                                                      19
+3.7.3   Counseling: This is specific advice given to patients and it may, for instance, include food restrictions,
+        do’s and don’t’s for a patient on anticancer drugs, proper use of a hearing aid, home physiotherapy,
+        etc to mitigate the underlying condition. This may also include advice for new investigations that
+        need to be carried out before the next consult.
+
+
+3.7.4   Prescribing Medicines
+
+Prescribing medications, via telemedicine consultation is at the professional discretion of the RMP. It
+entails the same professional accountability as in the traditional in-person consult. If a medical condition
+requires a particular protocol to diagnose and prescribe as in a case of in-person consult then same
+prevailing principle will be applicable to a telemedicine consult.
+
+RMP may prescribe medicines via telemedicine ONLY when RMP is satisfied that he/ she has gathered
+adequate and relevant information about the patient’s medical condition and prescribed medicines are in
+the best interest of the patient.
+
+Prescribing Medicines without an appropriate diagnosis/provisional diagnosis will amount to a professional
+misconduct
+
+Specific Restrictions
+
+        There are certain limitations on prescribing medicines on consult via telemedicine depending upon
+        the type of consultation and mode of consultation. The categories of medicines that can be
+        prescribed via tele-consultation will be as notified in consultation with the Central Government from
+        time to time.
+        The categories of medicines that can be prescribed are listed below:
+
+
+           List O: It will comprise those medicines which are safe to be prescribed through any mode of
+            tele-consultation. In essence they would comprise of
+
+            o   Medicines which are used for common conditions and are often available ‘over the
+                counter’. For instance, these medicines would include, paracetamol, ORS solutions, cough
+                lozenges etc
+            o   Medicines that may be deemed necessary during public health emergencies.
+
+
+           List A: These medications are those which can be prescribed during the first consult which is a
+            video consultation and are being re-prescribed for re-fill, in case of follow-up.
+
+            o   This would be an inclusion list, containing relatively safe medicines with low potential for
+                abuse Is a list of medication which RMP can prescribe in a patient who is undergoing
+                follow-up consult, as a refill.
+
+
+
+                                                       20
+    List B: Is a list of medication which RMP can prescribe in a patient who is undergoing follow-up
+     consultation in addition to those which have been prescribed during in-person consult for the
+     same medical condition.
+
+    Prohibited List: An RMP providing consultation via telemedicine cannot prescribe medicines in
+     this list. These medicine have a high potential of abuse and could harm the patient or the
+     society at large if used improperly
+
+     o   Medicines listed in Schedule X of Drug and Cosmetic Act and Rules or any Narcotic and
+         Psychotropic substance listed in the Narcotic Drugs and Psychotropic Substances, Act, 1985
+
+The drugs in the above mentioned list is summarized in Annexure 1
+
+
+
+ 3.6.4.2 Issue a Prescription and Transmit
+
+     o   If the RMP has prescribed medicines, RMP shall issue a prescription as per the Indian Medical
+         Council (Professional Conduct, Etiquette and Ethics) Regulations and shall not contravene
+         the provisions of the Drugs and Cosmetics Act and Rules. A sample format is suggested in
+         Annexure 2
+     o   RMP shall provide photo, scan, digital copy of a signed prescription or e-Prescription to the
+         patient via email or any messaging platform
+     o   In case the RMP is transmitting the prescription directly to a pharmacy, he/ she must ensure
+         explicit consent of the patient that entitles him/her to get the medicines dispensed from any
+         pharmacy of his/ her choice
+
+
+
+
+                                              21
+       Table: Matrix of the permissible drug lists based on the type and mode of consultation
+
+     List Group             Mode of Consultation            Nature of Consultation            List of Medicines
+                             [Video/Audio/Text]              [First-consultation/
+                                                                  Follow-up]
+         O                            Any                  Any                                      List O1
+
+
+         A                           Video                 First Consultation                       List A2
+
+                                                           Follow-up, for
+                                                           continuation of
+                                                           medications
+         B                          Any                    Follow-up                                List B3
+
+
+ Prohibited                 Not to be prescribed           Not to be prescribed           Schedule X of Drug and
+                                                                                          Cosmetic Act and Rules
+                                                                                          or any Narcotic and
+                                                                                          Psychotropic substance
+                                                                                          listed in the Narcotic
+                                                                                          Drugs and Psychotropic
+                                                                                          Substances, Act, 19854
+
+1.     This list included commonly used ‘over-the-counter’ medications such as Paracetamol, Oral Rehydration
+       Solution (ORS) packets, Antacids etc.
+       This list also includes medicines that may be deemed necessary during emergencies and would be notified
+       from time to time.
+2.     This list includes usually prescribed medications for which diagnosis is possible only by video consultation
+       such as antifungal medications for Tinea Cruris, Ciprofloxacillin eye drops for Conjunctivitis etc. and
+       Re-fill medications for chronic diseases such as Diabetes, Hypertension, Asthma etc
+3.     This list includes ‘add-on’ medications which are used to optimize an existing condition. For instance, if the
+       patient is already on Atenolol for hypertension and the blood pressure is not controlled, an ACE inhibitor
+       such as Enalapril
+4.     For instance, Anti-Cancer drugs; Narcotics such as Morphine, Codeine etc
+
+
+
+
+                                                        22
+3.7    DUTIES AND RESPONSIBILITIES OF A RMP IN GENERAL                                                                          .
+       .
+3.7.1 MEDICAL ETHICS, DATA PRIVACY & CONFIDENTIAILITY3
+
+      3.7.1.1 Principles of medical ethics, including professional norms for protecting patient privacy and
+              confidentiality as per IMC Act shall be binding and must be upheld and practiced.
+
+      3.7.1.2 Registered Medical Practitioner would be required to fully abide by Indian Medical Council
+              (Professional conduct, Etiquette and Ethics) Regulations, 2002 and with the relevant
+              provisions of the IT Act, Data protection and privacy laws or any applicable rules notified
+              from time to time for protecting patient privacy and confidentiality and regarding the
+              handling and transfer of such personal information regarding the patient. This shall be
+              binding and must be upheld and practiced.
+
+      3.7.1.3 Registered Medical Practitioners will not be held responsible for breach of confidentiality if
+              there is a reasonable evidence to believe that patient’s privacy and confidentiality has been
+              compromised by a technology breach or by a person other than RMP. The RMPs should
+              ensure that reasonable degree of care undertaken during hiring such services.
+
+      3.7.1.4 Misconduct
+              It is specifically noted that in addition to all general requirements under the MCI Act for
+              professional conduct, ethics etc, while using telemedicine all actions that wilfully
+              compromise patient care or privacy and confidentiality, or violate any prevailing law are
+              explicitly not permissible.
+              Some examples of actions that are not permissible:
+               RMPs insisting on Telemedicine, when the patient is willing to travel to a facility and/or
+                   requests an in-person consultation
+               RMPs misusing patient images and data, especially private and sensitive in nature (e.g.
+                   RMP uploads an explicit picture of patient on social media etc)
+               RMPs who use telemedicine to prescribe medicines from the specific restricted list
+               RMPs are not permitted to solicit patients for telemedicine through any advertisements
+                   or inducements
+
+      3.7.1.5 Penalties: As per IMC Act, ethics and other prevailing laws.
+
+
+
+
+      3
+        It is the responsibility of the RMP to be cognizant of the current Data Protection and Privacy laws. RMP shall not breach
+      the patient’s confidentiality akin to an in-person consultation. For example: If the RMP is planning to create virtual support
+      group for disseminating health education for patients suffering from a particular disease condition then he/she shall be
+      wary of the patient’s willingness and not violate patient’s privacy and confidentiality by adding them to the group without
+      their consent.
+
+                                                              23
+3.7.2   MAINTAIN DIGITAL TRAIL/ DOCUMENTATION OF CONSULTATION
+        It is incumbent on RMP to maintain the following records/ documents for the period as prescribed
+from time to time:
+        3.7.2.1 Log or record of Telemedicine interaction (e.g. Phone logs, email records, chat/ text record,
+                video interaction logs etc.).
+        3.7.2.2 Patient records, reports, documents, images, diagnostics, data etc. (Digital or non-Digital)
+                utilized in the telemedicine consultation should be retained by the RMP.
+        3.7.2.3 Specifically, in case a prescription is shared with the patient, the RMP is required to maintain
+                the prescription records as required for in-person consultations.
+
+3.7.3   Fee for Telemedicine Consultation
+        3.7.3.1 Telemedicine consultations should be treated the same way as in-person consultations from
+                a fee perspective: RMP may charge an appropriate fee for the Telemedicine consultation
+                provided.
+        3.7.3.2 An RMP should also give a receipt/invoice for the fee charged for providing telemedicine-
+                based consultation.
+
+
+
+
+                                                      24
+4.      Framework for Telemedicine
+
+This section lays out the framework for practicing telemedicine in 5 scenarios:
+                   1. Patient to Registered Medical Practitioner
+                   2. Caregiver to Registered Medical Practitioner
+                   3. Health Worker to Registered Medical Practitioner
+                   4. Registered Medical Practitioner to Registered Medical Practitioner
+                   5. Emergency Situations
+
+        Essential Principles:
+                - The professional judgement of a Registered Medical Practitioner should be the guiding
+                     principle: an RMP is well positioned to decide whether a technology-based consultation
+                     is sufficient, or an in-person review is needed. Practitioner shall exercise proper
+                     discretion and not compromise on the quality of care
+                - Same principles apply irrespective of the mode (video, audio, text) used for a
+                     telemedicine consultation. However, the patient management and treatment can be
+                     different depending on the mode of communication used.
+                - RMP should exercise his/her professional discretion for the mode of communication
+                     depending on the type of medical condition. If a case requires a video consultation for
+                     examination, RMP should explicitly ask for it
+                - The RMP can choose not to proceed with the consultation at any time. At any step, the
+                     RMP may refer or request for an in-person consultation
+                - At any stage, the patient has the right to choose to discontinue the teleconsultation
+
+
+4.1     CONSULTATION BETWEEN PATIENT AND REGISTERED MEDICAL PRACTITIONER
+        Specifically, this section details with the key elements of the process of teleconsultation to be used
+        in the First consults and Follow up consults when a patient consults with an RMP.
+
+        In these 2 situations, the patient initiates telemedicine consultation and thereby consent is implied
+
+4.1.1   First Consult: Patient to Registered Medical Practitioner
+
+        4.1.1.1 First Consult means
+                         1. The patient is consulting with the RMP for the first time; or
+                         2. The patient has consulted with the RMP earlier, but more than 6 months have
+                             lapsed since the previous consultation; or
+                         3. The patient has consulted with the RMP earlier, but for a different health
+                             condition
+
+
+
+
+                                                     25
+       4.1.1.2 Tele-Consultation Process
+
+       The flow of the process is summarized in the Figure 1 and the steps are detailed below.
+
+       1.   Start of a Telemedicine Consultation for First Consult
+             o     The telemedicine consultation is initiated by the patient (For example, a patient may do
+                   an audio or video call with a RMP or send an email or text with a health query)
+             o     RMP accepts to undertake the consultation
+
+       2.   Patient identification and consent
+              o     RMP should confirm patient identity to his/her satisfaction by asking patient’s name,
+                    age, address, email ID, phone number or any other identification that may be reasonable
+              o     Telemedicine consultation should be initiated by the patient and thereby consent is
+                    implied
+
+
+       3.   Quick assessment:
+
+              o     The patient’s condition needs to be quickly assessed by the RMP based on available
+                    inputs and RMP uses his professional discretion if emergency care is needed, to decide
+                    if emergency care is needed.
+              o     If the condition of the patient merits emergency intervention, then advice for first aid/
+                    immediate relief is provided and guidance is provided for referral, as appropriate.
+
+If the condition does not merit an emergency intervention, the following steps are undertaken:
+
+       4.   Exchange of Information for Patient Evaluation
+              o    The RMP may ask the patient to provide relevant information (complaints, information
+                   about any other consults for the same problem, available investigation and medication
+                   details, if any). The patient shall be responsible for accuracy of information shared by
+                   him/her with the RMP.
+              o    If the RMP feels that the information provided at this stage is inadequate, then he/she
+                   shall request for additional information from the patient. This information may be
+                   shared in real time or shared later via email/text, as per the nature of such information.
+                   The consultation may be resumed at a rescheduled time after receipt of the additional
+                   information (this may include some laboratory or radiological tests). In the meantime,
+                   the RMP may provide health advice as appropriate.
+              o    If the RMP is satisfied that he/she has adequate patient information for offering a
+                   professional opinion, then he/she shall exercise one’s professional judgment for its
+                   suitability for management via telemedicine.
+              o    If the situation is NOT appropriate for further telemedicine consultation, then the RMP
+                   should provide Health advice/ Education as appropriate; and/or refer for in-person
+                   consultation.
+
+
+
+
+                                                     26
+        5.    Patient Management
+                 If the condition can be appropriately managed via telemedicine, then the RMP may take a
+                 professional judgement to either:
+                          o Provide Health Education as appropriate in the case; and/or
+                          o Provide Counseling related to specific clinical condition, including advice related
+                              to new investigations that need to be carried out before next consult; and/or
+                          o Provide specific treatment by prescribing medicines as in List O (which are over
+                              the counter drugs or others as notified). Additional medicines (as per List A) can
+                              also be prescribed if the ongoing tele-consultation is on video.
+
+
+
+
+4.1.2   Follow-up Consult: Patient to Registered Medical Practitioner
+
+        In a follow-up consultation, since the RMP-patient interaction has already taken place for the
+        specific medical condition under follow-up, there is already an understanding of the context, with
+        availability of previous records. This allows a more definitive and secure interaction between the
+        RMP and the patient.
+
+        4.1.2.1 Follow-Up Consult means
+                The patient is consulting with the RMP within 6 months of his/her previous in-person, and
+                this consultation is for continuation of care of the same health condition. Follow-up can be
+                in situations of a chronic disease or a treatment (e.g. renewal or change in medications)
+                when a face-to-face consultation is not necessary. Examples of such chronic diseases are:
+                asthma, diabetes, hypertension and epilepsy etc
+
+
+
+        4.1.2.2 Tele-Consultation Process
+
+        The flow of the process is summarized in Figure 2 and the steps are detailed below:
+
+             1. Start of a Telemedicine Consultation for Follow Up
+                    o Patient may initiate a follow up consult with a RMP for continuation of his/her
+                         ongoing treatment or for a new complaint or complication arising during the course
+                         of the ongoing treatment using any mode of communication. For e.g., the patient
+                         may do an audio or video call with a RMP or send him/her an email or text message
+                         with a specific health query
+                    o RMP accepts to undertake the consultation
+
+
+
+
+             2. Patient identification and consent
+                                                       27
+       o RMP should be reasonably convinced that he/she is communicating with the known
+         patient, for e.g. if the patient is communicating with RMP through the registered
+         phone number or registered email id
+      o If there is any doubt RMP can request the patient to reinitiate the conversation from
+         a registered phone number or email id or should confirm patient identity to his/her
+         satisfaction by asking patient’s name, age, address, email ID or phone number.
+         [Details in the section 3.2]
+    o Patient initiates the Telemedicine consultation and thereby consent is implied
+
+
+3. Quick Assessment for Emergency Condition
+      o If the patient presents with a complaint which the RMP identifies as an emergency
+          condition necessitating urgent care, the RMP would then advice for first aid to provide
+          immediate relief and guide for referral of the patient, as deemed necessary.
+
+4. In case of routine follow-up consultation, the following would be undertaken:
+       o If the RMP has access to previous records of the patient, he/ she may proceed with
+           continuation of care.
+       o RMP shall apply his/her professional discretion for type of consultation based on the
+           adequacy of patient information (history/examination findings/Investigation
+           reports/past records).
+       o If the RMP needs additional information, he/ she should seek the information
+           before proceeding and resume tele-consultation for later point in time.
+
+
+5. Patient Management
+       o If RMP is satisfied that he/she has access to adequate patient information and if the
+           condition can be appropriately managed by tele-consultation, he/she would go
+           ahead with the tele-management of the patient.
+
+       o   If the follow-up is for continuation of care, then the RMP may take a professional
+           judgement to either:
+            o Provide health education as appropriate in the case; or
+            o Provide counseling related to specific clinical condition including advice related
+                 to new investigations that need to be carried out before next consult;
+            o And/or Prescribe Medications. The medications could be either of the below:
+
+                    If the follow up is for continuation of care for the same medical condition,
+                     the RMP would re-prescribe original set of medications for a refill (List A of
+                     medications, which has been previously prescribed for the patient).
+
+
+
+
+                                          28
+                              If the RMP considers addition of a new drug, as an ‘add-on’ medication to
+                               optimize the underlying medical condition, then the RMP can prescribe
+                               medications listed under List B.
+
+                              If the follow-up consult is for a new minor ailment necessitating only ‘over
+                               the counter’ medications or those notified for this purpose, medications
+                               under List O can be prescribed.
+
+                              If the follow-up consult reveals new symptom pertaining to a different
+                               spectrum of disease, then the RMP would proceed with the condition as
+                               enunciated in the scenario for a first-time consultation (4.1.1).
+
+
+
+4.2   CONSULTATION BETWEEN PATIENT AND RMP THROUGH A CAREGIVER
+
+
+      4.2.1 For the purpose of these guidelines “Caregiver” could be a family member, or any person
+      authorized by the patient to represent the patient.
+
+      4.2.2 There could be two possible settings:
+
+          1. Patient is present with the Caregiver during the consultation.
+
+          2. Patient is not present with the Caregiver. This may be the case in the following:
+
+              2a. Patient is a minor (aged 16 or less) or the patient is incapacitated, for example, in medical
+              conditions like dementia or physical disability etc. The care giver is deemed to be authorized
+              to consult on behalf of the patient.
+
+              2b. Caregiver has a formal authorization or a verified document establishing his relationship
+              with the patient and/or has been verified by the patient in a previous in-person consult
+              (explicit consult).
+
+
+      In all of the above, the consult shall proceed as in the case of RMP and the patient (first or follow up
+      consult, vide 4.1)
+
+
+
+
+                                                    29
+4.2    CONSULTATION BETWEEN HEALTH WORKER AND RMP
+
+
+For the purpose of these guidelines, “Health worker” could be a Nurse, Allied Health Professional, Mid-
+Level Health Practitioner, ANM or any other health worker designated by an appropriate authority
+
+              Proposed Set up
+
+              o    This sub section will cover interaction between a Health Worker seeking consultation for
+                   a patient in a public or private health facility.
+              o    In a public health facility, the mid-level health practitioner at a Sub-center or Health and
+                   wellness center can initiate and coordinate the telemedicine consultation for the patient
+                   with a RMP at a higher center at district or State or National level. Health and Wellness
+                   centers are an integral part of comprehensive primary health care.
+              o    This setting will also include health camps, home visits, mobile medical units or any
+                   community-based interaction.
+
+              Tele-Consultation Process
+
+              The flow of the process is summarized in Figure 3 and the steps are detailed below:
+
+       1. Start of a Telemedicine Consultation through a Health Worker/RMP
+                 o The premise of this consultation is that a patient has been seen by the Health
+                      worker
+                 o In the judgment of the health worker, a tele-consultation with a RMP is required
+                 o Health Worker should obtain the patient’s informed consent
+                 o Health worker should explain potential use and limitations of a telemedicine
+                      consultation
+                 o He/she should also confirm patient identity by asking patient’s name, age, address,
+                      email ID, phone number or any other identification that may be reasonable
+                 o Health Worker initiates and facilitates the telemedicine consultation.
+
+       2. Patient Identification (by RMP)
+                 o RMP should confirm patient identity to his/her satisfaction by asking patient’s
+                     name, age, address, email ID, phone number or any other identification that may be
+                     reasonable
+                 o RMP should also make their identity known to the patient
+
+
+
+
+       3.   Patient Consent (by RMP):
+                  o RMP should confirm the patient’s consent to continue the consultation
+
+
+
+
+                                                     30
+        4. In case of Emergency,
+                  o The Health Worker would urgently communicate about the underlying medical
+                       condition of the patient to the RMP.
+                  o If based on information provided, if the RMP identifies it as an emergency condition
+                       necessitating urgent care, he/she should advice for first aid to be provided by the
+                       Health Worker for immediate relief and guide for referral of the patient, as deemed
+                       necessary.
+
+
+In case, the condition is not an emergency, the following steps would be taken:
+
+        5. Exchange of Information for Patient Evaluation (by RMP)
+                 o The Health Worker must give a detailed explanation of their health problems to the
+                     RMP which can be supplemented by additional information by the patient, if
+                     required.
+                 o The RMP shall apply his professional discretion for type and extent of patient
+                     information (history/examination findings/Investigation reports/past records)
+                     required to be able to exercise proper clinical judgement.
+                 o If the RMP feels that the information provided is inadequate, then he/she shall
+                     request for additional information. This information may be shared in real time or
+                     shared later via email/text, as per the nature of such information. For e.g., RMP may
+                     advice some laboratory or/and radiological tests for the patient. For such instances,
+                     the consult may be considered paused and can be resumed at the rescheduled time.
+                     RMP may provide health education as appropriate at any time.
+
+         6. Patient Management
+                   o Once the RMP is satisfied that the available patient information is adequate and
+                      that the case is appropriate for management via telemedicine, then he/she would
+                      proceed with the management. Health worker should document the same in
+                      his/her records.
+                   o The RMP may take a professional judgement to either:
+                       o Provide health education as appropriate in the case,
+                       o Provide counseling related to specific clinical condition including advice related
+                           to new investigations that need to be carried out before next consult;
+                       o And/or prescribe medications.
+                           as prescribed for use in guidelines from time to time for a particular cadre
+                              of Health Workers.
+
+
+
+                5.2 Role of Health Worker:
+
+In all cases of emergency, the Health Worker must seek measures for immediate relief and first-aid from
+the RMP who is being tele-consulted. Health worker must provide the immediate relief/first aid as advised
+by the RMP and facilitate the referral of the patient for appropriate care. The Health Worker must ensure
+that patient is advised for an in-person interaction with an RMP, at the earliest.
+
+                                                    31
+For patients who can be suitably managed via telemedicine, the Health Worker plays a vital role of
+
+                           Reinforcing the health education and counseling provided by the RMP
+                           Providing the medicine prescribed by the RMP and providing patient
+                            counseling on his/her treatment.
+
+4.4     REGISTERED MEDICAL PRACTITIONER TO ANOTHER RMP/ SPECIALIST                                         . .
+
+           Registered Medical Practitioner might use telemedicine services to consult with another RMP or
+            a specialist for a patient under his/her care. Such consultations can be initiated by a RMP on
+            his/her professional judgement.
+           The RMP asking for another RMP’s advice remains the treating RMP and shall be responsible for
+            treatment and other recommendations given to the patient.
+           It is acknowledged that many medical specialties like radiology, pathology, ophthalmology,
+            cardiology, dermatology etc. may be at advanced stages of adoption of technology for exchange
+            of information or some may be at early stage. Guidelines support and encourage interaction
+            between RMPs/ specialists using information technology for diagnosis, management and
+            prevention of disease.
+                o Tele-radiology is the ability to send radiographic images (x-rays, CT, MRI, PET/CT,
+                   SPECT/CT, MG, Ultrasound) from one location to another.
+                o Tele-pathology is use of technology to transfer image-rich pathology data between
+                   distant locations for the purposes of diagnosis, education, and research.
+                o Tele-ophthalmology access to eye specialists for patients in remote areas, ophthalmic
+                   disease screening, diagnosis and monitoring.
+
+
+
+
+4.5     EMERGENCY SITUATIONS                                                                               . .
+
+
+        In all telemedicine consultations, as per the judgment of the RMP, if it is an emergency situation, the
+        goal and objective should be to provide in-person care at the soonest. However critical steps could
+        be life-saving and guidance and counseling could be critical. For example, in cases involving trauma,
+        right advice and guidance around maintaining the neck position might protect the spine in some
+        cases. The guidelines are designed to provide a balanced approach in such conditions. The RMP,
+        based on his/ her professional discretion may
+
+               o Advise first aid
+               o Counseling
+               o Facilitate referral
+
+        In all cases of emergency, the patient MUST be advised for an in-person interaction with a
+        Registered Medical Practitioner at the earliest
+
+                                                      32
+5. Guidelines for Technology Platforms enabling Telemedicine
+      This specifically covers those technology platforms which work across a network of Registered
+      medical practitioners and enable patients to consult with RMPs through the platform
+
+5.1   Technology platforms (mobile apps, websites etc.) providing telemedicine services to consumers
+      shall be obligated to ensure that the consumers are consulting with Registered medical practitioners
+      duly registered with national medical councils or respective state medical council and comply with
+      relevant provisions
+
+5.2   Technology Platforms shall conduct their due diligence before listing any RMP on its online portal.
+      Platform must provide the name, qualification and registration number, contact details of every
+      RMP listed on the platform
+
+5.3   In the event some non-compliance is noted, the technology platform shall be required to report the
+      same to BoG, in supersession to MCI who may take appropriate action
+
+5.4   Technology platforms based on Artificial Intelligence/Machine Learning are not allowed to counsel
+      the patients or prescribe any medicines to a patient. Only a RMP is entitled to counsel or prescribe
+      and has to directly communicate with the patient in this regard. While new technologies such as
+      Artificial Intelligence, Internet of Things, advanced data science-based decision support systems etc.
+      could assist and support a RMP on patient evaluation, diagnosis or management, the final
+      prescription or counseling has to be directly delivered by the RMP
+
+5.6   Technology Platform must ensure that there is a proper mechanism in place to address any queries
+      or grievances that the end-customer may have
+
+5.7   In case any specific technology platform is found in violation, BoG, MCI may designate the technology
+      platform as blacklisted, and no RMP may then use that platform to provide telemedicine
+
+
+
+
+                                                   33
+6. Special responsibilities of Board of Governors in supersession to
+Medical Council of India (BoG-MCI)
+
+6.1 Any of the drug-lists contained in Telemedicine Practice Guidelines can be modified by the Board of
+Governors in super-session of the Medical Council of India/Medical Council of India from time to time, as
+required.
+
+6.2 The Board of Governors in super-session of the Medical Council of India may issue necessary directions
+or advisories or clarifications in regard to these Guidelines, as required.
+
+6.3 The Telemedicine Practice Guidelines can be amended from time to time in larger public interest with
+the prior approval of Central Government [Ministry of Health and Family Welfare, Government of India].
+
+
+
+
+                                                   34
+Flow charts
+
+
+
+
+     35
+This page is intentionally left blank
+
+
+
+
+            36
+                           37
+Figure 1: Flow chart for teleconsultation for first consult
+This page is intentionally left blank
+
+
+
+
+          38
+Figure 2: Flow Chart for teleconsultation on follow-up Consult
+
+
+
+
+                               39
+This page is intentionally left blank
+
+
+
+
+             40
+Figure 3: Flow chart for a teleconsultation between a Health Worker (HW)
+                  and a Registered41Medical Practitioner
+This page is intentionally left blank
+
+
+
+
+             42
+Annexures
+
+
+
+
+    43
+This page is intentionally left blank
+
+
+
+
+              44
+                                                                                       Annexure 1
+    MEDICINE LISTS                                                                                    .
+
+
+    List O
+
+   Common over-the counter medications such as
+       o Antipyretics: Paracetamol
+       o Cough Supplements: Lozenges,
+       o Cough/ Common-cold medications (such as combinations of Acetylcysteine, Ammonium
+         Chloride, Guaifensen, Ambroxol, Bromhexene, Dextromethorphan)
+       o ORS Packets
+       o Syrup Zinc
+       o Supplements: Iron & Folic Acid tablets, Vitamin D, Calcium supplements
+       o Etc
+
+   Medications notified by Government of India in case from time to time on an Emergency basis
+      o Such as Chloroquine for Malaria control for a specific endemic region, when notified by
+           Government
+
+    List A
+
+   First Consult Medications (Diagnosis done on video mode of consultation) such as
+        o Ointments/Lotion for skin ailments: Ointments Clotrimazole, Mupirocin, Calamine Lotion,
+            Benzyl Benzoate Lotion etc
+        o Local Ophthalmological drops such as: Ciprofloxacillin for Conjunctivitis, etc
+        o Local Ear Drops such as: Clotrimazole ear drops, drops for ear wax etc..
+        o Follow-up consult for above medications
+
+   Follow-up medications for chronic illnesses for ‘re-fill’ (on any mode of consultation) such as
+    medications for
+        o Hypertension: Enalapril, Atenolol etc
+        o Diabetes: Metformin, Glibenclamide etc
+        o Asthma: Salmetrol inhaler etc
+        o Etc
+
+    List B
+   On follow-up, medications prescribed as ‘Add-on’ to ongoing chronic medications to optimize
+    management such as for hYpertension: Eg, add-on of Thiazide diuretic with Atenolol
+         o Diabetes: Addition of Sitagliptin to Metformin
+         o Etc
+
+
+
+
+                                                45
+This page is intentionally left blank
+
+
+
+
+                 46
+                                        Annexure 2
+6.1   SAMPLE PRESCRIPTION FORMAT                 .
+
+
+
+
+                                   47
+This page is intentionally left blank
+
+
+
+
+               48
+
