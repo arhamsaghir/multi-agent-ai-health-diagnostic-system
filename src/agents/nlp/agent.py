@@ -1,13 +1,16 @@
-"""NLP Symptom Agent — BioBERT-based symptom extraction and NER.
+"""NLP Symptom Agent — clinical symptom, entity and intent extraction.
 
-Extracts medical entities, symptoms, body systems, severity indicators,
-and intent from free-text symptom descriptions.
+Symptom extraction runs on deterministic clinical patterns by default and can
+be extended with a biomedical NER model (see ``settings.enable_biobert_ner``).
+Both paths feed the same downstream contract, so the pipeline degrades to the
+pattern extractor whenever the model is unavailable.
 """
 
 from typing import Any
 import re
 from loguru import logger
 
+from config import settings
 from src.agents.base import BaseAgent
 from src.data.preprocessing.text_preprocessor import TextPreprocessor
 
@@ -16,14 +19,14 @@ class NLPAgent(BaseAgent):
     """NLP agent for symptom text analysis."""
 
     name = "nlp_agent"
-    description = "BERT / BioBERT — Symptom NER and intent classification"
+    description = "Clinical NLP — symptom/entity extraction and intent classification"
 
     # Pattern-based symptom extraction by body system/category
     SYMPTOM_PATTERNS = {
-        "respiratory": r'\b(cough|wheez[eio]+ing|shortness of breath|difficulty breathing|trouble breathing|rapid breathing|shallow breathing|chest tightness|runny nose|nasal congestion|sneezing|postnasal drip|hemoptysis|coughing up blood|productive cough|dry cough|barking cough|whooping cough)\b',
+        "respiratory": r'\b(cough|wheez(?:e|ing)|shortness of breath|difficulty breathing|trouble breathing|rapid breathing|shallow breathing|chest tightness|runny nose|nasal congestion|sneezing|postnasal drip|hemoptysis|coughing up blood|productive cough|dry cough|barking cough|whooping cough)\b',
         "cardiovascular": r'\b(chest pain|chest pressure|heart palpitations|irregular heartbeat|rapid heartbeat|skipped beats|swollen ankles|swollen legs|leg swelling|edema|orthopnea|paroxysmal nocturnal dyspnea|angina|heart murmur)\b',
         "gastrointestinal": r'\b(nausea|vomiting|diarrhea|constipation|abdominal pain|stomach pain|belly pain|bloating|heartburn|acid reflux|indigestion|loss of appetite|decreased appetite|bloody stool|black stool|jaundice|yellow skin|yellow eyes)\b',
-        "neurological": r'\b(headache|migraine|dizzin ess|vertigo|fainting|syncope|numbness|tingling|pins and needles|tremor|seizure|confusion|memory loss|difficulty concentrating|brain fog|slurred speech|weakness on one side|paralysis)\b',
+        "neurological": r'\b(headache|migraine|dizziness|vertigo|fainting|syncope|numbness|tingling|pins and needles|tremor|seizure|confusion|memory loss|difficulty concentrating|brain fog|slurred speech|weakness on one side|paralysis)\b',
         "musculoskeletal": r'\b(back pain|joint pain|muscle pain|muscle ache|body ache|stiff joints|swollen joints|limited range of motion|muscle cramp|muscle spasm|neck pain|shoulder pain|hip pain|knee pain|lower back pain)\b',
         "dermatological": r'\b(rash|itching|hives|skin discoloration|bruising|dry skin|flaky skin|blister|boil|skin lesion|mole change|hair loss|nail changes|skin peeling|eczema|psoriasis)\b',
         "constitutional": r'\b(fever|chills|fatigue|tired|exhaustion|weight loss|weight gain|night sweats|swollen lymph nodes|swollen glands|malaise|cold intolerance|heat intolerance|excessive thirst|excessive hunger)\b',
@@ -33,22 +36,36 @@ class NLPAgent(BaseAgent):
         "ophthalmological": r'\b(blurred vision|double vision|eye pain|red eyes|dry eyes|watery eyes|sensitivity to light|eye discharge|floaters|flashes of light|vision loss|halos around lights)\b',
     }
 
-    # Body system keywords for contextual detection
+    # Body system keywords for contextual detection. Forms that are not
+    # simple suffix variants of a base word ("headache", "arteries",
+    # "heartburn") are listed explicitly, because whole-word matching would
+    # otherwise miss them.
     BODY_SYSTEMS = {
-        "respiratory": ["lung", "breath", "cough", "wheeze", "pneumonia", "asthma", "bronchitis", "airway", "trachea", "oxygen"],
-        "cardiovascular": ["heart", "blood pressure", "pulse", "artery", "vein", "circulation", "cardiac", "angina", "cholesterol"],
-        "gastrointestinal": ["stomach", "digestion", "bowel", "liver", "intestine", "colon", "gastric", "esophagus", "appendix"],
-        "neurological": ["brain", "nerve", "head", "cognitive", "seizure", "consciousness", "memory", "reflex", "spinal cord"],
+        "respiratory": ["lung", "breath", "breathing", "breathless", "cough", "wheeze", "pneumonia", "asthma", "bronchitis", "airway", "trachea", "oxygen"],
+        "cardiovascular": ["heart", "heartbeat", "palpitation", "blood pressure", "pulse", "artery", "arteries", "vein", "circulation", "cardiac", "angina", "cholesterol"],
+        "gastrointestinal": ["stomach", "heartburn", "digestion", "bowel", "liver", "intestine", "colon", "gastric", "esophagus", "appendix"],
+        "neurological": ["brain", "nerve", "head", "headache", "migraine", "vertigo", "cognitive", "seizure", "consciousness", "memory", "reflex", "spinal cord"],
         "musculoskeletal": ["bone", "muscle", "joint", "skeleton", "cartilage", "ligament", "tendon", "spine", "posture"],
         "dermatological": ["skin", "dermal", "epidermal", "rash", "lesion", "mole", "pigment", "dermatitis"],
         "endocrine": ["hormone", "thyroid", "insulin", "diabetes", "gland", "blood sugar", "metabolic", "cortisol"],
         "urinary": ["kidney", "bladder", "urine", "urinary", "renal", "ureter", "dialysis", "prostate"],
-        "reproductive": ["menstrual", "pregnancy", "ovary", "testicular", "prostate", "fertility", "contraception"],
+        "reproductive": ["menstrual", "pregnancy", "ovary", "ovaries", "testicular", "prostate", "fertility", "contraception"],
         "psychiatric": ["mood", "anxiety", "depression", "mental health", "psychological", "emotional", "stress", "trauma"],
-        "immune": ["immune", "infection", "inflammation", "autoimmune", "allergy", "antibody", "fever", "white blood cell"],
+        "immune": ["immune", "infection", "inflammation", "autoimmune", "allergy", "allergies", "antibody", "fever", "white blood cell"],
         "ENT": ["ear", "nose", "throat", "sinus", "hearing", "tongue", "tonsil", "larynx", "pharynx"],
         "ophthalmological": ["eye", "vision", "retina", "pupil", "cornea", "lens", "optic", "sight"],
         "hematological": ["blood", "anemia", "hemoglobin", "clot", "platelet", "bleeding", "bruise", "hematocrit"],
+    }
+
+    # Compiled word-boundary matchers so "ear" cannot match inside "heart".
+    # A small suffix set is allowed so inflected forms still match
+    # ("breath" covers "breathe" and "breathing").
+    BODY_SYSTEM_PATTERNS = {
+        system: [
+            re.compile(rf"\b{re.escape(kw)}(?:s|es|ing|ed|e)?\b")
+            for kw in keywords
+        ]
+        for system, keywords in BODY_SYSTEMS.items()
     }
 
     def __init__(self):
@@ -58,23 +75,79 @@ class NLPAgent(BaseAgent):
         self.tokenizer = None
         self._model_loaded = False
         self._load_attempted = False
-        # Don't load BioBERT at init — lazy load on first use
+        self._load_error = None
+        # Don't load the NER model at init — lazy load on first use
 
     def _try_load_biobert(self):
-        """Attempt to load BioBERT, fall back to pattern matching."""
+        """Load the optional biomedical NER model, if enabled and reachable.
+
+        The deterministic pattern extractor is the default path. When
+        ``ENABLE_BIOBERT_NER`` is set, a token-classification checkpoint is
+        loaded and its entities are merged with the pattern entities; any
+        failure falls back to patterns alone.
+        """
         if self._load_attempted:
             return
-        
+
         self._load_attempted = True
+        if not settings.enable_biobert_ner:
+            return
+
         try:
             from transformers import AutoTokenizer, AutoModelForTokenClassification
-            self.tokenizer = AutoTokenizer.from_pretrained("dmis-lab/biobert-v1.1")
-            self.model = AutoModelForTokenClassification.from_pretrained("dmis-lab/biobert-v1.1")
+            self.tokenizer = AutoTokenizer.from_pretrained(settings.biobert_model_id)
+            self.model = AutoModelForTokenClassification.from_pretrained(settings.biobert_model_id)
             self._model_loaded = True
-            self.log("info", "BioBERT model loaded successfully")
+            self.log("info", f"NER model loaded: {settings.biobert_model_id}")
         except Exception as e:
             self._load_error = str(e)
-            self.log("warning", f"BioBERT not available, using pattern matching: {e}")
+            self.log("warning", f"NER model unavailable, using deterministic extraction: {e}")
+
+    def _extract_biobert_entities(self, text: str) -> list[dict]:
+        """Extract biomedical named entities with the NER model.
+
+        Returns an empty list when the model is not loaded or inference fails,
+        so the caller always has the pattern entities as a floor.
+        """
+        if not self._model_loaded or self.model is None or self.tokenizer is None:
+            return []
+
+        try:
+            import torch
+
+            inputs = self.tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
+            with torch.no_grad():
+                logits = self.model(**inputs).logits
+            predictions = torch.argmax(logits, dim=-1)[0].tolist()
+            tokens = self.tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
+            id2label = self.model.config.id2label
+
+            entities: list[dict] = []
+            current: dict | None = None
+            for token, pred_id in zip(tokens, predictions):
+                label = id2label[pred_id]
+                if token in self.tokenizer.all_special_tokens:
+                    if current:
+                        entities.append(current)
+                        current = None
+                    continue
+                if label.startswith("B-"):
+                    if current:
+                        entities.append(current)
+                    current = {"type": label[2:].lower(), "value": token}
+                elif label.startswith("I-") and current:
+                    current["value"] += token.replace("##", "")
+                else:
+                    if current:
+                        entities.append(current)
+                        current = None
+            if current:
+                entities.append(current)
+
+            return [e for e in entities if e["value"].strip()]
+        except Exception as e:
+            self.log("warning", f"NER extraction failed, falling back to patterns: {e}")
+            return []
 
     async def run(self, input_data: dict) -> dict:
         """Extract symptoms, entities, and intent from text.
@@ -101,6 +174,7 @@ class NLPAgent(BaseAgent):
 
         symptoms = self._extract_symptoms(normalized_text)
         entities = self._extract_entities(normalized_text)
+        entities.extend(self._extract_biobert_entities(normalized_text))
         body_systems = self._detect_body_systems(normalized_text)
         intent = self._classify_intent(normalized_text)
 
@@ -121,6 +195,7 @@ class NLPAgent(BaseAgent):
             "intent": intent,
             "duration": duration,
             "preprocessed": processed,
+            "extractor": "ner_model" if self._model_loaded else "deterministic_patterns",
             "agent": self.name,
         }
 
@@ -164,12 +239,16 @@ class NLPAgent(BaseAgent):
         return entities
 
     def _detect_body_systems(self, text: str) -> list[str]:
-        """Detect which body systems are referenced."""
-        systems = []
-        for system, keywords in self.BODY_SYSTEMS.items():
-            if any(kw in text for kw in keywords):
-                systems.append(system)
-        return systems
+        """Detect which body systems are referenced.
+
+        Matching is word-boundary based so a keyword never matches inside an
+        unrelated word (e.g. "ear" inside "heart").
+        """
+        return [
+            system
+            for system, patterns in self.BODY_SYSTEM_PATTERNS.items()
+            if any(pattern.search(text) for pattern in patterns)
+        ]
 
     def _assess_severity(self, text: str) -> str:
         """Assess symptom severity from language cues."""

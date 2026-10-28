@@ -9,6 +9,8 @@ import asyncio
 from loguru import logger
 
 from src.agents.orchestrator.agent import OrchestratorAgent
+from src.core.disease_kb import DISEASE_DATABASE
+from src.utils.redaction import safe_error
 
 router = APIRouter(prefix="/diagnosis", tags=["diagnosis"])
 
@@ -40,9 +42,13 @@ def _ensure_explanation_flavors(synthesis: dict) -> dict:
 
 
 class DiagnosisRequest(BaseModel):
-    """Request body for diagnostic analysis."""
+    """Request body for diagnostic analysis.
+
+    Image input is not accepted here: the server-side upload endpoints
+    (``/analyze-with-image``, ``/vision/analyze``) own the file path so a
+    client can never point the pipeline at an arbitrary filesystem path.
+    """
     text: str = Field(..., description="Symptom description in natural language")
-    image_path: Optional[str] = Field(None, description="Path to uploaded medical image")
     patient_history: Optional[dict] = Field(None, description="Patient demographics and history")
     language: Optional[str] = Field(None, description="Target language for response (e.g., 'hi' for Hindi)")
 
@@ -80,31 +86,40 @@ class DiagnosisResponse(BaseModel):
 
 @router.post("/analyze", response_model=DiagnosisResponse)
 async def analyze_symptoms(request: DiagnosisRequest):
-    """Run full diagnostic analysis on symptom text and optional image.
+    """Run full diagnostic analysis on symptom text.
 
     This endpoint:
     1. Detects input language and translates to English if needed
-    2. Extracts symptoms using NLP (BioBERT)
+    2. Extracts symptoms using the clinical NLP agent
     3. Retrieves relevant medical knowledge (RAG + FAISS)
-    4. Assesses disease risk (XGBoost/rule-based)
-    5. Analyzes uploaded image if provided (ResNet-50)
-    6. Synthesizes all findings into a diagnostic report (Gemini 1.5 Flash)
-    7. Translates results back to input language if needed
+    4. Assesses disease risk (GradientBoosting / rule-based)
+    5. Synthesizes all findings into a diagnostic report (LLM or rule-based)
+    6. Translates results back to input language if needed
+
+    Image input is not accepted here; use ``/analyze-with-image`` or
+    ``/api/vision/analyze`` so the server owns the file path.
     """
     try:
         return await run_analysis(request)
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Diagnosis analysis failed: {e}")
+        logger.error(f"Diagnosis analysis failed: {safe_error(e, request.text)}")
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
 
 
-async def run_analysis(request: DiagnosisRequest, progress_cb=None) -> DiagnosisResponse:
+async def run_analysis(
+    request: DiagnosisRequest,
+    progress_cb=None,
+    image_path: Optional[str] = None,
+) -> DiagnosisResponse:
     """Core analysis pipeline shared by /analyze and /analyze-stream.
 
     Extracted as a helper so the SSE route can pass a progress callback
     through to the orchestrator without duplicating the endpoint logic.
+
+    ``image_path`` is server-owned (upload endpoints set it); it is never read
+    from the client request body.
     """
     # Language detection
     from src.utils.language_detector import detect_language, is_multilingual
@@ -124,7 +139,7 @@ async def run_analysis(request: DiagnosisRequest, progress_cb=None) -> Diagnosis
 
     input_data = {
         "text": processing_text,
-        "image_path": request.image_path,
+        "image_path": image_path,
         "patient_history": request.patient_history,
     }
 
@@ -154,7 +169,7 @@ async def run_analysis(request: DiagnosisRequest, progress_cb=None) -> Diagnosis
             user_input=request.text,
             symptoms=symptoms,
             patient_history=request.patient_history,
-            image_path=request.image_path,
+            image_path=image_path,
         )
 
         # Persist individual detected conditions
@@ -541,7 +556,7 @@ async def analyze_with_image(
             "disclaimer": synthesis.get("disclaimer", ""),
         }
     except Exception as e:
-        logger.error(f"Analysis with image failed: {e}")
+        logger.error(f"Analysis with image failed: {safe_error(e, text)}")
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
     finally:
         # Clean up temp image
@@ -552,128 +567,6 @@ async def analyze_with_image(
                 pass
 
 
-DISEASE_DATABASE = {
-    "upper respiratory infection": {
-        "name": "Upper Respiratory Infection",
-        "icd10": "J06.9",
-        "description": "Acute infection of the upper airway including nose, sinuses, pharynx, and larynx. Most commonly viral and self-limiting.",
-        "symptoms": ["Runny nose", "Nasal congestion", "Sore throat", "Cough", "Sneezing", "Mild fever", "Headache"],
-        "causes": ["Rhinovirus", "Coronavirus", "Adenovirus", "Respiratory syncytial virus", "Influenza virus"],
-        "risk_factors": ["Close contact with infected individuals", "Weakened immune system", "Smoking", "Allergies", "Seasonal changes"],
-        "treatment": ["Rest and hydration", "Over-the-counter analgesics (acetaminophen, ibuprofen)", "Saline nasal spray", "Decongestants", "Throat lozenges"],
-        "when_to_see_doctor": ["Symptoms lasting more than 10 days", "Fever above 102°F (38.9°C)", "Difficulty breathing", "Severe sore throat with white patches", "Symptoms worsening after initial improvement"],
-        "prognosis": "Excellent. Most cases resolve within 7-10 days without complications.",
-        "prevention": ["Frequent handwashing", "Avoid close contact with sick individuals", "Don't touch face with unwashed hands", "Annual flu vaccination"],
-    },
-    "pneumonia": {
-        "name": "Pneumonia",
-        "icd10": "J18.9",
-        "description": "Acute infection of the pulmonary parenchyma causing inflammation and fluid accumulation in the alveoli.",
-        "symptoms": ["Productive cough", "Fever and chills", "Shortness of breath", "Chest pain when breathing", "Fatigue", "Nausea", "Confusion (elderly)"],
-        "causes": ["Streptococcus pneumoniae", "Haemophilus influenzae", "Mycoplasma pneumoniae", "Viral pathogens", "Fungal organisms"],
-        "risk_factors": ["Age >65 or <2", "Smoking", "Chronic lung disease", "Weakened immune system", "Recent viral infection", "Hospitalization"],
-        "treatment": ["Antibiotics (bacterial)", "Antiviral medications (viral)", "Rest and fluids", "Fever reducers", "Hospitalization for severe cases"],
-        "when_to_see_doctor": ["Difficulty breathing", "Chest pain", "Persistent fever above 102°F", "Coughing up blood", "Confusion or altered mental state"],
-        "prognosis": "Good with prompt treatment. Recovery typically takes 1-3 weeks. Higher risk in elderly and immunocompromised.",
-        "prevention": ["Pneumococcal vaccination", "Annual flu vaccine", "Hand hygiene", "Don't smoke", "Maintain healthy immune system"],
-    },
-    "type 2 diabetes": {
-        "name": "Type 2 Diabetes Mellitus",
-        "icd10": "E11.9",
-        "description": "Chronic metabolic disorder characterized by insulin resistance and relative insulin deficiency, leading to elevated blood glucose levels.",
-        "symptoms": ["Excessive thirst (polydipsia)", "Frequent urination (polyuria)", "Fatigue", "Blurred vision", "Slow wound healing", "Unexplained weight loss", "Tingling in extremities"],
-        "causes": ["Insulin resistance", "Genetic predisposition", "Obesity", "Sedentary lifestyle", "Pancreatic beta-cell dysfunction"],
-        "risk_factors": ["Age >45", "Overweight/obesity", "Family history", "Sedentary lifestyle", "Gestational diabetes history", "Polycystic ovary syndrome", "Certain ethnicities"],
-        "treatment": ["Lifestyle modifications (diet, exercise)", "Metformin (first-line)", "Other oral medications (SGLT2 inhibitors, DPP-4 inhibitors)", "Insulin therapy if needed", "Regular blood glucose monitoring"],
-        "when_to_see_doctor": ["Excessive thirst and urination", "Unexplained weight loss", "Blurred vision", "Slow-healing sores", "Frequent infections"],
-        "prognosis": "Manageable with proper treatment. Poor control leads to complications: neuropathy, retinopathy, nephropathy, cardiovascular disease.",
-        "prevention": ["Maintain healthy weight", "Regular physical activity", "Balanced diet", "Regular screening if high risk"],
-    },
-    "cardiovascular disease": {
-        "name": "Cardiovascular Disease",
-        "icd10": "I25.9",
-        "description": "Broad category of disorders affecting the heart and blood vessels, including coronary artery disease, heart failure, and arrhythmias.",
-        "symptoms": ["Chest pain or pressure", "Shortness of breath", "Pain radiating to arm/jaw", "Fatigue", "Dizziness", "Swelling in legs", "Palpitations"],
-        "causes": ["Atherosclerosis", "High blood pressure", "High cholesterol", "Blood clots", "Coronary artery damage"],
-        "risk_factors": ["Hypertension", "High cholesterol", "Smoking", "Diabetes", "Obesity", "Family history", "Sedentary lifestyle", "Age >55 (male) / >65 (female)"],
-        "treatment": ["Lifestyle changes (diet, exercise)", "Statins for cholesterol", "Blood pressure medications", "Antiplatelet therapy", "Surgical interventions if needed"],
-        "when_to_see_doctor": ["Chest pain or pressure", "Shortness of breath at rest", "Pain radiating to arm or jaw", "Sudden dizziness or fainting", "Rapid or irregular heartbeat"],
-        "prognosis": "Varies by condition. Early detection and treatment significantly improve outcomes. Leading cause of death worldwide.",
-        "prevention": ["Don't smoke", "Regular exercise", "Healthy diet", "Manage blood pressure and cholesterol", "Control diabetes", "Maintain healthy weight"],
-    },
-    "migraine": {
-        "name": "Migraine",
-        "icd10": "G43.9",
-        "description": "Recurrent primary headache disorder characterized by moderate to severe throbbing pain, often unilateral, with associated neurological symptoms.",
-        "symptoms": ["Throbbing headache", "Nausea and vomiting", "Sensitivity to light", "Sensitivity to sound", "Visual aura", "Dizziness", "Fatigue after attack"],
-        "causes": ["Neurological disorder", "Genetic predisposition", "Neurotransmitter imbalances", "Blood vessel changes", "Trigeminal nerve activation"],
-        "risk_factors": ["Family history", "Female sex", "Hormonal changes", "Stress", "Sleep disturbances", "Certain foods"],
-        "treatment": ["Acute: triptans, NSAIDs", "Preventive: beta-blockers, anticonvulsants, CGRP inhibitors", "Lifestyle modifications", "Trigger avoidance", "Botox for chronic migraines"],
-        "when_to_see_doctor": ["Sudden severe headache (thunderclap)", "Headache with fever, stiff neck", "New headaches after age 50", "Headache after head injury", "Headaches that worsen over time"],
-        "prognosis": "Chronic but manageable. Many patients experience improvement with age. Quality of life can be significantly impacted without proper treatment.",
-        "prevention": ["Identify and avoid triggers", "Regular sleep schedule", "Stress management", "Regular exercise", "Adequate hydration"],
-    },
-    "gastroenteritis": {
-        "name": "Acute Gastroenteritis",
-        "icd10": "K52.9",
-        "description": "Inflammation of the stomach and intestines causing diarrhea, vomiting, and abdominal pain. Usually viral and self-limiting.",
-        "symptoms": ["Diarrhea", "Nausea and vomiting", "Abdominal cramps", "Low-grade fever", "Dehydration", "Loss of appetite", "Muscle aches"],
-        "causes": ["Norovirus", "Rotavirus", "Salmonella", "Campylobacter", "E. coli", "Giardia"],
-        "risk_factors": ["Contaminated food/water", "Close contact with infected person", "Poor hygiene", "Travel to endemic areas", "Weakened immune system"],
-        "treatment": ["Oral rehydration therapy", "Rest", "BRAT diet (bananas, rice, applesauce, toast)", "Anti-nausea medications", "Antibiotics only for bacterial cases"],
-        "when_to_see_doctor": ["Signs of dehydration", "Blood in stool", "Fever above 102°F", "Vomiting lasting more than 2 days", "Severe abdominal pain"],
-        "prognosis": "Excellent. Most cases resolve within 3-7 days. Dehydration is the main complication risk.",
-        "prevention": ["Frequent handwashing", "Food safety practices", "Safe water sources", "Avoid close contact with infected individuals", "Vaccination (rotavirus for children)"],
-    },
-    "asthma": {
-        "name": "Asthma",
-        "icd10": "J45.9",
-        "description": "Chronic inflammatory disease of the airways causing recurrent episodes of wheezing, breathlessness, chest tightness, and coughing.",
-        "symptoms": ["Wheezing", "Shortness of breath", "Chest tightness", "Coughing (especially at night)", "Difficulty exercising", "Rapid breathing"],
-        "causes": ["Airway inflammation", "Bronchial hyperresponsiveness", "Genetic predisposition", "Environmental triggers", "Allergic reactions"],
-        "risk_factors": ["Family history of asthma", "Allergies", "Childhood respiratory infections", "Exposure to air pollution", "Obesity", "Smoking"],
-        "treatment": ["Quick-relief inhalers (albuterol)", "Inhaled corticosteroids", "Long-acting bronchodilators", "Leukotriene modifiers", "Allergy medications"],
-        "when_to_see_doctor": ["Frequent asthma attacks", "Using rescue inhaler more than twice weekly", "Wheezing that doesn't improve", "Difficulty speaking due to breathlessness", "Peak flow readings consistently low"],
-        "prognosis": "Good with proper management. Many children outgrow symptoms. Adults typically have lifelong condition requiring ongoing management.",
-        "prevention": ["Avoid known triggers", "Use preventive medications as prescribed", "Regular monitoring", "Create an asthma action plan", "Annual flu vaccination"],
-    },
-    "hypertension": {
-        "name": "Hypertension (High Blood Pressure)",
-        "icd10": "I10",
-        "description": "Chronic condition where blood pressure in the arteries is persistently elevated, increasing risk of cardiovascular disease, stroke, and kidney disease.",
-        "symptoms": ["Usually asymptomatic", "Headaches (severe cases)", "Shortness of breath", "Nosebleeds", "Flushing", "Dizziness", "Chest pain"],
-        "causes": ["Primary: unknown (90-95%)", "Secondary: kidney disease, hormonal disorders", "Narrowed arteries", "Increased blood volume"],
-        "risk_factors": ["Age >60", "Family history", "Obesity", "High sodium diet", "Excessive alcohol", "Sedentary lifestyle", "Stress", "Smoking"],
-        "treatment": ["Lifestyle changes (DASH diet, exercise)", "ACE inhibitors", "Calcium channel blockers", "Diuretics", "ARBs", "Beta-blockers"],
-        "when_to_see_doctor": ["Blood pressure consistently above 130/80", "Headaches with elevated BP", "Vision changes", "Chest pain", "Blood pressure above 180/120 (emergency)"],
-        "prognosis": "Lifelong condition requiring ongoing management. Well-controlled hypertension significantly reduces complication risk.",
-        "prevention": ["Healthy diet (low sodium)", "Regular exercise", "Maintain healthy weight", "Limit alcohol", "Don't smoke", "Manage stress", "Regular BP monitoring"],
-    },
-    "anxiety disorder": {
-        "name": "Anxiety Disorder",
-        "icd10": "F41.9",
-        "description": "Mental health disorder characterized by excessive worry, fear, and physical symptoms that interfere with daily activities.",
-        "symptoms": ["Excessive worry", "Restlessness", "Fatigue", "Difficulty concentrating", "Sleep disturbances", "Rapid heartbeat", "Muscle tension", "Trembling"],
-        "causes": ["Neurotransmitter imbalances", "Genetic factors", "Environmental stress", "Traumatic experiences", "Medical conditions"],
-        "risk_factors": ["Family history", "Traumatic experiences", "Chronic stress", "Other mental health conditions", "Substance use", "Female sex"],
-        "treatment": ["Cognitive behavioral therapy", "SSRIs/SNRIs", "Benzodiazepines (short-term)", "Relaxation techniques", "Exercise", "Mindfulness meditation"],
-        "when_to_see_doctor": ["Worry interfering with daily life", "Panic attacks", "Physical symptoms without medical cause", "Sleep disturbances", "Avoidance behavior"],
-        "prognosis": "Good with treatment. Many people achieve significant improvement with therapy and/or medication. Untreated anxiety can worsen over time.",
-        "prevention": ["Stress management", "Regular exercise", "Adequate sleep", "Limit caffeine and alcohol", "Seek help early"],
-    },
-    "urinary tract infection": {
-        "name": "Urinary Tract Infection",
-        "icd10": "N39.0",
-        "description": "Infection in any part of the urinary system (kidneys, bladder, ureters, urethra). Most commonly affects the lower tract.",
-        "symptoms": ["Burning during urination", "Frequent urge to urinate", "Cloudy or strong-smelling urine", "Pelvic pain", "Blood in urine", "Low-grade fever"],
-        "causes": ["E. coli (most common)", "Other bacteria entering urinary tract", "Sexual activity", "Anatomical factors", "Catheter use"],
-        "risk_factors": ["Female anatomy", "Sexual activity", "Menopause", "Urinary tract abnormalities", "Kidney stones", "Weakened immune system", "Catheter use"],
-        "treatment": ["Antibiotics (nitrofurantoin, trimethoprim, ciprofloxacin)", "Increased fluid intake", "Pain relievers", "Cranberry supplements (preventive)"],
-        "when_to_see_doctor": ["Symptoms lasting more than 2 days", "Fever or chills", "Back pain (possible kidney infection)", "Blood in urine", "Recurrent infections"],
-        "prognosis": "Excellent with prompt antibiotic treatment. Untreated UTIs can progress to kidney infections (pyelonephritis).",
-        "prevention": ["Drink plenty of water", "Urinate after intercourse", "Wipe front to back", "Avoid irritating feminine products", "Cranberry products may help"],
-    },
-}
 
 
 class DiseaseInfoResponse(BaseModel):

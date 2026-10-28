@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     # App
     app_env: str = "development"
     log_level: str = "debug"
-    secret_key: str = "dev-secret-change-me"
+    secret_key: str = ""
 
     # LLM APIs
     openai_api_key: str = ""
@@ -39,7 +39,16 @@ class Settings(BaseSettings):
         "http://localhost:8501,http://127.0.0.1:8501,"
         "http://localhost:3000,http://127.0.0.1:3000"
     )
-    enforce_api_key: bool = False
+    # API key enforcement is on by default. The development bypass below is
+    # explicit and only applies while APP_ENV is "development".
+    enforce_api_key: bool = True
+    allow_insecure_dev: bool = True
+
+    # NLP
+    # The deterministic clinical-pattern extractor is the default path. Set
+    # ENABLE_BIOBERT_NER=true to additionally run a biomedical NER checkpoint.
+    enable_biobert_ner: bool = False
+    biobert_model_id: str = "d4data/biomedical-ner-all"
 
     # LLM Model Names
     orchestrator_model: str = "nvidia/nemotron-3.5-lightning:free"

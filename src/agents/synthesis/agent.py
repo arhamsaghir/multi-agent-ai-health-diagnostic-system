@@ -1,8 +1,10 @@
-"""GenAI Synthesis Agent — Gemini 1.5 Flash diagnostic report generation.
+"""GenAI Synthesis Agent — LLM diagnostic report generation.
 
 Takes outputs from all specialist agents (NLP, Vision, RAG, Prediction) and
 produces a structured diagnostic report with diagnoses, explanations,
-recommendations, severity assessment, and patient-friendly language.
+recommendations, severity assessment, and patient-friendly language. Uses the
+configured LLM provider (Gemini, with an OpenRouter fallback) and degrades to
+the rule-based report generator when no provider is reachable.
 """
 
 from typing import Optional
@@ -17,7 +19,7 @@ class GenAIAgent(BaseAgent):
     """Generates final diagnostic report by synthesizing all agent outputs."""
 
     name = "genai_agent"
-    description = "Gemini 1.5 Flash — Diagnostic report synthesis and patient communication"
+    description = "LLM synthesis (rule-based fallback) — Diagnostic report and patient communication"
 
     def __init__(self):
         super().__init__()

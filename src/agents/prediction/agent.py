@@ -1,7 +1,8 @@
 """Prediction Agent — ML-based disease risk scoring.
 
-Uses GradientBoosting (scikit-learn) for tabular patient data risk prediction and
-LSTM for temporal symptom progression analysis.
+Uses GradientBoosting classifiers (scikit-learn, loaded from joblib) for
+tabular patient data risk prediction, with a rule-based fallback when no
+trained model is available.
 """
 
 from typing import Any, Optional
@@ -18,7 +19,7 @@ class PredictionAgent(BaseAgent):
     """Machine learning prediction agent for disease risk assessment."""
 
     name = "prediction_agent"
-    description = "XGBoost / LSTM — Risk scoring from patient history and vitals"
+    description = "GradientBoosting — Risk scoring from patient history and vitals"
 
     def __init__(self):
         super().__init__()

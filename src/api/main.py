@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from loguru import logger
+import secrets
 import sys
 import os
 from pathlib import Path
@@ -21,10 +22,27 @@ logger.add(
 os.makedirs("logs", exist_ok=True)
 logger.add("logs/app_{time:YYYY-MM-DD}.log", rotation="1 day", retention="30 days")
 
+def _is_production() -> bool:
+    """True when the service is running with production settings.
+
+    Read live from settings rather than frozen at import time, so the
+    startup guard and the request path always agree on the environment.
+    """
+    return settings.app_env.lower() in {"production", "prod"}
+
+
+# The docs surface is fixed when the app object is built.
+_IS_PRODUCTION = _is_production()
+
 app = FastAPI(
     title="Multi-Agent AI Health Diagnostic System",
     description="B.Tech Final Year Project — AI-powered medical diagnosis using multi-agent orchestration",
     version="0.1.0",
+    # Interactive API docs are development conveniences; they are not exposed
+    # in production deployments.
+    docs_url=None if _IS_PRODUCTION else "/docs",
+    redoc_url=None if _IS_PRODUCTION else "/redoc",
+    openapi_url=None if _IS_PRODUCTION else "/openapi.json",
 )
 
 # CORS — allowed origins are deployment-configurable via CORS_ORIGINS
@@ -37,26 +55,31 @@ app.add_middleware(
 )
 
 
-# API Key Authentication Middleware (development mode)
+# API Key Authentication Middleware
 @app.middleware("http")
 async def verify_api_key(request: Request, call_next):
-    """Validate API key for non-public endpoints."""
+    """Validate the API key for non-public endpoints.
+
+    Enforcement is on by default. The unauthenticated bypass exists only in
+    development and only while ``ALLOW_INSECURE_DEV`` is enabled; production
+    startup refuses to run without a configured secret.
+    """
     # Public endpoints that don't require authentication
     public_paths = ["/health", "/docs", "/openapi.json", "/redoc"]
     if any(request.url.path.startswith(p) for p in public_paths):
         return await call_next(request)
-    
-    # API key is optional in development unless explicitly enforced
-    if settings.app_env == "development" and not settings.enforce_api_key:
+
+    # Explicit, development-only bypass
+    if settings.app_env == "development" and settings.allow_insecure_dev:
         return await call_next(request)
-    
-    api_key = request.headers.get("X-API-Key")
-    if not api_key or api_key != settings.secret_key:
+
+    api_key = request.headers.get("X-API-Key") or ""
+    if not api_key or not secrets.compare_digest(api_key, settings.secret_key):
         return JSONResponse(
             status_code=401,
             content={"error": "Unauthorized. Provide X-API-Key header."}
         )
-    
+
     return await call_next(request)
 
 
@@ -68,7 +91,17 @@ async def startup_event():
     logger.info(f"Environment: {settings.app_env}")
     logger.info(f"Python: {sys.version.split()[0]}")
     logger.info("=" * 60)
-    
+
+    # Fail fast rather than serving an unauthenticated clinical API
+    if _is_production():
+        if not settings.enforce_api_key:
+            raise RuntimeError("ENFORCE_API_KEY must remain enabled outside development")
+        if not settings.secret_key:
+            raise RuntimeError("SECRET_KEY must be set outside development")
+        logger.info("API key authentication: enforced")
+    elif settings.allow_insecure_dev:
+        logger.warning("API key authentication: disabled (development bypass)")
+
     # Check API keys
     if not settings.openrouter_api_key and not os.environ.get("OPENROUTER_API_KEY"):
         logger.warning("OPENROUTER_API_KEY not set — LLM synthesis features will fail")
@@ -135,37 +168,46 @@ async def health_check():
         "status": "healthy",
         "environment": settings.app_env,
         "version": "0.1.0",
-        "agents": {
-            "orchestrator": "active",
-            "vision": "active",
-            "nlp": "active",
-            "rag": "active",
-            "prediction": "active",
-            "voice": "active",
-            "synthesis": "active",
-        },
+        "authentication": (
+            "open (development bypass)"
+            if settings.app_env == "development" and settings.allow_insecure_dev
+            else "enforced"
+        ),
     }
-    
+
     # Check model file availability
     model_status = {}
     if os.path.exists(settings.vision_model_path):
         model_status["vision"] = "loaded"
     else:
         model_status["vision"] = "missing"
-    
+
     pred_metadata = settings.prediction_model_path.replace(".pkl", "_metadata.json")
     if os.path.exists(pred_metadata):
         model_status["prediction"] = "loaded"
     else:
         model_status["prediction"] = "missing"
-    
+
     faiss_path = settings.vector_store_dir + "/medical_knowledge.faiss"
     if os.path.exists(faiss_path):
         model_status["rag"] = "loaded"
     else:
         model_status["rag"] = "missing"
-    
+
     status["models"] = model_status
+
+    # Agent availability reflects what is actually usable in this deployment
+    llm_configured = bool(settings.openrouter_api_key or os.environ.get("OPENROUTER_API_KEY"))
+    voice_configured = bool(settings.openai_api_key or os.environ.get("OPENAI_API_KEY"))
+    status["agents"] = {
+        "orchestrator": "active",
+        "nlp": "pattern_extractor + ner_model" if settings.enable_biobert_ner else "pattern_extractor",
+        "vision": model_status["vision"],
+        "rag": model_status["rag"],
+        "prediction": model_status["prediction"],
+        "voice": "configured" if voice_configured else "unavailable",
+        "synthesis": "llm_configured" if llm_configured else "rule_based_fallback",
+    }
     status["response_time_ms"] = round((time.time() - start) * 1000, 2)
     
     return status
