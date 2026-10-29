@@ -7,6 +7,7 @@ rather than raising. That string must never reach the patient.
 from __future__ import annotations
 
 import asyncio
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -112,3 +113,41 @@ def test_llm_exception_falls_back_to_rule_based(agent, monkeypatch) -> None:
 
     result = _run(agent)
     assert result["patient_explanation"] == "rule-based text"
+
+
+class TestRuleBasedSymptomFilter:
+    """R9 (w0-assertion-nlp): the rule-based report consumes only present,
+    self-reported findings."""
+
+    def _symptom(self, symptom, polarity, subject):
+        return {
+            "symptom": symptom,
+            "category": "cardiovascular" if symptom == "chest pain" else "other",
+            "polarity": polarity,
+            "subject": subject,
+            "certainty": "explicit",
+            "span": (0, len(symptom)),
+        }
+
+    def test_absent_and_family_findings_never_reach_the_report(self):
+        from src.agents.rule_based_synthesis import RuleBasedSynthesizer
+
+        report = RuleBasedSynthesizer().generate_report(
+            {
+                "nlp": {
+                    "symptoms": [
+                        self._symptom("chest pain", "present", "self"),
+                        self._symptom("fever", "absent", "self"),
+                        self._symptom("diabetes", "present", "family"),
+                    ]
+                },
+                "vision": {"findings": []},
+                "rag": {"knowledge": ""},
+                "prediction": {"risk_scores": {}},
+            }
+        )
+
+        dumped = json.dumps(report)
+        assert "fever" not in dumped, "a denied symptom reached the report"
+        assert "diabetes" not in dumped, "a family mention reached the report"
+        assert "chest pain" in dumped

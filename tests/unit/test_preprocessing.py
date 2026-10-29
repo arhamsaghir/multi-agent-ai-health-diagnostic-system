@@ -68,6 +68,34 @@ class TestTextPreprocessor:
         assert result["moderate"] is True
 
 
+class TestAssertionAwareNormalization:
+    """The polarity map must not create symptoms the patient denied (R6/R7)."""
+
+    @pytest.fixture
+    def processor(self):
+        return TextPreprocessor()
+
+    def test_no_appetite_is_not_blindly_rewritten(self, processor):
+        result = processor.normalize_symptoms("no appetite")
+        assert "decreased appetite" not in result
+
+    def test_negated_variant_preserves_negation(self, processor):
+        result = processor.normalize_symptoms("no loss of appetite")
+        assert "decreased appetite" not in result
+        assert "loss of appetite" in result
+
+    def test_affirmative_canonicalization_still_applies(self, processor):
+        result = processor.normalize_symptoms("i have loss of appetite")
+        assert "decreased appetite" in result
+
+    def test_without_is_not_a_stop_word(self):
+        assert "without" not in TextPreprocessor.STOP_WORDS
+
+    def test_without_survives_keyword_extraction(self, processor):
+        keywords = processor.extract_keywords("chest pain without fever")
+        assert "without" in keywords
+
+
 class TestTabularPreprocessor:
     """Test suite for tabular data preprocessing."""
 

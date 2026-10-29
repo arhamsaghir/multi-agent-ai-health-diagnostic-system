@@ -2,7 +2,7 @@
 
 **Module id:** `w0-assertion-nlp` · **Wave:** 0 · **Owner:** clinical NLP
 **Closes gaps:** 1, 2 · **Depends on:** — · **Blocks:** `w1-external-eval`
-**Status:** not started
+**Status:** implemented — PR pending on `feat/w0-assertion-nlp`
 
 ## Objective
 
@@ -175,24 +175,24 @@ case where the symptom is missed entirely counts as incorrect on polarity
 
 ## Acceptance criteria
 
-- [ ] `"no fever, no cough, no chest pain"` yields zero present symptoms for
+- [x] `"no fever, no cough, no chest pain"` yields zero present symptoms for
       all three, verified in a test.
-- [ ] The golden harness reaches ≥95% overall, ≥100% on controls, ≥100% on
+- [x] The golden harness reaches ≥95% overall, ≥100% on controls, ≥100% on
       the live probe case.
-- [ ] `"no fever but I have a bad cough"` yields fever absent, cough present.
-- [ ] `"my mother has diabetes"` attributes diabetes to `family`, and it does
+- [x] `"no fever but I have a bad cough"` yields fever absent, cough present.
+- [x] `"my mother has diabetes"` attributes diabetes to `family`, and it does
       not appear in the triage belief.
-- [ ] `"not without a fever"` is handled as a positive assertion (per the
+- [x] `"not without a fever"` is handled as a positive assertion (per the
       double-negation cases) — the outcome is recorded in the golden set with
       its reasoning, and the rule is documented.
-- [ ] `normalize_symptoms("no appetite")` does not produce "decreased
+- [x] `normalize_symptoms("no appetite")` does not produce "decreased
       appetite" as a present symptom.
-- [ ] `"without"` is no longer in `STOP_WORDS`.
-- [ ] `compute_initial_belief()` reflects the filtered symptom set — verified
+- [x] `"without"` is no longer in `STOP_WORDS`.
+- [x] `compute_initial_belief()` reflects the filtered symptom set — verified
       by a test that asserts the belief for the probe case differs from the
       belief for the un-negated text.
-- [ ] The full backend suite is green with no previously-passing test removed.
-- [ ] No patient text appears in any log emitted by this module.
+- [x] The full backend suite is green with no previously-passing test removed.
+- [x] No patient text appears in any log emitted by this module.
 
 ## Files in scope
 
