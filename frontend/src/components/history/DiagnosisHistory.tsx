@@ -18,7 +18,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { fetchHistory, mockHistoryRecords, type DiagnosisRecord } from "@/lib/api";
+import { fetchHistory, type DiagnosisRecord } from "@/lib/api";
 
 const severityConfig = {
   critical: { color: "#DC2626", bg: "#FEF2F2" },
@@ -28,7 +28,7 @@ const severityConfig = {
 };
 
 export function DiagnosisHistory() {
-  const [records, setRecords] = useState<DiagnosisRecord[]>(mockHistoryRecords);
+  const [records, setRecords] = useState<DiagnosisRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [severityFilter, setSeverityFilter] = useState<string>("all");
@@ -38,9 +38,7 @@ export function DiagnosisHistory() {
     setIsLoading(true);
     try {
       const data = await fetchHistory();
-      if (data && data.length > 0) {
-        setRecords(data);
-      }
+      setRecords(data);
     } catch (err) {
       console.error("Failed to load history:", err);
     } finally {

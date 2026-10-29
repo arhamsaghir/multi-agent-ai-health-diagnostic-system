@@ -12,20 +12,23 @@ import {
   ResponsiveContainer,
   Cell 
 } from "recharts";
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  Info, 
+import {
+  AlertTriangle,
+  CheckCircle,
+  Info,
   AlertCircle,
   Activity,
   FileText,
   FlaskConical,
   Download,
-  Loader2
+  Loader2,
+  Phone,
+  MessageSquare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePersona } from "@/lib/persona";
 import { downloadReport, type AgentProgressEvent, type TriageInfo } from "@/lib/api";
+import { EMERGENCY_NUMBER } from "@/components/diagnosis/ErrorState";
 
 export interface DiagnosisResult {
   condition: string;
@@ -49,6 +52,8 @@ interface DiagnosisResultsProps {
   sourceText?: string;
   patientHistory?: { age: number; bmi: number; gender: string };
   executionTrace?: AgentProgressEvent[];
+  /** "demo" results are synthetic examples and must render unmistakably marked. */
+  source?: "live" | "demo";
 }
 
 const TRIAGE_FROM_SEVERITY: Record<DiagnosisResult["severity"], string> = {
@@ -157,6 +162,7 @@ export function DiagnosisResults({
   sourceText = "",
   patientHistory,
   executionTrace = [],
+  source = "live",
 }: DiagnosisResultsProps) {
   const { persona } = usePersona();
   const [reportLoading, setReportLoading] = useState(false);
@@ -171,7 +177,11 @@ export function DiagnosisResults({
   }
 
   const primaryResult = results[0];
-  const severity = primaryResult?.severity || "low";
+  const severity = primaryResult.severity;
+  const isDemo = source === "demo";
+  // An escalation signal leads the page: the crisis card renders before any
+  // narrative content, per the action-first escalation requirement.
+  const escalate = Boolean(primaryResult.doctorAlert) || severity === "critical";
   const clinician = persona === "clinician";
   const narrative = clinician
     ? primaryResult.clinicalExplanation || primaryResult.description
@@ -219,6 +229,56 @@ export function DiagnosisResults({
       className="space-y-6"
       data-persona-view={persona}
     >
+      {/* Crisis card — action-first escalation, leads the page */}
+      {escalate && (
+        <div
+          data-testid="crisis-card"
+          className="p-6 rounded-2xl bg-red-600 text-white shadow-lg space-y-4"
+        >
+          <div className="flex items-center gap-3">
+            <AlertTriangle size={24} />
+            <h2 className="text-xl font-bold">Seek emergency care now</h2>
+          </div>
+          <p className="text-red-50 text-sm">
+            This assessment includes signs that may need immediate medical
+            attention. Do not wait for online advice — call emergency services
+            or go to the nearest emergency room now.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href={`tel:${EMERGENCY_NUMBER}`}
+              data-testid="crisis-call"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-red-700 font-bold text-sm hover:bg-red-50 transition-colors"
+            >
+              <Phone size={16} />
+              Call {EMERGENCY_NUMBER}
+            </a>
+            <a
+              href={`sms:${EMERGENCY_NUMBER}`}
+              data-testid="crisis-sms"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/70 text-white font-bold text-sm hover:bg-red-700 transition-colors"
+            >
+              <MessageSquare size={16} />
+              Text {EMERGENCY_NUMBER}
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* Demo-mode banner: a synthetic example must never look like a live analysis */}
+      {isDemo && (
+        <div
+          data-testid="demo-banner"
+          className="flex items-center gap-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800"
+        >
+          <FlaskConical size={16} className="text-amber-600 dark:text-amber-400" />
+          <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+            Demo Mode — the content below is a synthetic example, not an
+            analysis of you.
+          </p>
+        </div>
+      )}
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span className="text-sm text-neutral-500 dark:text-neutral-400">
           {clinician ? "Clinician consultation report" : "Save your assessment"}
@@ -254,6 +314,14 @@ export function DiagnosisResults({
               {clinician && primaryResult.icd10 && (
                 <span className="px-2 py-0.5 rounded-md text-xs font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
                   {primaryResult.icd10}
+                </span>
+              )}
+              {isDemo && (
+                <span
+                  data-testid="demo-marker"
+                  className="px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wide bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300"
+                >
+                  Demo · synthetic
                 </span>
               )}
             </div>
@@ -419,7 +487,7 @@ export function DiagnosisResults({
               </table>
             </div>
           ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-3" data-testid="red-flag-list">
             {primaryResult.redFlags.map((flag, i) => (
               <li key={i} className="flex items-start gap-3 text-red-800 dark:text-red-200">
                 <AlertCircle size={18} className="text-red-500 mt-0.5 flex-shrink-0" />
