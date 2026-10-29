@@ -3,6 +3,8 @@
 import re
 from typing import Optional
 
+from src.agents.nlp.assertion import negation_scopes
+
 
 class TextPreprocessor:
     """Cleans, normalizes, and standardizes medical symptom text."""
@@ -93,11 +95,13 @@ class TextPreprocessor:
         "feeling weak": "weakness",
     }
 
-    # Stop words specific to symptom descriptions
+    # Stop words specific to symptom descriptions. Negation cues ("without",
+    # "no", "not") must NOT be here — they are load-bearing for the assertion
+    # layer (w0-assertion-nlp R7).
     STOP_WORDS = {
         "i", "have", "been", "having", "got", "got", "a", "an", "the", "my",
         "is", "am", "are", "was", "were", "been", "being", "for", "since",
-        "with", "without", "from", "to", "of", "in", "on", "at", "and", "or",
+        "with", "from", "to", "of", "in", "on", "at", "and", "or",
         "but", "so", "very", "really", "just", "also", "still", "already",
         "feeling", "feel", "think", "seem", "seems", "like", "kind", "sort",
         "sorta", "kinda", "pretty", "quite", "somewhat", "getting", "got",
@@ -128,8 +132,48 @@ class TextPreprocessor:
         return text
 
     def normalize_symptoms(self, text: str) -> str:
-        """Replace symptom variants with canonical medical terms."""
+        """Replace symptom variants with canonical medical terms.
+
+        Assertion-aware (w0-assertion-nlp R6): an occurrence that sits
+        inside a negation scope is left untouched so the negation survives
+        for the assertion layer to resolve — "no appetite" is never blindly
+        rewritten into "decreased appetite" (the resolver maps negative
+        constructions like that one to present findings itself, and "no
+        loss of appetite" must not lose its negation).
+        """
         text_lower = text.lower()
+        scopes = negation_scopes(text_lower)
+        if not scopes:
+            return self._blind_replace(text_lower)
+
+        # Collect word-bounded candidate replacements outside negation
+        # scopes, longest variant first, then apply them right-to-left so
+        # earlier offsets stay valid.
+        candidates = []
+        for variant, canonical in sorted(
+            self.SYMPTOM_CANONICAL.items(), key=lambda x: -len(x[0])
+        ):
+            for m in re.finditer(rf"\b{re.escape(variant)}\b", text_lower):
+                start, end = m.span()
+                if any(s <= start < e for s, e in scopes):
+                    continue
+                candidates.append((start, end, canonical))
+
+        # Drop candidates that overlap an earlier (longer) candidate.
+        claimed: list[tuple[int, int]] = []
+        accepted = []
+        for start, end, canonical in candidates:
+            if any(start < ce and cs < end for cs, ce in claimed):
+                continue
+            claimed.append((start, end))
+            accepted.append((start, end, canonical))
+
+        result = text_lower
+        for start, end, canonical in sorted(accepted, key=lambda c: -c[0]):
+            result = result[:start] + canonical + result[end:]
+        return result
+
+    def _blind_replace(self, text_lower: str) -> str:
         for variant, canonical in sorted(
             self.SYMPTOM_CANONICAL.items(), key=lambda x: -len(x[0])
         ):
