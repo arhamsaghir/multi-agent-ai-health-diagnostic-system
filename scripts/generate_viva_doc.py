@@ -303,7 +303,7 @@ def create_document():
     add_callout(
         "Executive Viva Strategy & 60-Second Opening Pitch",
         "Professors evaluate final-year AI projects on three criteria: (1) Did you build an actual engineering system rather than an API wrapper? (2) Is there verifiable mathematical and algorithmic novelty? (3) Do you understand clinical safety and failure boundaries?\n\n"
-        "Your 60-Second Pitch: 'Current medical AI systems are passive, monolithic models that guess diagnoses in one pass. They fail in clinical practice because symptoms are ambiguous, imaging and notes often contradict each other, and neural networks hallucinate without statistical bounds. In AegisMed, we replace passive one-shot guessing with an active, multi-agent clinical decision support system. We introduce four key contributions: (1) DEMAT, which uses Shannon entropy and mutual information gain to ask the most informative clarifying question; (2) EN-SCAF, which uses Dempster-Shafer theory to catch and arbitrate cross-modal contradictions between chest X-rays and symptoms; (3) an Ontological Pruning Gate backed by UMLS/SNOMED-CT; and (4) Conformal Risk Bounding providing 95% statistical coverage guarantees. Across our 200-case empirical benchmark, DEMAT improved Top-1 accuracy from 93.0% to 98.0% (p = 0.0339) and collapsed diagnostic entropy by 53.7% in under two questions on average.'"
+        "Your 60-Second Pitch: 'Current medical AI systems are passive, monolithic models that guess diagnoses in one pass. They fail in clinical practice because symptoms are ambiguous, imaging and notes often contradict each other, and neural networks hallucinate without statistical bounds. In AegisMed, we replace passive one-shot guessing with an active, multi-agent clinical decision support system. We introduce four key contributions: (1) DEMAT, which uses Shannon entropy and mutual information gain to ask the most informative clarifying question; (2) EN-SCAF, which uses Dempster-Shafer theory to catch and arbitrate cross-modal contradictions between chest X-rays and symptoms; (3) an Ontological Pruning Gate backed by UMLS/SNOMED-CT; and (4) Conformal Risk Bounding providing 95% statistical coverage guarantees. On our 200-case self-generated regression harness, DEMAT's active questioning reduced diagnostic entropy by 53.7% in under two questions on average — an internal-consistency result on self-generated cases, not an accuracy claim (the project's accuracy numbers come from external evaluation; see data/benchmarks/RETIREMENT.md).'"
     )
 
     # ==================== 1. RESEARCH PROGRESS ====================
@@ -422,13 +422,13 @@ def create_document():
     add_h1("4. Empirical Results & Validation")
     
     add_h2("4.1 Comparative Benchmark: DEMAT vs. Single-Pass Baseline")
-    add_p("All figures are drawn directly from the verified 200-case empirical research benchmark (data/benchmarks/results/demat_research_benchmark.json):")
+    add_p("All figures below are drawn from the retired self-generated regression harness (data/benchmarks/results/). They measure internal consistency on cases generated from the system's own knowledge base — they are NOT accuracy results. See data/benchmarks/RETIREMENT.md for the retraction; the project's accuracy numbers will come from external evaluation (w1-external-eval).")
 
     format_table(
         [1.8, 1.4, 1.4, 1.2, 0.9],
         ["Performance Metric", "Arm 1: Full DEMAT Triage", "Arm 2: Single-Pass Baseline", "Absolute Delta", "Significance"],
         [
-            ["Top-1 Diagnostic Accuracy", "98.0% (196/200)", "93.0% (186/200)", "+5.0%", "p = 0.0339 *"],
+            ["Top-1 Diagnostic Accuracy — retired self-generated measurement, NOT accuracy (see data/benchmarks/RETIREMENT.md)", "98.0% (196/200)", "93.0% (186/200)", "+5.0%", "internal-consistency delta on self-generated cases"],
             ["Top-3 Differential Coverage", "100.0% (200/200)", "97.5% (195/200)", "+2.5%", "Clinically Safe"],
             ["Top-5 Differential Coverage", "100.0% (200/200)", "100.0% (200/200)", "0.0%", "Identical Tail"],
             ["Mean Shannon Entropy", "1.3178 bits", "2.8464 bits", "-53.7%", "-1.5286 bits"],
@@ -587,7 +587,7 @@ def create_document():
         [2.0, 4.5],
         ["Key Parameter / Metric", "Exact Verified Value to State in Viva"],
         [
-            ["Top-1 Accuracy Gain", "98.0% (DEMAT) vs. 93.0% (Single-pass baseline) — a +5.0% absolute improvement"],
+            ["Top-1 Consistency Delta — retired self-generated measurement, NOT accuracy (see data/benchmarks/RETIREMENT.md)", "98.0% (DEMAT) vs. 93.0% (Single-pass baseline) — +5.0 pp internal-consistency delta on self-generated cases"],
             ["Statistical Significance", "McNemar Chi-Square χ² = 4.50, p = 0.0339 (p < 0.05, statistically significant)"],
             ["Shannon Entropy Reduction", "53.7% reduction (mean initial 2.8464 bits collapsed to 1.3178 bits)"],
             ["Average Inquiries Asked", "1.92 questions per patient session (well below the 3-question fatigue ceiling)"],

@@ -26,7 +26,9 @@ ranks differential diagnoses from a presenting narrative (and optional
 chest radiograph) using an active questioning strategy (DEMAT) and
 evidential arbitration. Its performance has been characterised only on
 synthetic cases; the Phase 3 benchmark (200 synthetic cases, top-1
-98.0% vs 93.0% single-pass, p=0.0339) cannot be generalised to clinical
+98.0% vs 93.0% single-pass, p=0.0339 — a retired self-generated
+measurement, not an accuracy result; see `data/benchmarks/RETIREMENT.md`)
+cannot be generalised to clinical
 encounters.
 
 **Aim.** Estimate top-1/top-3 accuracy, calibration (ECE, Brier), triage

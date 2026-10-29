@@ -1,3 +1,16 @@
+# ⚠️ RETRACTED AS AN ACCURACY CLAIM — see data/benchmarks/RETIREMENT.md
+
+> The figures below were generated on 2026-10-06 by a harness whose cases
+> derive from the same knowledge base the system is scored against, with
+> simulated follow-up answers drawn from the same likelihood tables. The
+> oracle is the system under test, so these numbers measure internal
+> consistency on self-generated cases — **not** diagnostic accuracy. They
+> were presented as accuracy at the time; that presentation was retired on
+> 2026-10-29. This file is preserved unmodified (apart from this header) as
+> the historical record of what was claimed.
+
+---
+
 # AegisMed Phase 3: Research Benchmark Summary
 
 **Date:** 2026-10-06  

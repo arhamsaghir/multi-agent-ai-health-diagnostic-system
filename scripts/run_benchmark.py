@@ -1,7 +1,15 @@
-"""Phase 3: Benchmark runner — evaluates diagnostic accuracy against 200 synthetic cases.
+"""Legacy demo-matching smoke script — NOT a benchmark, NOT runnable.
 
-Computes Top-1 and Top-5 accuracy rates, per-category breakdowns, and generates
-a comprehensive benchmark report.
+This script scores `_get_demo_result()` — a substring-matching demo function —
+against self-generated cases whose ground truth was authored from the same
+symptom vocabulary. It measures how well a keyword rule matches a template,
+which is not a diagnosis evaluation of any kind.
+
+It is also currently NON-RUNNABLE: it imports `frontend.pages.diagnosis`,
+a Streamlit-era module that no longer exists in the repo. It is kept only as
+a historical record. The maintained regression harness lives in
+`scripts/benchmark/demat_benchmark.py`; see `data/benchmarks/RETIREMENT.md`
+for why the numbers this script once produced are retired.
 """
 
 import json
