@@ -1,8 +1,22 @@
-"""AegisMed Phase 3 — Research Benchmark Harness.
+"""AegisMed — DEMAT Self-Generated Regression Harness.
 
-Compares Dynamic Entropy-Minimizing Active Triage (DEMAT) against Single-Pass
-Ablation across 200 clinical presentation cases, computing diagnostic accuracy,
-Shannon entropy reduction, calibration error, and statistical significance.
+Compares DEMAT triage against Single-Pass Ablation on 200 cases that were
+GENERATED FROM THE SAME KNOWLEDGE BASE the system is scored against
+(`scripts/generate_benchmark_cases.py` builds them from `DISEASE_TEMPLATES`,
+and `simulate_patient_answer()` answers follow-ups using the same
+`DISEASE_DATABASE` likelihoods DEMAT reasons over). The oracle is the system
+under test.
+
+These numbers measure INTERNAL CONSISTENCY ONLY — whether entropy decreases
+when it should, whether information gain ranks questions as expected, whether
+the stopping rule fires, and whether the mechanics are deterministic across
+runs. They are NOT an accuracy evaluation and must never be cited as one.
+For external evaluation against real clinician-patient vignettes, see
+`w1-external-eval` (scripts/benchmark/external_eval.py).
+
+This reclassification is documented in
+`data/benchmarks/RETIREMENT.md` and
+`.planning/2026-10-28-aegismed-improvement-phase/specs/SPEC-w0-benchmark-honesty.md`.
 """
 
 import argparse
@@ -28,6 +42,13 @@ from scripts.benchmark.metrics import (
     compute_ece,
     compute_mcnemar_test,
 )
+
+REGRESSION_BANNER = [
+    "SELF-GENERATED REGRESSION HARNESS — NOT AN ACCURACY EVALUATION",
+    "Cases are generated from the same knowledge base the system is scored against.",
+    "These numbers describe internal consistency only. Do not cite them as",
+    "accuracy. For external evaluation see scripts/benchmark/external_eval.py.",
+]
 
 
 def normalize_disease_key(name: str) -> str:
@@ -101,7 +122,11 @@ def run_benchmark(
     max_rounds: int = 2,
     stopping_entropy: float = 0.80
 ) -> Dict[str, Any]:
-    """Run empirical benchmark comparing DEMAT vs Single-pass ablation."""
+    """Run the self-generated regression harness (DEMAT vs single-pass ablation).
+
+    Internal-consistency measurement only — see the module docstring and
+    REGRESSION_BANNER. Not an accuracy evaluation.
+    """
     engine = DEMATEngine()
 
     with open(cases_path, "r") as f:
@@ -109,8 +134,10 @@ def run_benchmark(
     cases: List[Dict[str, Any]] = data if isinstance(data, list) else data.get("cases", [])
 
     total_cases = len(cases)
+    for line in REGRESSION_BANNER:
+        print(line)
     print(f"\n==================================================================")
-    print(f" AegisMed Phase 3 Research Benchmark Harness")
+    print(f" DEMAT Self-Generated Regression Harness")
     print(f" Cases: {total_cases} | Max Rounds: {max_rounds} | Stopping H: {stopping_entropy} bits")
     print(f"==================================================================\n")
 
@@ -238,6 +265,7 @@ def run_benchmark(
     results = {
         "metadata": {
             "timestamp": datetime.now(timezone.utc).isoformat(),
+            "harness_type": "self-generated regression harness (NOT an accuracy evaluation)",
             "total_cases": total_cases,
             "max_triage_rounds": max_rounds,
             "stopping_entropy_bits": stopping_entropy,
@@ -313,22 +341,27 @@ def run_benchmark(
 
 
 def generate_markdown_summary(results: Dict[str, Any], file_path: Path):
-    """Format benchmark results as a publication-ready Markdown table."""
+    """Format the regression-harness results as a Markdown table.
+
+    Every output carries the regression banner: these are internal-consistency
+    numbers on self-generated cases, not accuracy results.
+    """
     a1 = results["arm1_demat"]
     a2 = results["arm2_single_pass"]
     stat = results["statistical_comparison"]
 
-    lines = [
-        "# AegisMed Phase 3: Research Benchmark Summary",
+    lines = ["# DEMAT Self-Generated Regression Harness — Summary"]
+    lines.extend(f"> {line}" for line in REGRESSION_BANNER)
+    lines.extend([
         "",
         f"**Date:** {results['metadata']['timestamp'][:10]}  ",
-        f"**Cases Evaluated:** {results['metadata']['total_cases']} standardized clinical presentations  ",
+        f"**Cases (self-generated):** {results['metadata']['total_cases']}  ",
         f"**Disease Vocabulary:** {results['metadata']['diseases_modeled']} conditions  ",
         f"**Active Inquiries Pool:** {results['metadata']['questions_available']} calibrated questions  ",
         "",
-        "## 1. Overall Performance: DEMAT vs. Single-Pass Ablation",
+        "## 1. Internal Consistency: DEMAT vs. Single-Pass Ablation",
         "",
-        "| Metric | Arm 1: Full DEMAT Triage | Arm 2: Single-Pass Ablation | Delta (DEMAT vs. Ablation) | p-value (McNemar) |",
+        "| Metric (internal consistency, NOT accuracy) | Arm 1: Full DEMAT Triage | Arm 2: Single-Pass Ablation | Delta (DEMAT vs. Ablation) | p-value (McNemar) |",
         "| :--- | :---: | :---: | :---: | :---: |",
         f"| **Top-1 Accuracy** | **{a1['top1_accuracy']*100:.1f}%** | {a2['top1_accuracy']*100:.1f}% | **+{stat['top1_absolute_delta']:.1f}%** | *p = {stat['mcnemar_p_value']:.4f}* (χ²={stat['mcnemar_chi2']}) |",
         f"| **Top-3 Accuracy** | **{a1['top3_accuracy']*100:.1f}%** | {a2['top3_accuracy']*100:.1f}% | +{(a1['top3_accuracy']-a2['top3_accuracy'])*100:.1f}% | — |",
@@ -343,7 +376,7 @@ def generate_markdown_summary(results: Dict[str, Any], file_path: Path):
         "",
         "| Clinical Specialty / Category | Cases (N) | Arm 1 DEMAT Top-1 | Arm 2 Ablation Top-1 | Absolute Gain |",
         "| :--- | :---: | :---: | :---: | :---: |",
-    ]
+    ])
 
     for cat, stats in sorted(results["category_breakdown"].items()):
         lines.append(
@@ -352,12 +385,12 @@ def generate_markdown_summary(results: Dict[str, Any], file_path: Path):
 
     lines.extend([
         "",
-        "## 3. Key Research Findings",
+        "## 3. Internal-Consistency Observations",
         "",
-        f"1. **Statistical Significance**: DEMAT improves diagnostic Top-1 accuracy by **+{stat['top1_absolute_delta']:.1f} percentage points** over single-pass diagnosis with strong statistical significance (McNemar χ² = {stat['mcnemar_chi2']}, p = {stat['mcnemar_p_value']:.4e}).",
-        f"2. **Information-Theoretic Efficiency**: Under an average of only **{a1['mean_questions_asked']} questions per session**, Shannon entropy collapses by **{a1['mean_entropy_reduction']:.3f} bits ({a1['entropy_reduction_pct']:.1f}%)**, proving the mathematical optimality of expected information gain ranking.",
-        f"3. **Clinical Calibration**: Brier score improves from {a2['mean_brier_score']:.4f} to {a1['mean_brier_score']:.4f}, demonstrating that posterior probabilities reflect genuine certainty rather than overconfident hallucinations.",
-        f"4. **Low Computational Overhead**: Mean active triage inference latency is only **{a1['mean_latency_ms']:.1f} ms**, proving suitability for real-time edge or web clinical deployment.",
+        f"1. **Consistency Delta (not accuracy)**: On these self-generated cases, DEMAT's active inquiries change the top-1 outcome on **+{stat['top1_absolute_delta']:.1f} percentage points** of cases versus single-pass (McNemar χ² = {stat['mcnemar_chi2']}, p = {stat['mcnemar_p_value']:.4e}). Because the oracle is the system under test, this delta describes harness consistency only and must not be read as a clinical-accuracy difference.",
+        f"2. **Mechanics Check**: Under an average of **{a1['mean_questions_asked']} questions per session**, Shannon entropy collapses by **{a1['mean_entropy_reduction']:.3f} bits ({a1['entropy_reduction_pct']:.1f}%)** — the expected-information-gain ranking and stopping rule behave as designed. This validates the mechanism, not the optimality of its clinical value.",
+        f"3. **Belief Sharpening (not calibration)**: Brier score moves from {a2['mean_brier_score']:.4f} to {a1['mean_brier_score']:.4f} on cases whose answers derive from the same likelihood tables the beliefs are computed over. Calibration measured on self-generated data is not evidence of clinical calibration.",
+        f"4. **Overhead**: Mean active-triage inference latency is **{a1['mean_latency_ms']:.1f} ms** — fast enough for interactive use, pending validation on external data (`w1-external-eval`).",
         "",
     ])
 
@@ -366,13 +399,20 @@ def generate_markdown_summary(results: Dict[str, Any], file_path: Path):
 
 
 def print_cli_summary(results: Dict[str, Any]):
-    """Pretty-print benchmark summary table to console."""
+    """Pretty-print regression-harness summary table to console.
+
+    Leads with the regression banner so console output can never be read as
+    an accuracy claim.
+    """
     a1 = results["arm1_demat"]
     a2 = results["arm2_single_pass"]
     stat = results["statistical_comparison"]
 
+    for line in REGRESSION_BANNER:
+        print(f">>> {line}")
+    print()
     print("------------------------------------------------------------------")
-    print(f" RESULTS SUMMARY (N = {results['metadata']['total_cases']} cases)")
+    print(f" INTERNAL-CONSISTENCY SUMMARY (N = {results['metadata']['total_cases']} self-generated cases)")
     print("------------------------------------------------------------------")
     print(f" Metric                       DEMAT       Ablation    Delta")
     print(f" ------------------------------------------------------------------")

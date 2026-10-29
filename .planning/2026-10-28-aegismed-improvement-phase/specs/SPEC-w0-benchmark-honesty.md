@@ -3,7 +3,7 @@
 **Module id:** `w0-benchmark-honesty` · **Wave:** 0 · **Owner:** evaluation
 **Closes gap:** 7 (partial) · **Depends on:** — · **Blocks:**
 `publication-truth`, `w1-external-eval`
-**Status:** not started
+**Status:** implemented — PR open on `feat/w0-benchmark-honesty`
 
 ## Objective
 
@@ -141,22 +141,22 @@ historical reference or a violation.
 
 ## Acceptance criteria
 
-- [ ] `scripts/benchmark/demat_benchmark.py` prints the regression banner on
+- [x] `scripts/benchmark/demat_benchmark.py` prints the regression banner on
       every run.
-- [ ] The generated summary file contains the banner.
-- [ ] `data/benchmarks/RETIREMENT.md` exists and explains the retraction.
-- [ ] `data/benchmark_cases.json` carries a provenance block.
-- [ ] Every test in `tests/unit/test_demat_benchmark.py` is renamed to
+- [x] The generated summary file contains the banner.
+- [x] `data/benchmarks/RETIREMENT.md` exists and explains the retraction.
+- [x] `data/benchmark_cases.json` carries a provenance block.
+- [x] Every test in `tests/unit/test_demat_benchmark.py` is renamed to
       regression framing with an explanatory docstring.
-- [ ] The grep guard returns zero unlabeled hits outside this planning
+- [x] The grep guard returns zero unlabeled hits outside this planning
       directory and the retirement notice.
-- [ ] `README.md` and `docs/test_report.md` no longer state the 98% figure as
+- [x] `README.md` and `docs/test_report.md` no longer state the 98% figure as
       an accuracy result.
-- [ ] A test asserts the grep guard condition, so a future doc that
+- [x] A test asserts the grep guard condition, so a future doc that
       reintroduces the claim fails the suite.
-- [ ] `scripts/run_benchmark.py` is labeled as a demo-matching smoke script,
+- [x] `scripts/run_benchmark.py` is labeled as a demo-matching smoke script,
       not a benchmark.
-- [ ] The full backend suite is green with no previously-passing test removed.
+- [x] The full backend suite is green with no previously-passing test removed.
 
 ## Files in scope
 
