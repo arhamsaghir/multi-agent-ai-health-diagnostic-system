@@ -2,6 +2,109 @@ import { DiagnosisResult } from "@/components/diagnosis/DiagnosisResults";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+/* ------------------------------------------------------------------ */
+/* Typed API errors                                                    */
+/* ------------------------------------------------------------------ */
+
+export type ApiErrorKind =
+  | "unreachable" // network failure, DNS, CORS
+  | "server" // 5xx
+  | "rejected" // 4xx
+  | "malformed"; // 2xx with an unusable body
+
+export class AegisMedApiError extends Error {
+  readonly kind: ApiErrorKind;
+  readonly status?: number;
+
+  constructor(kind: ApiErrorKind, message: string, status?: number) {
+    super(message);
+    this.name = "AegisMedApiError";
+    this.kind = kind;
+    this.status = status;
+  }
+}
+
+/** Classify a fetch/network failure. Fetch rejects with TypeError on DNS/CORS/offline. */
+function classifyFetchError(error: unknown): AegisMedApiError {
+  if (error instanceof AegisMedApiError) {
+    return error;
+  }
+  return new AegisMedApiError(
+    "unreachable",
+    "Could not reach the analysis service.",
+    undefined,
+  );
+}
+
+/** Classify a completed HTTP response by status code. */
+function classifyResponseError(response: Response): AegisMedApiError {
+  if (response.status >= 500) {
+    return new AegisMedApiError(
+      "server",
+      `The analysis service failed (HTTP ${response.status}).`,
+      response.status,
+    );
+  }
+  if (response.status >= 400) {
+    return new AegisMedApiError(
+      "rejected",
+      `The request was rejected (HTTP ${response.status}).`,
+      response.status,
+    );
+  }
+  return new AegisMedApiError(
+    "malformed",
+    `Unexpected response status ${response.status}.`,
+    response.status,
+  );
+}
+
+/**
+ * Run one backend call, retrying once after 2s on transient failures
+ * (network errors and 5xx — the OmniRoute 503 pattern). A 4xx is never
+ * retried: the request itself is wrong.
+ */
+async function fetchWithRetry(
+  input: string,
+  init: RequestInit,
+): Promise<Response> {
+  let firstError: AegisMedApiError | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (attempt > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+    try {
+      const response = await fetch(input, init);
+      if (response.status < 400) {
+        return response;
+      }
+      const classified = classifyResponseError(response);
+      if (classified.kind === "rejected") {
+        throw classified;
+      }
+      firstError = classified;
+    } catch (error) {
+      const classified = classifyFetchError(error);
+      if (classified.kind === "rejected") {
+        throw classified;
+      }
+      firstError = classified;
+    }
+  }
+  throw firstError ?? new AegisMedApiError("server", "Request failed.");
+}
+
+/** Wrap an unknown thrown value into a typed error without inventing a kind. */
+export function toAegisMedApiError(error: unknown): AegisMedApiError {
+  if (error instanceof AegisMedApiError) {
+    return error;
+  }
+  return new AegisMedApiError(
+    "server",
+    error instanceof Error ? error.message : "Unknown error.",
+  );
+}
+
 export interface SystemHealth {
   status: string;
   environment: string;
@@ -91,13 +194,14 @@ export async function analyzeImage(file: File): Promise<VisionResult> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.detail || `Vision analysis failed with status ${response.status}`);
+    throw classifyResponseError(response);
   }
 
-  const data = await response.json();
-  const findings: Array<{ condition?: string; disease?: string; confidence?: number; severity?: string }> =
-    data.findings || [];
+  const data = await parseJsonBody(response);
+  const findings =
+    (Array.isArray(data.findings)
+      ? (data.findings as Array<{ condition?: string; disease?: string; confidence?: number; severity?: string }>)
+      : []);
 
   const predictions: AnalysisResult[] = findings.map((f) => ({
     disease: f.condition || f.disease || "Unknown Finding",
@@ -105,9 +209,9 @@ export async function analyzeImage(file: File): Promise<VisionResult> {
   }));
 
   const primaryFinding = predictions.length > 0 ? predictions[0].disease : "No Abnormality Detected";
-  const rawSeverity = (findings[0]?.severity?.toLowerCase() || "low") as "critical" | "high" | "moderate" | "low";
-  const validSeverities: Array<"critical" | "high" | "moderate" | "low"> = ["critical", "high", "moderate", "low"];
-  const severity = validSeverities.includes(rawSeverity) ? rawSeverity : "moderate";
+  // No findings at all is a legitimate "nothing detected" response; findings
+  // without a usable severity are a malformed response, not a "low".
+  const severity = findings.length === 0 ? "low" : requireSeverity(findings[0]?.severity);
 
   let recommendation = "Image analysis shows no high-confidence abnormalities. Correlate with clinical examination.";
   if (predictions.length > 0 && predictions[0].confidence > 0.4) {
@@ -119,12 +223,17 @@ export async function analyzeImage(file: File): Promise<VisionResult> {
     primary_finding: primaryFinding,
     severity,
     recommendation,
-    heatmap: data.heatmap,
-    heatmap_class: data.heatmap_class,
-    heatmap_confidence: data.heatmap_confidence,
+    heatmap: typeof data.heatmap === "string" ? data.heatmap : undefined,
+    heatmap_class: typeof data.heatmap_class === "string" ? data.heatmap_class : undefined,
+    heatmap_confidence: typeof data.heatmap_confidence === "number" ? data.heatmap_confidence : undefined,
   };
 }
 
+/**
+ * Run a diagnosis. `demoMode` must only ever be set from the explicit
+ * Demo Mode toggle — it returns synthetic example content that is rendered
+ * with a visible synthetic-source marker.
+ */
 export async function diagnose(
   text: string,
   history: PatientHistory,
@@ -134,30 +243,37 @@ export async function diagnose(
     return getDemoResults(text);
   }
 
+  const response = await fetchWithRetry(`${API_BASE}/api/diagnosis/analyze`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      text,
+      patient_history: {
+        age: history.age,
+        bmi: history.bmi,
+        gender: history.gender,
+        family_history: history.familyHistory,
+      },
+    }),
+  });
+
+  const data = await parseJsonBody(response);
+  return transformAPIResponse(data);
+}
+
+/** Parse a 2xx JSON body; a body that is not an object is a malformed response. */
+async function parseJsonBody(response: Response): Promise<Record<string, unknown>> {
   try {
-    const response = await fetch(`${API_BASE}/api/diagnosis/analyze`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text,
-        patient_history: {
-          age: history.age,
-          bmi: history.bmi,
-          gender: history.gender,
-          family_history: history.familyHistory,
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`API returned status ${response.status}: ${response.statusText}`);
-    }
-
     const data = await response.json();
-    return transformAPIResponse(data);
+    if (data === null || typeof data !== "object" || Array.isArray(data)) {
+      throw new AegisMedApiError("malformed", "Response body is not a JSON object.", response.status);
+    }
+    return data as Record<string, unknown>;
   } catch (error) {
-    console.warn("Live API call failed, providing demo fallback:", error);
-    return getDemoResults(text);
+    if (error instanceof AegisMedApiError) {
+      throw error;
+    }
+    throw new AegisMedApiError("malformed", "Response body is not valid JSON.", response.status);
   }
 }
 
@@ -181,22 +297,18 @@ export async function fetchFollowUpQuestions(
     session_id: sessionId,
   };
 
-  const response = await fetch(`${API_BASE}/api/diagnosis/follow-up`, {
+  const response = await fetchWithRetry(`${API_BASE}/api/diagnosis/follow-up`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
-  if (!response.ok) {
-    throw new Error(`Follow-up API error: ${response.statusText}`);
-  }
-
-  const data = await response.json();
+  const data = await parseJsonBody(response);
   return {
-    questions: data.questions || [],
-    has_more: data.has_more ?? false,
-    session_id: data.session_id || "",
-    triage: data.triage,
+    questions: Array.isArray(data.questions) ? (data.questions as FollowUpQuestion[]) : [],
+    has_more: Boolean(data.has_more),
+    session_id: typeof data.session_id === "string" ? data.session_id : "",
+    triage: data.triage as TriageInfo | undefined,
   };
 }
 
@@ -206,7 +318,7 @@ export async function refineDiagnosis(
   answers: Array<{ id: string; question: string; answer: string }>,
   sessionId?: string
 ): Promise<{ results: DiagnosisResult[]; triage?: TriageInfo }> {
-  const response = await fetch(`${API_BASE}/api/diagnosis/refine`, {
+  const response = await fetchWithRetry(`${API_BASE}/api/diagnosis/refine`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -222,14 +334,10 @@ export async function refineDiagnosis(
     }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Refine API error: ${response.statusText}`);
-  }
-
-  const data = await response.json();
+  const data = await parseJsonBody(response);
   return {
-    results: transformAPIResponse(data),
-    triage: data.triage,
+    results: transformAPIResponse(data as ApiDiagnosisPayload),
+    triage: data.triage as TriageInfo | undefined,
   };
 }
 
@@ -258,11 +366,11 @@ async function consumeSSE(
   onEvent: (event: AgentProgressEvent) => void
 ): Promise<AgentProgressEvent | null> {
   if (!response.ok) {
-    throw new Error(`Stream request failed with status ${response.status}`);
+    throw classifyResponseError(response);
   }
   const reader = response.body?.getReader();
   if (!reader) {
-    throw new Error("Stream not supported by this browser");
+    throw new AegisMedApiError("unreachable", "Stream not supported by this browser.");
   }
 
   const decoder = new TextDecoder();
@@ -287,7 +395,10 @@ async function consumeSSE(
       try {
         const event = JSON.parse(dataLine.slice(5).trim()) as AgentProgressEvent;
         if (event.type === "error") {
-          throw new Error(event.message || "Pipeline error");
+          throw new AegisMedApiError(
+            "server",
+            event.message || "The analysis pipeline reported an error.",
+          );
         }
         if (event.type === "result") {
           resultEvent = event;
@@ -301,6 +412,18 @@ async function consumeSSE(
     }
   }
   return resultEvent;
+}
+
+function requireStreamResult(
+  resultEvent: AgentProgressEvent | null,
+): Record<string, unknown> {
+  if (!resultEvent?.data || typeof resultEvent.data !== "object") {
+    throw new AegisMedApiError(
+      "malformed",
+      "The analysis stream ended without a result payload.",
+    );
+  }
+  return resultEvent.data as Record<string, unknown>;
 }
 
 /** Streamed variant of diagnose(): emits per-agent progress events, resolves with results. */
@@ -321,14 +444,13 @@ export async function streamDiagnosis(
         family_history: history.familyHistory,
       },
     }),
+  }).catch((error: unknown): Response => {
+    throw classifyFetchError(error);
   });
 
   const resultEvent = await consumeSSE(response, onEvent);
-  if (!resultEvent?.data) {
-    throw new Error("Stream ended without a result payload");
-  }
-  const data = resultEvent.data as Record<string, unknown>;
-  return { results: transformAPIResponse(data), triage: data.triage as TriageInfo | undefined };
+  const data = requireStreamResult(resultEvent);
+  return { results: transformAPIResponse(data as ApiDiagnosisPayload), triage: data.triage as TriageInfo | undefined };
 }
 
 /** Streamed variant of refineDiagnosis(): DEMAT arbitration event + agent progress. */
@@ -353,14 +475,13 @@ export async function streamRefineDiagnosis(
       follow_up_answers: answers,
       session_id: sessionId,
     }),
+  }).catch((error: unknown): Response => {
+    throw classifyFetchError(error);
   });
 
   const resultEvent = await consumeSSE(response, onEvent);
-  if (!resultEvent?.data) {
-    throw new Error("Stream ended without a result payload");
-  }
-  const data = resultEvent.data as Record<string, unknown>;
-  return { results: transformAPIResponse(data), triage: data.triage as TriageInfo | undefined };
+  const data = requireStreamResult(resultEvent);
+  return { results: transformAPIResponse(data as ApiDiagnosisPayload), triage: data.triage as TriageInfo | undefined };
 }
 
 interface ApiDiagnosisEntry {
@@ -390,17 +511,31 @@ interface ApiDiagnosisPayload {
 
 type Severity = "critical" | "high" | "moderate" | "low";
 
-function normalizeSeverity(value: unknown): Severity {
-  const severities: Severity[] = ["critical", "high", "moderate", "low"];
+/**
+ * A severity present in the payload is used; a missing or unrecognized one is
+ * a malformed response, never a default. Silent severity defaults have been
+ * shown to mask under-triage, so this fails loudly instead.
+ */
+function requireSeverity(value: unknown, status?: number): Severity {
   const lowered = typeof value === "string" ? value.toLowerCase() : "";
-  return (severities as string[]).includes(lowered) ? (lowered as Severity) : "moderate";
+  if ((["critical", "high", "moderate", "low"] as string[]).includes(lowered)) {
+    return lowered as Severity;
+  }
+  throw new AegisMedApiError(
+    "malformed",
+    "Response is missing a usable severity field.",
+    status,
+  );
 }
 
 function transformAPIResponse(data: ApiDiagnosisPayload): DiagnosisResult[] {
+  // Severity is required at the payload level; every derived entry needs it.
+  const payloadSeverity = requireSeverity(data.severity);
+
   const diagnosis = Array.isArray(data.diagnosis) && data.diagnosis.length > 0
     ? data.diagnosis
     : Array.isArray(data.differential_diagnoses) && data.differential_diagnoses.length > 0
-      ? data.differential_diagnoses.map((name: string) => ({ name, confidence: 0.7, severity: data.severity || "moderate" }))
+      ? data.differential_diagnoses.map((name: string) => ({ name, confidence: 0.7, severity: payloadSeverity }))
       : [];
 
   const baseRecommendations = Array.isArray(data.recommendations) ? data.recommendations : [];
@@ -421,7 +556,7 @@ function transformAPIResponse(data: ApiDiagnosisPayload): DiagnosisResult[] {
     return [{
       condition: "Clinical Evaluation Recommended",
       confidence: 0.6,
-      severity: normalizeSeverity(data.severity),
+      severity: payloadSeverity,
       description: generalExplanation || "The multi-agent system analyzed the provided symptoms. Clinical follow-up is recommended.",
       recommendations: baseRecommendations.length > 0 ? baseRecommendations : ["Consult a licensed physician for comprehensive evaluation"],
       redFlags: baseRedFlags,
@@ -430,9 +565,9 @@ function transformAPIResponse(data: ApiDiagnosisPayload): DiagnosisResult[] {
   }
 
   return diagnosis.map((d: ApiDiagnosisEntry, idx: number) => {
-    const rawSeverity = (d.severity?.toLowerCase() || data.severity?.toLowerCase() || "moderate");
-    const validSeverities: Array<"critical" | "high" | "moderate" | "low"> = ["critical", "high", "moderate", "low"];
-    const severity = validSeverities.includes(rawSeverity as Severity) ? (rawSeverity as Severity) : "moderate";
+    // An entry-level severity wins; otherwise the payload severity (already
+    // validated) applies. There is no third option to silently default to.
+    const severity = requireSeverity(d.severity ?? payloadSeverity);
 
     return {
       condition: d.name || d.condition || `Condition ${idx + 1}`,
@@ -625,49 +760,6 @@ export interface DiagnosisRecord {
   symptoms: string;
 }
 
-export const mockHistoryRecords: DiagnosisRecord[] = [
-  {
-    id: "1",
-    date: "2024-01-15",
-    condition: "Cardiovascular Disease",
-    severity: "high",
-    confidence: 0.85,
-    symptoms: "Chest pain, shortness of breath",
-  },
-  {
-    id: "2",
-    date: "2024-01-14",
-    condition: "Respiratory Infection",
-    severity: "moderate",
-    confidence: 0.78,
-    symptoms: "Cough, fever, chills",
-  },
-  {
-    id: "3",
-    date: "2024-01-12",
-    condition: "Type 2 Diabetes Risk",
-    severity: "moderate",
-    confidence: 0.65,
-    symptoms: "Fatigue, increased thirst",
-  },
-  {
-    id: "4",
-    date: "2024-01-10",
-    condition: "Migraine",
-    severity: "low",
-    confidence: 0.72,
-    symptoms: "Headache, light sensitivity",
-  },
-  {
-    id: "5",
-    date: "2024-01-08",
-    condition: "Common Cold",
-    severity: "low",
-    confidence: 0.92,
-    symptoms: "Runny nose, sore throat",
-  },
-];
-
 interface HistorySessionRecord {
   id: string | number;
   severity?: string;
@@ -679,42 +771,41 @@ interface HistorySessionRecord {
 }
 
 export async function fetchHistory(): Promise<DiagnosisRecord[]> {
+  let res: Response;
   try {
-    const res = await fetch(`${API_BASE}/api/history?limit=50`, {
+    res = await fetch(`${API_BASE}/api/history?limit=50`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch history: ${res.statusText}`);
-    }
-
-    const data = await res.json();
-    const sessions = data.sessions || [];
-    if (sessions.length === 0) {
-      return mockHistoryRecords;
-    }
-
-    return sessions.map((s: HistorySessionRecord) => {
-      const rawSeverity = (s.severity?.toLowerCase() || "low") as "critical" | "high" | "moderate" | "low";
-      const validSeverities: Array<"critical" | "high" | "moderate" | "low"> = ["critical", "high", "moderate", "low"];
-      const severity = validSeverities.includes(rawSeverity) ? rawSeverity : "moderate";
-      const symptomsList = Array.isArray(s.symptoms) && s.symptoms.length > 0
-        ? s.symptoms.join(", ")
-        : s.user_input || "Symptom check";
-      const dateStr = s.created_at ? s.created_at.split("T")[0] : new Date().toISOString().split("T")[0];
-
-      return {
-        id: String(s.id),
-        date: dateStr,
-        condition: s.primary_condition || "General Assessment",
-        severity,
-        confidence: typeof s.confidence === "number" ? Math.round(s.confidence * 100) / 100 : 0.8,
-        symptoms: symptomsList,
-      };
-    });
-  } catch (err) {
-    console.error("fetchHistory error, falling back to mock records:", err);
-    return mockHistoryRecords;
+  } catch {
+    // Unreachable backend: an empty history is shown. Fabricated records must
+    // never stand in for stored sessions.
+    return [];
   }
+
+  if (!res.ok) {
+    return [];
+  }
+
+  const data = await parseJsonBody(res);
+  const sessions = Array.isArray(data.sessions) ? (data.sessions as HistorySessionRecord[]) : [];
+
+  return sessions.map((s) => {
+    const rawSeverity = (s.severity?.toLowerCase() || "low") as "critical" | "high" | "moderate" | "low";
+    const validSeverities: Array<"critical" | "high" | "moderate" | "low"> = ["critical", "high", "moderate", "low"];
+    const severity = validSeverities.includes(rawSeverity) ? rawSeverity : "moderate";
+    const symptomsList = Array.isArray(s.symptoms) && s.symptoms.length > 0
+      ? s.symptoms.join(", ")
+      : s.user_input || "Symptom check";
+    const dateStr = s.created_at ? s.created_at.split("T")[0] : new Date().toISOString().split("T")[0];
+
+    return {
+      id: String(s.id),
+      date: dateStr,
+      condition: s.primary_condition || "General Assessment",
+      severity,
+      confidence: typeof s.confidence === "number" ? Math.round(s.confidence * 100) / 100 : 0.8,
+      symptoms: symptomsList,
+    };
+  });
 }

@@ -6,18 +6,21 @@ import { SymptomInput, type PatientHistory } from "@/components/diagnosis/Sympto
 import { DiagnosisResults } from "@/components/diagnosis/DiagnosisResults";
 import { FollowUpQuestions } from "@/components/diagnosis/FollowUpQuestions";
 import { AgentExecutionStepper } from "@/components/diagnosis/AgentExecutionStepper";
+import { ErrorState } from "@/components/diagnosis/ErrorState";
 import {
-  diagnose,
   fetchFollowUpQuestions,
+  getDemoResults,
   streamDiagnosis,
   streamRefineDiagnosis,
+  toAegisMedApiError,
+  type AegisMedApiError,
   type AgentProgressEvent,
   type FollowUpQuestion,
   type TriageInfo,
 } from "@/lib/api";
 import type { DiagnosisResult } from "@/components/diagnosis/DiagnosisResults";
 
-type TriageStep = "input" | "follow_up" | "running" | "results";
+type TriageStep = "input" | "follow_up" | "running" | "results" | "error";
 
 /** Synthetic completed event so the stepper shows triage as done when the pipeline starts. */
 function triageSeedEvent(triage?: TriageInfo): AgentProgressEvent {
@@ -38,8 +41,11 @@ function triageSeedEvent(triage?: TriageInfo): AgentProgressEvent {
 export default function DiagnosisPage() {
   const [step, setStep] = useState<TriageStep>("input");
   const [results, setResults] = useState<DiagnosisResult[] | null>(null);
+  const [resultSource, setResultSource] = useState<"live" | "demo">("live");
   const [isLoading, setIsLoading] = useState(false);
   const [isRefining, setIsRefining] = useState(false);
+  const [error, setError] = useState<AegisMedApiError | null>(null);
+  const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
 
   // Active triage state
   const [activeText, setActiveText] = useState("");
@@ -60,6 +66,13 @@ export default function DiagnosisPage() {
     setProgressEvents((prev) => [...prev, event]);
   }, []);
 
+  /** Surface a failure as an error state with a retry affordance. No fallback content. */
+  const failWith = useCallback((err: unknown, retry: () => void) => {
+    setError(toAegisMedApiError(err));
+    setRetryAction(() => retry);
+    setStep("error");
+  }, []);
+
   /** Run the streamed analysis pipeline (direct path — no follow-up questions). */
   const runStreamedAnalysis = useCallback(
     async (text: string, history: PatientHistory, triage?: TriageInfo) => {
@@ -68,49 +81,53 @@ export default function DiagnosisPage() {
       try {
         const streamed = await streamDiagnosis(text, history, appendEvent);
         setResults(streamed.results);
+        setResultSource("live");
         if (streamed.triage) setTriageInfo(streamed.triage);
         setStep("results");
       } catch (streamErr) {
-        console.warn("Streaming analysis failed, falling back to standard call:", streamErr);
-        try {
-          const directResults = await diagnose(text, history, false);
-          setResults(directResults);
-          setStep("results");
-        } catch (diagErr) {
-          console.error("Diagnosis error:", diagErr);
-          setStep("input");
-        }
+        failWith(streamErr, () => runStreamedAnalysis(text, history, triage));
       }
     },
-    [appendEvent]
+    [appendEvent, failWith]
   );
 
-  const handleInitialSubmit = useCallback(async (text: string, history: PatientHistory) => {
-    setIsLoading(true);
-    setActiveText(text);
-    setActiveHistory(history);
+  const handleInitialSubmit = useCallback(
+    async (text: string, history: PatientHistory, demoMode: boolean) => {
+      setIsLoading(true);
+      setActiveText(text);
+      setActiveHistory(history);
+      setError(null);
 
-    try {
-      // 1. Query the DEMAT Active Triage engine for entropy-minimizing questions
-      const followUp = await fetchFollowUpQuestions(text, history);
+      try {
+        // Demo mode is explicit: synthetic example content, rendered with a
+        // persistent marker, without touching the backend.
+        if (demoMode) {
+          setResults(getDemoResults(text));
+          setResultSource("demo");
+          setStep("results");
+          return;
+        }
 
-      if (followUp.questions && followUp.questions.length > 0) {
-        setQuestions(followUp.questions);
-        setTriageInfo(followUp.triage);
-        setSessionId(followUp.session_id);
+        // 1. Query the DEMAT Active Triage engine for entropy-minimizing questions
+        const followUp = await fetchFollowUpQuestions(text, history);
+
+        if (followUp.questions && followUp.questions.length > 0) {
+          setQuestions(followUp.questions);
+          setTriageInfo(followUp.triage);
+          setSessionId(followUp.session_id);
+          setStep("follow_up");
+          return;
+        }
+        // Entropy already low — run the streamed pipeline directly
+        await runStreamedAnalysis(text, history, followUp.triage);
+      } catch (err) {
+        failWith(err, () => handleInitialSubmit(text, history, demoMode));
+      } finally {
         setIsLoading(false);
-        setStep("follow_up");
-        return;
       }
-      // Entropy already low — run the streamed pipeline directly
-      await runStreamedAnalysis(text, history, followUp.triage);
-    } catch (err) {
-      console.warn("Follow-up check failed, evaluating initial diagnosis directly:", err);
-      await runStreamedAnalysis(text, history);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [runStreamedAnalysis]);
+    },
+    [runStreamedAnalysis, failWith]
+  );
 
   const handleRefineSubmit = useCallback(
     async (answers: Array<{ id: string; question: string; answer: string }>) => {
@@ -120,25 +137,18 @@ export default function DiagnosisPage() {
       try {
         const refined = await streamRefineDiagnosis(activeText, activeHistory, answers, appendEvent, sessionId);
         setResults(refined.results);
+        setResultSource("live");
         if (refined.triage) {
           setTriageInfo(refined.triage);
         }
         setStep("results");
       } catch (err) {
-        console.warn("Refinement failed, generating standard diagnosis:", err);
-        try {
-          const directResults = await diagnose(activeText, activeHistory, false);
-          setResults(directResults);
-          setStep("results");
-        } catch (diagErr) {
-          console.error("Diagnosis error:", diagErr);
-          setStep("input");
-        }
+        failWith(err, () => handleRefineSubmit(answers));
       } finally {
         setIsRefining(false);
       }
     },
-    [activeText, activeHistory, sessionId, triageInfo, appendEvent]
+    [activeText, activeHistory, sessionId, triageInfo, appendEvent, failWith]
   );
 
   const handleSkipFollowUp = useCallback(async () => {
@@ -153,10 +163,13 @@ export default function DiagnosisPage() {
   const handleReset = useCallback(() => {
     setStep("input");
     setResults(null);
+    setResultSource("live");
     setQuestions([]);
     setTriageInfo(undefined);
     setSessionId("");
     setProgressEvents([]);
+    setError(null);
+    setRetryAction(null);
   }, []);
 
   return (
@@ -201,6 +214,28 @@ export default function DiagnosisPage() {
           </motion.div>
         )}
 
+        {step === "error" && error && (
+          <motion.div
+            key="error"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <ErrorState
+              error={error}
+              onRetry={
+                retryAction
+                  ? () => {
+                      setError(null);
+                      setRetryAction(null);
+                      retryAction();
+                    }
+                  : undefined
+              }
+            />
+          </motion.div>
+        )}
+
         {step === "results" && (
           <motion.div
             key="results"
@@ -230,6 +265,7 @@ export default function DiagnosisPage() {
                 sourceText={activeText}
                 patientHistory={activeHistory}
                 executionTrace={progressEvents}
+                source={resultSource}
               />
             )}
           </motion.div>

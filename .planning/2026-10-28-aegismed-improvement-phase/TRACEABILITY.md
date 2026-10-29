@@ -24,7 +24,7 @@ gap is closed only when its test passes and its evidence is linked.
 | 8 | `src/agents/rag/agent.py` — dense-only FAISS, WHO NC text | `w2-hybrid-rag` | `specs/SPEC-w2-hybrid-rag.md` | `tests/unit/test_rag_agent.py` | not started |
 | 9 | `src/agents/synthesis/agent.py` — free-form JSON parse | `w2-schema-synthesis` | `specs/SPEC-w2-schema-synthesis.md` | `tests/unit/test_synthesis_fallback.py` | not started |
 | 10 | `src/agents/orchestrator/agent.py` — no verification node | `w2-orchestration` | `specs/SPEC-w2-orchestration.md` | `tests/unit/test_orchestrator_critic.py` | not started |
-| 11 | `frontend/src/lib/api.ts` — fabricates demo diagnoses | `w0-truthful-frontend` | `specs/SPEC-w0-truthful-frontend.md` | `frontend/src/lib/api.test.ts` | not started |
+| 11 | `frontend/src/lib/api.ts` — fabricates demo diagnoses | `w0-truthful-frontend` | `specs/SPEC-w0-truthful-frontend.md` | `frontend/src/lib/api.test.ts` | in progress — implemented on `feat/w0-truthful-frontend` (26 Vitest tests green; PR open) |
 | 12 | Product-wide — no regulatory posture | `w3-regulatory` + `w3-abdm` | both specs | `tests/unit/test_product_language.py` | not started |
 | 13 | `src/data/database/` — SQLite, plaintext at rest | `w3-dpdp` | `specs/SPEC-w3-dpdp.md` | `tests/unit/test_dpdp_controls.py` | not started |
 | 14 | `src/llm/openrouter_client.py` — 503-prone, off-box PHI path | `w3-engineering` | `specs/SPEC-w3-engineering.md` | `tests/unit/test_local_fallback.py` | not started |
