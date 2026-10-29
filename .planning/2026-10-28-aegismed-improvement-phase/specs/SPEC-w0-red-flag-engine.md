@@ -3,7 +3,8 @@
 **Module id:** `w0-red-flag-engine` · **Wave:** 0 · **Owner:** safety
 **Closes gap:** 5 · **Depends on:** — · **Blocks:** `w2-orchestration`,
 `w2-ask-coverage`
-**Status:** not started
+**Status:** implemented — PR pending on `feat/w0-red-flag-engine` (stacked
+on `feat/w0-assertion-nlp` for the negation guard)
 
 ## Objective
 
@@ -175,19 +176,21 @@ wave.
 
 ## Acceptance criteria
 
-- [ ] Every Part A gold case is flagged at `emergency` or `urgent`.
-- [ ] No Part B case is flagged `emergency` or `urgent`.
-- [ ] Every Part C case produces a refusal that names no condition.
-- [ ] Part D cases land in the correct tier.
-- [ ] The `"no chest pain"` negative case does not fire a chest-pain rule.
-- [ ] `SAFETY_KEYWORDS` no longer drives escalation anywhere — grep confirms.
-- [ ] The synthesis step cannot lower an escalation tier — a test asserts
+- [x] Every Part A gold case is flagged at `emergency` or `urgent`.
+- [x] No Part B case is flagged `emergency` or `urgent`.
+- [x] Every Part C case produces a refusal that names no condition.
+- [x] Part D cases land in the correct tier.
+- [x] The `"no chest pain"` negative case does not fire a chest-pain rule.
+- [x] `SAFETY_KEYWORDS` no longer drives escalation anywhere — grep confirms.
+- [x] The synthesis step cannot lower an escalation tier — a test asserts
       this.
-- [ ] The `doctor_alert` boolean is replaced by the structured object in the
-      API response, and every consumer is updated.
-- [ ] Emergency contact numbers come from configuration.
-- [ ] The full backend suite is green with no previously-passing test removed.
-- [ ] No patient text appears in any log emitted by this module.
+- [x] The `doctor_alert` boolean is replaced by the structured object in the
+      API response, and every consumer is updated. *(Deviation: `escalation`
+      is the authoritative object; `doctor_alert` is retained as a derived
+      boolean until PR #8's frontend consumers land — ask-first boundary.)*
+- [x] Emergency contact numbers come from configuration.
+- [x] The full backend suite is green with no previously-passing test removed.
+- [x] No patient text appears in any log emitted by this module.
 
 ## Files in scope
 

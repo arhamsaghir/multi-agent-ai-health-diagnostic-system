@@ -243,6 +243,9 @@ class TestRuleBasedSynthesis:
                     {"symptom": "shortness of breath", "severity": "high", "body_system": "respiratory"},
                 ],
                 "entities": {"conditions": [], "medications": [], "body_parts": ["chest"]},
+                # The red-flag engine matches the patient's own words
+                # (w0-red-flag-engine), so the text must be present.
+                "preprocessed": {"original": "I have chest pain and shortness of breath when I walk"},
             },
             "vision": {
                 "findings": [],

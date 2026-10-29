@@ -7,6 +7,7 @@ import time
 import uuid
 from loguru import logger
 
+from src.core.red_flags import RedFlagEngine
 from src.llm.openai_client import OpenAIClient
 from src.utils.redaction import safe_error
 
@@ -18,14 +19,12 @@ _conversations: dict[str, list[dict]] = {}
 # Global OpenAI client (lazy-loaded)
 _openai_client = None
 
-# Safety keywords that trigger medical escalation
-SAFETY_KEYWORDS = [
-    "emergency", "call 911", "ambulance", "heart attack", "stroke",
-    "can't breathe", "severe chest pain", "unconscious", "bleeding",
-    "suicidal", "overdose", "poisoning",
-]
+# Structured red-flag engine (w0-red-flag-engine): replaces the retired
+# SAFETY_KEYWORDS substring list. Tiered, negation-aware, sourced rules;
+# a C-SSRS hit terminates triage before any generation happens.
+_red_flag_engine = RedFlagEngine()
 
-# Medical disclaimer
+# Medical disclaimer (legal footer only — never a safety control)
 DISCLAIMER = "I am an AI health assistant, not a doctor. This information is for educational purposes only. Always consult a healthcare professional for medical advice."
 
 
@@ -49,6 +48,9 @@ class ChatMessageResponse(BaseModel):
     response: str
     safety_alert: bool = False
     safety_message: Optional[str] = None
+    escalation: Optional[dict] = Field(
+        None, description="Structured escalation object from the red-flag engine"
+    )
     timestamp: float = Field(default_factory=time.time)
 
 
@@ -72,20 +74,48 @@ async def send_message(request: ChatMessageRequest):
     if conv_id not in _conversations:
         _conversations[conv_id] = []
 
-    # Check for safety keywords
-    safety_alert = False
+    # Structured safety assessment — tiered engine, not keyword matching.
+    assessment = _red_flag_engine.assess(request.message)
+    escalation = assessment.escalation
+    safety_alert = escalation.level in ("urgent", "emergency")
     safety_message = None
-    msg_lower = request.message.lower()
-    for keyword in SAFETY_KEYWORDS:
-        if keyword in msg_lower:
-            safety_alert = True
-            safety_message = (
-                "⚠️ SAFETY ALERT: Your symptoms may indicate a medical emergency. "
-                "Please call your local emergency number (911, 999, or 112) or go to "
-                "the nearest emergency room immediately. Do not wait for online advice."
-            )
-            logger.warning(f"Safety alert triggered in conversation {conv_id}: {keyword}")
-            break
+
+    # A C-SSRS emergency terminates triage: return the crisis card and skip
+    # generation entirely (dossier 08 row 1 — the LLM must not answer this).
+    crisis_hit = any(f.flag_id == "RF-CSSRS-001" for f in escalation.findings)
+    if crisis_hit:
+        contact = escalation.contact
+        crisis_message = (
+            "I'm really glad you told me. What you're feeling matters, and "
+            "support is available right now.\n\n"
+            f"Please call {contact.crisis} (Tele-MANAS, 24x7) or "
+            f"{contact.emergency} (emergency) now — or have someone take you "
+            "to the nearest hospital. You deserve to talk to a person who "
+            "can help, and that help is one call away."
+        )
+        _conversations[conv_id].append({
+            "role": "assistant",
+            "content": crisis_message,
+            "timestamp": time.time(),
+        })
+        return ChatMessageResponse(
+            conversation_id=conv_id,
+            response=crisis_message,
+            safety_alert=True,
+            safety_message=crisis_message,
+            escalation=escalation.model_dump(),
+        )
+
+    if safety_alert:
+        actions = " ".join(escalation.actions[:2]) if escalation.actions else (
+            "Contact a healthcare professional immediately."
+        )
+        contact = escalation.contact
+        safety_message = (
+            f"⚠️ URGENT SAFETY ALERT ({escalation.level}): {actions} "
+            f"Emergency: {contact.emergency} · Ambulance: {contact.ambulance}. "
+            "Do not wait for online advice."
+        )
 
     # Add user message to history
     _conversations[conv_id].append({
@@ -201,6 +231,7 @@ Previous conversation context:"""
             response=response_text,
             safety_alert=safety_alert,
             safety_message=safety_message,
+            escalation=escalation.model_dump(),
         )
     except Exception as e:
         logger.error(f"Chat message failed: {safe_error(e, request.message)}")
