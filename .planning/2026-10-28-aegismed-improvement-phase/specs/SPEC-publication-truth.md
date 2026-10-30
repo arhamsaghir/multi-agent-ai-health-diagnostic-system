@@ -3,7 +3,7 @@
 **Module id:** `publication-truth` · **Wave:** 0–1 · **Owner:** principal investigator
 **Closes gaps:** 7, 16 (partial) · **Depends on:** `w0-benchmark-honesty`
 **Blocks:** `w3-patent`
-**Status:** not started — **phase A is urgent**
+**Status:** phase A (paper + repo docs) implemented — PR pending on `feat/publication-truth-phase-a`. Patent re-scope (R6/R8) deliberately NOT executed here: patent specification files are a legal artifact never edited without explicit user say-so, and the spec's own open question 2 routes the re-scope through the patent agent. **Patent untouched.**
 
 ## Objective
 
@@ -160,20 +160,22 @@ than a reader of the paper.
 
 ## Acceptance criteria
 
-- [ ] The grep guard from `w0-benchmark-honesty` returns zero unlabeled hits
+- [x] The grep guard from `w0-benchmark-honesty` returns zero unlabeled hits
       across the paper.
-- [ ] No sentence in the paper claims clinical accuracy from self-generated
+- [x] No sentence in the paper claims clinical accuracy from self-generated
       cases.
-- [ ] Every claim about a system component corresponds to code that exists,
+- [x] Every claim about a system component corresponds to code that exists,
       or is explicitly labeled as a proposed extension.
-- [ ] The paper's contribution statement is consistent with the research's
+- [x] The paper's contribution statement is consistent with the research's
       strategy paragraph and with the code.
 - [ ] The patent specification contains no claim broader than the re-scoped
-      contract, and the brief cites the anticipatory references.
-- [ ] `SUBMISSION_CHECKLIST.md` states the accuracy situation accurately.
-- [ ] The README's performance statements match the paper's.
+      contract, and the brief cites the anticipatory references. *(PENDING —
+      owned by the patent agent + user; out of scope for this PR by the
+      legal-artifact boundary.)*
+- [x] `SUBMISSION_CHECKLIST.md` states the accuracy situation accurately.
+- [x] The README's performance statements match the paper's.
 - [ ] The principal investigator has signed off on the re-scoped claim set
-      before filing.
+      before filing. *(PENDING — user sign-off on this PR is that sign-off.)*
 
 ## Files in scope
 
