@@ -1,0 +1,82 @@
+# CI — the regression fence (w0 ci-foundation module).
+# Mirrors the root SPEC.md canonical commands:
+#   /build = compileall + import src.api.main -> frontend tsc -> next build
+#   /test  = pytest + frontend vitest
+# ruff runs ADVISORY only (67 pre-existing findings recorded in SPEC.md).
+
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: backend (compile + pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # No OmniRoute tunnel exists in CI; the LLM clients fail fast and fall
+      # back, but never wait on localhost:20128.
+      USE_OMNIROUTE: "false"
+      APP_ENV: "development"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compile gate (/build)
+        run: |
+          python -m compileall -q src tests
+          python -c "import src.api.main"
+
+      - name: Ruff (advisory — findings are recorded debt, not a gate)
+        continue-on-error: true
+        run: |
+          pip install ruff
+          ruff check src tests scripts
+
+      - name: Tests (/test)
+        run: python -m pytest -q
+
+  frontend:
+    name: frontend (tsc + build + vitest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check (tsc --noEmit)
+        run: npx tsc --noEmit
+
+      - name: Build (next build)
+        run: npm run build
+
+      # --if-present: branches before PR #8 have no test script yet.
+      - name: Tests (vitest)
+        run: npm run test --if-present

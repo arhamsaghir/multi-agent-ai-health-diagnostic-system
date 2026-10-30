@@ -28,7 +28,7 @@ gap is closed only when its test passes and its evidence is linked.
 | 12 | Product-wide — no regulatory posture | `w3-regulatory` + `w3-abdm` | both specs | `tests/unit/test_product_language.py` | not started |
 | 13 | `src/data/database/` — SQLite, plaintext at rest | `w3-dpdp` | `specs/SPEC-w3-dpdp.md` | `tests/unit/test_dpdp_controls.py` | not started |
 | 14 | `src/llm/openrouter_client.py` — 503-prone, off-box PHI path | `w3-engineering` | `specs/SPEC-w3-engineering.md` | `tests/unit/test_local_fallback.py` | not started |
-| 15 | CI, tests — zero CI, zero frontend tests, `diagnosis.py` 5 domains | `w3-engineering` (+ `ci-foundation` in Wave 0) | `specs/SPEC-w3-engineering.md` | CI run green | not started |
+| 15 | CI, tests — zero CI, zero frontend tests, `diagnosis.py` 5 domains | `w3-engineering` (+ `ci-foundation` in Wave 0) | `specs/SPEC-w3-engineering.md` | CI run green | ci-foundation: implemented, PR pending · w3-engineering remainder: not started |
 | 16 | `patent/` — claims cover prior art | `publication-truth` + `w3-patent` | both specs | `patent/CLAIMS_TRACEABILITY.md` | not started |
 
 ## Release blockers
@@ -64,7 +64,7 @@ system genuinely better rather than merely honest.
 | Regulatory (gap 12) | `w3-regulatory`, `w3-abdm` | `W3-RG-01`…`W3-RG-05`, `W3-AB-01`…`W3-AB-04` | Counsel sign-off; ABDM M1 milestone | _pending_ |
 | Data layer (gap 13) | `w3-dpdp` | `W3-DP-01`…`W3-DP-08` | Consent + security controls implemented and tested | _pending_ |
 | LLM dependency (gap 14) | `w3-engineering` | `W3-EN-04` | Local fallback benchmarked; off-box PHI path closed | _pending_ |
-| Engineering (gap 15) | `w3-engineering` | `W3-EN-01`…`W3-EN-05` | CI green on every PR; frontend suite exists | _pending_ |
+| Engineering (gap 15) | `w3-engineering` | `W3-EN-01`…`W3-EN-05` | CI green on every PR; frontend suite exists | CI workflow landed (`ci-foundation`, PR pending); Vitest suite landed with #8; split + local-fallback pending |
 | Patent (gap 16) | `publication-truth`, `w3-patent` | `PT-01`…`PT-05`, `W3-PT-01`…`W3-PT-04` | Claims re-scoped; prior-art search filed | _pending_ |
 
 ## Claim-level traceability for the retired numbers
