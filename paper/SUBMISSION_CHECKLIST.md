@@ -4,7 +4,7 @@
 - **Primary:** ACM Conference on Health, Inference, and Learning (ACM CHIL) — Research Track
 - **Secondary (Alternative):** MICCAI Workshop on Clinical Machine Learning / Multimodal AI in Healthcare
 
-**Status:** Research Draft & Repro Package Complete — Ready for Submission Workflow  
+**Status:** Research Draft re-scoped to the mechanism contribution (publication-truth phase A); Repro Package Complete — **not** submission-ready until external evaluation numbers exist (see `data/benchmarks/RETIREMENT.md`; the manuscript currently makes no accuracy claim by design)  
 **Notice:** *Submission requires author registration, OpenReview/HotCRP upload, and final blinding check by the corresponding author. The automated system compiles and verifies all technical artifacts; actual submission is the user's action.*
 
 ---
@@ -18,7 +18,7 @@
 | **3** | **Bibliography** | Complete `.bib` database with 17 verified citations | `READY` | `paper/phase3-paper/references.bib` |
 | **4** | **Page Limit Compliance** | CHIL guideline: $\le 10$ pages excluding references. AegisMed: 7.5 content pages + references | `READY` | Verified 8 pages total |
 | **5** | **Figure Resolution** | High-resolution publication-quality vector/raster graphics | `READY` | `paper/phase3-paper/figures/` (FIG. 1 architecture, FIG. 2 DEMAT flowchart, FIG. 5 empirical results) |
-| **6** | **Empirical Honesty** | 100% byte-for-byte consistency between Tables 1 & 2 in manuscript and benchmark JSON | `READY` | Verified against `data/benchmarks/results/demat_research_benchmark.json` |
+| **6** | **Empirical Honesty** | Manuscript reports mechanism-only measurements from the self-generated regression suite; no accuracy claim; every number traces to the committed artifact | `READY` | Verified against `data/benchmarks/results/demat_research_benchmark.json` and `data/benchmarks/RETIREMENT.md` |
 
 ---
 
