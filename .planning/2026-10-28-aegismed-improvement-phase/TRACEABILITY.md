@@ -18,7 +18,7 @@ gap is closed only when its test passes and its evidence is linked.
 | 2 | `src/data/preprocessing/text_preprocessor.py` — blind polarity map | `w0-assertion-nlp` | `specs/SPEC-w0-assertion-nlp.md` | `tests/unit/test_preprocessing.py` | in progress — implemented, PR pending |
 | 3 | `src/core/disease_kb.py` — 15 conditions, string keys | `w1-kb-v2` | `specs/SPEC-w1-kb-v2.md` | `tests/unit/test_kb_v2.py` | not started |
 | 4 | `src/core/demat.py`, `question_bank.py` — no ask-coverage metric | `w2-ask-coverage` | `specs/SPEC-w2-ask-coverage.md` | `tests/unit/test_ask_coverage.py` | not started |
-| 5 | `src/api/routes/chat.py` — 12 keyword strings | `w0-red-flag-engine` | `specs/SPEC-w0-red-flag-engine.md` | `tests/safety/test_red_flag_adversarial.py` | not started |
+| 5 | `src/api/routes/chat.py` — 12 keyword strings | `w0-red-flag-engine` | `specs/SPEC-w0-red-flag-engine.md` | `tests/safety/test_red_flag_adversarial.py` | in progress — implemented, PR pending |
 | 6 | `src/agents/confidence_scorer.py` — ECE 0.245, blend before calibration | `w1-conformal` | `specs/SPEC-w1-conformal.md` | `tests/unit/test_conformal.py` | not started |
 | 7 | `scripts/benchmark/` — circular, oracle = system under test | `w0-benchmark-honesty` + `w1-external-eval` | both specs | `tests/unit/test_demat_benchmark.py` (demoted) + `scripts/benchmark/external_eval.py` | not started |
 | 8 | `src/agents/rag/agent.py` — dense-only FAISS, WHO NC text | `w2-hybrid-rag` | `specs/SPEC-w2-hybrid-rag.md` | `tests/unit/test_rag_agent.py` | not started |
@@ -39,7 +39,7 @@ closure is the Wave 0 gate.
 | Blocker | Module | Task ids | Gate criterion | Evidence link |
 |---|---|---|---|---|
 | Negation (gap 1) | `w0-assertion-nlp` | `W0-AL-01`…`W0-AL-05` | Golden harness ≥95%; live probe flips | Golden harness 224 authored cases green; probe flips; control set 100% — PR pending |
-| Red flags (gap 5) | `w0-red-flag-engine` | `W0-RF-01`…`W0-RF-06` | 100% emergency-flagging; refusal works | _pending_ |
+| Red flags (gap 5) | `w0-red-flag-engine` | `W0-RF-01`…`W0-RF-06` | 100% emergency-flagging; refusal works | Adversarial gate green: Part A 16/16, B 9/9 (0 false), C 6/6, D 6/6; R7 LLM-cannot-lower enforced — PR pending |
 | Circular eval (gap 7) | `w0-benchmark-honesty` + `w1-external-eval` | `W0-BH-01`…`W0-BH-04`, `W1-EE-01`…`W1-EE-07` | No self-referential number in any doc; external numbers published with CIs | _pending_ |
 | Fabricated output (gap 11) | `w0-truthful-frontend` | `W0-TF-01`…`W0-TF-05` | No code path renders a diagnosis without a backend response | _pending_ |
 

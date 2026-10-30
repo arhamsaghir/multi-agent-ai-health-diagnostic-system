@@ -12,6 +12,10 @@ from src.agents.orchestrator.agent import OrchestratorAgent
 from src.core.disease_kb import DISEASE_DATABASE
 from src.utils.redaction import safe_error
 
+from src.core.red_flags import RedFlagEngine
+
+_red_flag_engine = RedFlagEngine()
+
 router = APIRouter(prefix="/diagnosis", tags=["diagnosis"])
 
 # Global orchestrator instance (lazy-loaded)
@@ -77,6 +81,12 @@ class DiagnosisResponse(BaseModel):
     recommendations: list[str] = Field(default_factory=list)
     severity: str = "unknown"
     doctor_alert: bool = False
+    escalation: Optional[dict] = Field(
+        None, description="Structured escalation object from the red-flag engine"
+    )
+    refusal: Optional[dict] = Field(
+        None, description="Out-of-scope refusal (present when no KB condition is supported)"
+    )
     differential_diagnoses: list[str] = Field(default_factory=list)
     red_flags: list[str] = Field(default_factory=list)
     confidence: dict = Field(default_factory=dict)
@@ -207,12 +217,16 @@ async def run_analysis(
 
     return DiagnosisResponse(
         session_id=session_id,
-        diagnosis=synthesis.get("diagnosis", []),
+        # Refusal enforcement (w0-red-flag-engine R5): when the engine
+        # refuses, no condition name may ship in the response.
+        diagnosis=[] if synthesis.get("refusal") else synthesis.get("diagnosis", []),
         explanation=synthesis.get("explanation", ""),
         patient_explanation=synthesis.get("patient_explanation", ""),
         recommendations=synthesis.get("recommendations", []),
         severity=synthesis.get("severity", "unknown"),
         doctor_alert=synthesis.get("doctor_alert", False),
+        escalation=synthesis.get("escalation"),
+        refusal=synthesis.get("refusal"),
         differential_diagnoses=synthesis.get("differential_diagnoses", []),
         red_flags=synthesis.get("red_flags", []),
         confidence=synthesis.get("confidence", {}),
@@ -407,12 +421,16 @@ async def run_refinement(request: RefineDiagnosisRequest, progress_cb=None) -> D
 
     return DiagnosisResponse(
         session_id=request.session_id or str(uuid.uuid4()),
-        diagnosis=synthesis.get("diagnosis", []),
+        # Refusal enforcement (w0-red-flag-engine R5): when the engine
+        # refuses, no condition name may ship in the response.
+        diagnosis=[] if synthesis.get("refusal") else synthesis.get("diagnosis", []),
         explanation=synthesis.get("explanation", ""),
         patient_explanation=synthesis.get("patient_explanation", ""),
         recommendations=synthesis.get("recommendations", []),
         severity=synthesis.get("severity", "unknown"),
         doctor_alert=synthesis.get("doctor_alert", False),
+        escalation=synthesis.get("escalation"),
+        refusal=synthesis.get("refusal"),
         differential_diagnoses=synthesis.get("differential_diagnoses", []),
         red_flags=synthesis.get("red_flags", []),
         confidence=synthesis.get("confidence", {}),
@@ -550,6 +568,8 @@ async def analyze_with_image(
             "recommendations": synthesis.get("recommendations", []),
             "severity": synthesis.get("severity", "unknown"),
             "doctor_alert": synthesis.get("doctor_alert", False),
+            "escalation": synthesis.get("escalation"),
+            "refusal": synthesis.get("refusal"),
             "differential_diagnoses": synthesis.get("differential_diagnoses", []),
             "red_flags": synthesis.get("red_flags", []),
             "confidence": synthesis.get("confidence", {}),
@@ -781,81 +801,46 @@ class EmergencyCheckResponse(BaseModel):
 @router.post("/emergency-check", response_model=EmergencyCheckResponse)
 async def check_emergency(request: EmergencyCheckRequest):
     """Check if symptoms indicate a medical emergency.
-    
-    This endpoint uses keyword matching and pattern detection to identify
-    potential medical emergencies and returns immediate action guidance.
+
+    Backed by the structured red-flag engine (w0-red-flag-engine): tiered,
+    negation-aware rules with recorded sources and a NEWS2-style numeric
+    gate — not keyword matching. Emergency contact numbers come from
+    configuration.
     """
-    text_lower = request.text.lower()
-    text_hindi = request.text  # Keep original for Hindi matching
-    
-    triggered = []
-    confidence = 0.0
-    
-    # Check English emergency keywords
-    for keyword in EMERGENCY_KEYWORDS_EN:
-        if keyword.lower() in text_lower:
-            triggered.append(keyword)
-            # Higher confidence for multi-word matches
-            confidence = max(confidence, 0.7 if len(keyword.split()) > 2 else 0.5)
-    
-    # Check Hindi emergency keywords
-    for keyword in EMERGENCY_KEYWORDS_HI:
-        if keyword in text_hindi:
-            triggered.append(f"Hindi: {keyword}")
-            confidence = max(confidence, 0.7)
-    
-    # Pattern-based detection for combinations
-    patterns = [
-        (["chest", "pain", "sweat"], 0.85),
-        (["chest", "pain", "radiating"], 0.85),
-        (["chest", "pain", "arm"], 0.80),
-        (["chest", "pain", "jaw"], 0.80),
-        (["stroke", "symptoms"], 0.90),
-        (["sudden", "weakness", "one side"], 0.85),
-        (["can't", "breathe"], 0.80),
-        (["cannot", "breathe"], 0.80),
-        (["severe", "bleeding"], 0.85),
-        (["coughing", "blood"], 0.80),
-        (["vomiting", "blood"], 0.80),
-        (["suicidal", "thoughts"], 0.95),
-        (["want", "to", "die"], 0.90),
-        (["overdose"], 0.95),
-        (["unconscious"], 0.90),
-        (["seizure"], 0.85),
-        (["severe", "allergic", "reaction"], 0.85),
-        (["swollen", "throat"], 0.80),
-    ]
-    
-    for pattern, score in patterns:
-        if all(word in text_lower for word in pattern):
-            triggered.append(f"Pattern: {' + '.join(pattern)}")
-            confidence = max(confidence, score)
-    
-    # Determine if emergency
-    is_emergency = len(triggered) > 0 and confidence >= 0.5
-    
-    if is_emergency:
-        logger.warning(f"EMERGENCY DETECTED (confidence: {confidence:.2f}): {triggered}")
+    assessment = _red_flag_engine.assess(request.text)
+    escalation = assessment.escalation
+    is_emergency = escalation.level == "emergency"
+    is_urgent = escalation.level == "urgent"
+    contact = escalation.contact
+
+    if is_emergency or is_urgent:
         return EmergencyCheckResponse(
-            is_emergency=True,
-            severity="critical",
-            alert_level="immediate",
-            message="⚠️ MEDICAL EMERGENCY DETECTED",
-            actions=EMERGENCY_RESPONSE["actions"],
-            emergency_numbers=EMERGENCY_RESPONSE["emergency_numbers"],
-            triggered_keywords=triggered,
-            confidence=confidence,
+            is_emergency=is_emergency,
+            severity="critical" if is_emergency else "urgent",
+            alert_level="immediate" if is_emergency else "same-day",
+            message=(
+                "⚠️ MEDICAL EMERGENCY DETECTED"
+                if is_emergency
+                else "⚠️ URGENT — same-day clinical assessment needed"
+            ),
+            actions=escalation.actions,
+            emergency_numbers=contact.as_phone_map() if contact else {},
+            triggered_keywords=[
+                f"{f.flag_id} ({f.tier}): {f.evidence}" for f in escalation.findings
+            ],
+            confidence=1.0 if is_emergency else 0.8,
             disclaimer=EMERGENCY_RESPONSE["disclaimer"],
         )
-    else:
-        return EmergencyCheckResponse(
-            is_emergency=False,
-            severity="non-emergency",
-            alert_level="none",
-            message="No emergency detected",
-            actions=[],
-            emergency_numbers={},
-            triggered_keywords=[],
-            confidence=0.0,
-            disclaimer=NORMAL_RESPONSE["disclaimer"],
-        )
+
+    return EmergencyCheckResponse(
+        is_emergency=False,
+        severity="non-emergency",
+        alert_level="none",
+        message="No emergency detected",
+        actions=[],
+        emergency_numbers={},
+        triggered_keywords=[],
+        confidence=0.0,
+        disclaimer=NORMAL_RESPONSE["disclaimer"],
+    )
+

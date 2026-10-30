@@ -11,6 +11,8 @@ from typing import Optional
 from loguru import logger
 
 from src.agents.base import BaseAgent
+from src.core.escalation import Escalation
+from src.core.red_flags import RedFlagEngine
 from src.llm.gemini_client import GeminiClient
 from src.agents.confidence_scorer import ConfidenceScorer
 
@@ -83,12 +85,39 @@ class GenAIAgent(BaseAgent):
         # Calculate confidence score
         confidence = self.confidence_scorer.score(agent_outputs, report.get("severity", "unknown"))
 
+        # Escalation: the deterministic engine is authoritative (R7,
+        # w0-red-flag-engine). It runs here, before the LLM's voice, on the
+        # patient's own words. A report-provided escalation can only RAISE
+        # the level — merge() never lowers it, removes an engine finding,
+        # or lets the LLM add a tier the engine did not produce.
+        engine = RedFlagEngine()
+        engine_text = user_input or (nlp.get("preprocessed") or {}).get("original", "")
+        assessment = engine.assess(engine_text)
+        engine_escalation = assessment.escalation
+        report_escalation_raw = report.get("escalation")
+        if isinstance(report_escalation_raw, dict):
+            try:
+                report_escalation = Escalation(**report_escalation_raw)
+            except Exception:
+                report_escalation = None
+        else:
+            report_escalation = None
+        final_escalation = (
+            engine_escalation.merge(report_escalation)
+            if report_escalation
+            else engine_escalation
+        )
+
         # Determine severity and doctor alert from report
         severity = report.get("severity", "unknown")
         doctor_alert = report.get("doctor_alert", False)
 
         # Auto-escalate to doctor alert if severity is critical
         if severity == "critical":
+            doctor_alert = True
+
+        # The structured escalation can also raise doctor_alert, never lower it.
+        if final_escalation.level in ("urgent", "emergency"):
             doctor_alert = True
 
         # Generate patient-friendly explanation
@@ -120,6 +149,8 @@ class GenAIAgent(BaseAgent):
             "recommendations": report.get("recommendations", []),
             "severity": severity,
             "doctor_alert": doctor_alert,
+            "escalation": final_escalation.model_dump(),
+            "refusal": assessment.refusal.model_dump() if assessment.refusal else None,
             "differential_diagnoses": report.get("differential_diagnoses", []),
             "red_flags": report.get("red_flags", []),
             "confidence": confidence,
