@@ -38,12 +38,8 @@
 
 % --- ABSTRACT ---
 \begin{abstract}
-\noindent When people use artificial intelligence for medical advice, current systems usually suffer from three practical flaws. First, they try to guess a diagnosis from a single prompt without asking follow-up questions, which leads to vague or premature conclusions. Second, when clinical text and medical images disagree, standard models often average their outputs or hallucinate a consensus that violates basic biology. Third, standard neural networks output overconfident confidence scores without statistical guarantees. We built \textbf{AegisMed} to solve these three problems through four clear mechanisms:
-(1) \textbf{Dynamic Entropy-Minimizing Active Triage (DEMAT)}, which tracks diagnostic uncertainty as Shannon entropy and actively selects the single best clinical question that clears up the most confusion;
-(2) \textbf{Evidential Neuro-Symbolic Conflict Arbitration (EN-SCAF)}, which translates outputs from text, vision, and vitals models into Dempster-Shafer belief masses and measures direct disagreement with a conflict metric $K$;
-(3) an \textbf{Ontological Knowledge Gate}, which consults the Unified Medical Language System (UMLS) and SNOMED-CT knowledge graphs whenever models clash ($K > 0.40$), discarding biologically impossible disease candidates before combining evidence; and
-(4) \textbf{Multimodal Conformal Risk Bounding}, which generates a small set of plausible diagnoses mathematically guaranteed to contain the patient's true condition at least 95\% of the time ($1 - \alpha = 0.95$).
-We evaluated AegisMed on 200 standardized clinical cases spanning 15 disease categories. Active questioning increased Top-1 diagnostic accuracy from 93.0\% to \textbf{98.0\%} ($+5.0\%$, $p = 0.0339$), attained \textbf{100.0\% Top-3 differential coverage}, and cut diagnostic uncertainty by \textbf{53.7\%} (from 2.846 down to 1.318 bits). The system achieved this while asking an average of only \textbf{1.92 questions per case} with an optimization latency of \textbf{0.2 ms}. Furthermore, expected calibration error fell from 0.5528 to 0.2451 ($-55.7\%$), showing that active inquiry makes clinical AI substantially more accurate, cautious, and trustworthy.
+\noindent When people use artificial intelligence for medical advice, current systems usually suffer from three practical flaws. First, they try to guess a diagnosis from a single prompt without asking follow-up questions, which leads to vague or premature conclusions. Second, when clinical text and medical images disagree, standard models often average their outputs or hallucinate a consensus that violates basic biology. Third, standard neural networks output overconfident confidence scores without statistical guarantees. We built \textbf{AegisMed} around one implemented answer to the first problem --- the one we argue is the scarce skill in this field:
+\textbf{Dynamic Entropy-Minimizing Active Triage (DEMAT)}, which tracks diagnostic uncertainty as Shannon entropy and actively selects the single best clinical question that clears up the most confusion. DEMAT runs inside a multi-agent pipeline (vision, clinical-text, retrieval, and risk agents over a typed state graph) with a structured, tiered red-flag safety layer. We further specify two designed layers as \emph{proposed extensions}: \textbf{Evidential Neuro-Symbolic Conflict Arbitration (EN-SCAF)} with Dempster-Shafer belief masses, a conflict metric $K$, and knowledge-graph pruning; and \textbf{Multimodal Conformal Risk Bounding}, which would generate a small set of plausible diagnoses mathematically guaranteed to contain the patient's true condition at least 95\% of the time ($1 - \alpha = 0.95$). Neither extension is implemented in the current system, and no claim in this paper depends on either. We exercised the DEMAT mechanism on a self-generated regression suite of 200 cases spanning 15 disease categories --- an internal-consistency harness whose cases come from the system's own knowledge base, \emph{not} an accuracy evaluation. On it, diagnostic uncertainty fell by \textbf{53.7\%} (from 2.846 down to 1.318 bits) while asking an average of only \textbf{1.92 questions per case} at \textbf{0.2 ms} of triage latency. We make no clinical-accuracy claim from this suite; accuracy on external doctor--patient vignette benchmarks is future work.
 \end{abstract}
 
 % --- SECTION 1: INTRODUCTION ---
@@ -64,16 +60,16 @@ To address these challenges, we created \textbf{AegisMed}, a practical multi-age
 \begin{figure*}[t!]
 \centering
 \includegraphics[width=0.88\textwidth,height=0.38\textheight,keepaspectratio]{figures/FIG_1_system_architecture.png}
-\caption{\textbf{AegisMed System Architecture.} Patient information (symptoms, vitals, and chest X-rays) enters through a FastAPI edge gateway (106) into the DEMAT Active Triage Engine (108). DEMAT determines whether follow-up questions are needed to clarify the differential. When uncertainty drops below our stopping threshold, specialist agents (112--118) run in parallel via LangGraph (110). If specialists disagree, EN-SCAF (120) checks UMLS medical knowledge graphs to eliminate impossible hypotheses before combining evidence. Finally, conformal risk bounding (122) guarantees that the true diagnosis is captured, and the dual-persona interface (124) presents tailored findings for both doctors and patients.}
+\caption{\textbf{AegisMed System Architecture.} Patient information (symptoms, vitals, and chest X-rays) enters through a FastAPI edge gateway (106) into the DEMAT Active Triage Engine (108). DEMAT determines whether follow-up questions are needed to clarify the differential. When uncertainty drops below our stopping threshold, specialist agents (112--118) run via LangGraph (110). Outputs are reconciled by consensus arbitration (120); the EN-SCAF knowledge-graph check and conformal risk bounding (122) are \emph{proposed extensions} (Section III), rendered here as designed. The dual-persona interface (124) presents tailored findings for both doctors and patients.}
 \label{fig:architecture}
 \end{figure*}
 
-Our main contributions are fourfold:
+Our main contributions are as follows:
 \begin{itemize}
-    \item \textbf{Active Follow-Up Questioning (DEMAT):} We treat the list of possible diseases as a probability distribution and measure clinical confusion using Shannon entropy $H(D)$. AegisMed automatically evaluates candidate clinical questions and selects the one that provides the largest Expected Mutual Information Gain $I(D; A_q)$ \cite{shannon1948mathematical}, halting as soon as diagnostic entropy drops below a confident threshold ($\le 0.45\text{ bits}$).
-    \item \textbf{Conflict-Aware Evidence Fusion (EN-SCAF):} We represent findings from vision, text, and vitals models as Dempster-Shafer belief masses \cite{dempster1967upper, shafer1976mathematical}. We track how much these models contradict each other using an orthogonal conflict value $K$. When models clash ($K > 0.40$), the system halts automatic blending and verifies candidate diagnoses against the Unified Medical Language System (UMLS) \cite{bodenreider2004unified} and SNOMED-CT knowledge graphs, pruning biologically implausible combinations.
-    \item \textbf{Guaranteed Prediction Sets (Conformal Risk Bounding):} We apply split conformal prediction \cite{vovk2005algorithmic, angelopoulos2021gentle} to our multi-agent outputs. This provides a formal statistical guarantee that the patient's true condition is included in the output differential set at least 95\% of the time ($1 - \alpha = 0.95$), without making unrealistic assumptions about data distributions.
-    \item \textbf{Open Empirical Validation:} We benchmarked AegisMed against 200 standardized clinical presentation cases across 15 medical specialties. Active inquiry improved Top-1 diagnostic accuracy from 93.0\% to 98.0\% ($p = 0.0339$), attained 100.0\% Top-3 coverage, and cut diagnostic entropy by 53.7\% with fewer than two questions per patient on average.
+    \item \textbf{Active Follow-Up Questioning (DEMAT) — implemented:} We treat the list of possible diseases as a probability distribution and measure clinical confusion using Shannon entropy $H(D)$. AegisMed automatically evaluates candidate clinical questions and selects the one that provides the largest Expected Mutual Information Gain $I(D; A_q)$ \cite{shannon1948mathematical}, halting as soon as diagnostic entropy drops below a confident threshold ($\le 0.45\text{ bits}$).
+    \item \textbf{Conflict-Aware Evidence Fusion (EN-SCAF) — proposed extension:} We specify a design that represents findings from vision, text, and vitals models as Dempster-Shafer belief masses \cite{dempster1967upper, shafer1976mathematical}, tracks an orthogonal conflict value $K$, and, when models clash, verifies candidate diagnoses against a coded knowledge base before combining evidence. This layer is not yet implemented; the deployed system arbitrates with deterministic agreement consensus.
+    \item \textbf{Guaranteed Prediction Sets (Conformal Risk Bounding) — proposed extension:} We specify split conformal prediction \cite{vovk2005algorithmic, angelopoulos2021gentle} over multi-agent outputs, which would provide a formal statistical guarantee that the patient's true condition is included in the output differential set at least 95\% of the time ($1 - \alpha = 0.95$), without unrealistic distributional assumptions. This stage is not yet implemented, and no coverage claim is made in this paper.
+    \item \textbf{Mechanism Validation:} We exercised the triage mechanism on 200 self-generated cases across 15 medical specialties. The suite's cases derive from the system's own knowledge base, so it is an internal-consistency harness, not an accuracy evaluation. On it the mechanism behaves as designed: diagnostic entropy fell by 53.7\% with fewer than two questions per case on average, at 0.2 ms of triage latency. Accuracy on external vignette benchmarks is future work.
 \end{itemize}
 
 % --- SECTION 2: RELATED WORK ---
@@ -160,8 +156,10 @@ P_{t+1}(d_i \mid a^*) = \frac{P(A_{q^*} = a^* \mid d_i) P_t(d_i)}{\sum_{j=1}^N P
 \end{equation}
 The system recalculates the updated entropy $H_{t+1}(D)$ and checks whether the stopping criteria are satisfied.
 
-\subsection{Evidential Neuro-Symbolic Conflict Arbitration (EN-SCAF)}
-Referring to Figure \ref{fig:enscaf}, once DEMAT reaches a conclusion, specialist inferences are converted into Dempster-Shafer basic belief assignments $m_k: 2^\Theta \to [0, 1]$ such that the sum of belief masses across all subsets equals one: $\sum_{A \subseteq \Theta} m_k(A) = 1$ \cite{shafer1976mathematical}.
+\subsection{Evidential Neuro-Symbolic Conflict Arbitration (EN-SCAF) --- Proposed Design}
+\textbf{Implementation status:} this subsection and the next describe \emph{designed, not implemented} layers; the deployed system arbitrates with deterministic agreement consensus.
+
+Referring to Figure \ref{fig:enscaf}, once DEMAT reaches a conclusion, specialist inferences would be converted into Dempster-Shafer basic belief assignments $m_k: 2^\Theta \to [0, 1]$ such that the sum of belief masses across all subsets equals one: $\sum_{A \subseteq \Theta} m_k(A) = 1$ \cite{shafer1976mathematical}.
 
 \subsubsection{Quantifying Model Disagreement ($K$)}
 We measure the degree of direct contradiction between vision evidence $m_{\text{vis}}$ and clinical text evidence $m_{\text{nlp}}$ using the orthogonal conflict parameter $K$:
@@ -180,24 +178,18 @@ where $K \in [0, 1]$. When both models agree on the same disease, $K$ is near ze
 \begin{table}[t]
 \centering
 \small
-\caption{\textbf{Main Benchmark Performance ($N = 200$ Cases).} Comparing Full DEMAT Active Triage against the Single-Pass Baseline.}
+\caption{\textbf{Mechanism Measurements ($N = 200$ Cases, self-generated suite).} Internal-consistency properties of the triage mechanism --- not clinical accuracy. The suite's cases derive from the system's own knowledge base (see Section IV-A).}
 \label{tab:main_results}
 \begin{tabularx}{\columnwidth}{@{}l r r r@{}}
 \toprule
 \textbf{Metric} & \textbf{DEMAT} & \textbf{Baseline} & \textbf{Delta} \\
 \midrule
-Top-1 Accuracy & \textbf{98.0\%} & 93.0\% & \textbf{+5.0\%}$^*$ \\
-Top-3 Coverage & \textbf{100.0\%} & 97.5\% & +2.5\% \\
-Top-5 Coverage & \textbf{100.0\%} & 100.0\% & +0.0\% \\
-\midrule
 Diagnostic Entropy ($H$) & \textbf{1.32 bits} & 2.85 bits & \textbf{-53.7\%} \\
-Brier Score (lower better) & \textbf{0.2005} & 0.5296 & \textbf{-62.1\%} \\
-Calibration Error (ECE) & \textbf{0.2451} & 0.5528 & \textbf{-55.7\%} \\
 \midrule
 Mean Inquiries Asked & \textbf{1.92} & 0.00 & +1.92 \\
 Mean Latency per Case & 0.2 ms & 0.1 ms & +0.1 ms \\
 \bottomrule
-\multicolumn{4}{@{}p{\columnwidth}@{}}{\footnotesize $^*$Statistically significant via McNemar's test ($\chi^2 = 4.50$, $p = 0.0339 < 0.05$).}
+\multicolumn{4}{@{}p{\columnwidth}@{}}{\footnotesize Outcome-level measurements on this suite (top-$k$ overlap between arms, Brier, ECE, and their McNemar-tested deltas, $\chi^2 = 4.50$, $p = 0.0339$) are recorded in the artifact as internal-consistency measurements of harness behavior. They compare the two arms' agreement with an oracle that is the system under test, and are not estimates of diagnostic accuracy.}
 \end{tabularx}
 \end{table}
 
@@ -218,8 +210,10 @@ m_{1 \oplus 2}(A) = \frac{1}{1 - K} \sum_{B \cap C = A} m_1(B) \cdot m_2(C) \qua
 \end{equation}
 This fused belief mass is transformed into standard probabilities using the pignistic transformation $\text{BetP}(d) = \sum_{d \in A} \frac{m(A)}{|A|}$, providing a unified consensus ranking across all specialist agents.
 
-\subsection{Multimodal Conformal Risk Bounding}
-Referring to Figure \ref{fig:conformal}, we apply split conformal prediction \cite{vovk2005algorithmic, angelopoulos2021gentle} to provide formal statistical protection against misdiagnosis.
+\subsection{Multimodal Conformal Risk Bounding --- Proposed Design}
+\textbf{Implementation status:} this stage is \emph{designed, not implemented}; no coverage guarantee is claimed for the current system.
+
+Referring to Figure \ref{fig:conformal}, the designed stage applies split conformal prediction \cite{vovk2005algorithmic, angelopoulos2021gentle} to provide formal statistical protection against misdiagnosis.
 
 For any patient input $\mathbf{x}$ and candidate disease $y$, we define a non-conformity score $S(\mathbf{x}, y)$ representing how surprised the model is by that diagnosis:
 \begin{equation}
@@ -241,8 +235,10 @@ Because the calibration and test cases are drawn from the same clinical domain (
 % --- SECTION 4: EMPIRICAL EVALUATION ---
 \section{Empirical Evaluation}
 
-\subsection{Benchmark Dataset and Setup}
-We evaluated AegisMed on a comprehensive benchmark of $N = 200$ standardized clinical cases across 15 condition categories: Cardiovascular Disease, Respiratory Infection, Pneumonia, Asthma, Hypertension, Type 2 Diabetes, Migraine, Gastroenteritis, Gastroesophageal Reflux Disease (GERD), Neurological Disorder (Stroke/TIA), Back Pain, Eczema, Osteoarthritis, Anxiety Disorder, and Urinary Tract Infection.
+\subsection{Evaluation Suite and Setup}
+We exercised the triage mechanism on a self-generated suite of $N = 200$ cases across 15 condition categories: Cardiovascular Disease, Respiratory Infection, Pneumonia, Asthma, Hypertension, Type 2 Diabetes, Migraine, Gastroenteritis, Gastroesophageal Reflux Disease (GERD), Neurological Disorder (Stroke/TIA), Back Pain, Eczema, Osteoarthritis, Anxiety Disorder, and Urinary Tract Infection.
+
+\textbf{Provenance and epistemic status.} The cases are generated from the system's own knowledge base, and simulated patient follow-up answers are drawn from the same likelihood tables DEMAT reasons over. The oracle is therefore the system under test. The suite is an \emph{internal-consistency regression harness}: it verifies that entropy decreases when it should, that information-gain ranking selects questions in the expected order, that the stopping rule fires, and that the mechanics are deterministic. \textbf{It is not an accuracy evaluation}, and no outcome-level number from it is reported as clinical accuracy anywhere in this paper. Accuracy on external doctor--patient vignette benchmarks is future work.
 
 We tested two distinct experimental arms:
 \begin{itemize}
@@ -250,50 +246,22 @@ We tested two distinct experimental arms:
     \item \textbf{Arm 2 (Single-Pass Baseline):} Standard one-shot triage using only initial symptoms and patient history without any follow-up questions.
 \end{itemize}
 
-\subsection{Main Benchmark Results}
-As shown in Table \ref{tab:main_results}, asking active follow-up questions produced a statistically significant gain of \textbf{+5.0\% in Top-1 accuracy} ($p = 0.0339$, evaluated using McNemar's test with Edwards continuity correction \cite{mcnemar1947note}) and attained \textbf{100.0\% Top-3 differential coverage}. Importantly, this accuracy improvement came with a massive drop in diagnostic uncertainty: Shannon entropy dropped by \textbf{1.528 bits (a 53.7\% relative reduction)}, as illustrated in Figure \ref{fig:results_evidence} Panel B.
+\subsection{Mechanism Results}
+As shown in Table \ref{tab:main_results}, the mechanism behaves as designed: Shannon entropy dropped by \textbf{1.528 bits (a 53.7\% relative reduction)} under a mean of 1.92 active questions, as illustrated in Figure \ref{fig:results_evidence} Panel B. This is the property the mechanism is engineered to have --- targeted questioning reduces diagnostic uncertainty at negligible latency. What these measurements do not establish is diagnostic accuracy: on a suite whose oracle is the system under test, outcome-level agreement measures circularity rather than clinical performance.
 
-\subsection{Probabilistic Calibration and Brier Score}
-For a medical tool to be safe, its probability estimates must be honest; an algorithm that makes an incorrect diagnosis with 99\% confidence is dangerous. We evaluated multiclass Brier score \cite{brier1950verification} ($B = \frac{1}{N}\sum \|p_i - y_i\|_2^2$, where lower values reflect better probability predictions) and Expected Calibration Error (ECE) across 10 confidence bins.
+\subsection{Belief Sharpening, Not Calibration}
+For a medical tool to be safe, its probability estimates must be honest; an algorithm that makes an incorrect diagnosis with 99\% confidence is dangerous. We computed multiclass Brier score \cite{brier1950verification} and Expected Calibration Error (ECE) on the self-generated suite.
 
-As detailed in Table \ref{tab:main_results}, DEMAT improved the Brier score by \textbf{62.1\%} (falling from 0.5296 to 0.2005) and reduced Expected Calibration Error by \textbf{55.7\%} (dropping from 0.5528 down to 0.2451). By asking follow-up questions that verify or eliminate specific symptoms, the system naturally shifts probability mass toward the true condition and away from irrelevant hypotheses, producing well-calibrated confidence scores.
+On that suite, DEMAT's beliefs sharpen (the Brier score moves from 0.5296 to 0.2005 and Expected Calibration Error from 0.5528 to 0.2451). Because the simulated answers derive from the same likelihood tables the beliefs are computed over, these figures measure belief sharpening on in-distribution cases, \emph{not} clinical calibration. A conformal calibration stage with external coverage measurement is a proposed extension (Section III); until it is implemented and measured on external data, no calibration claim is made.
 
-\subsection{Category-Specific Differential Breakdown}
-Table \ref{tab:category_results} provides the breakdown of Top-1 accuracy across all clinical specialties.
-
-\begin{table}[t]
-\centering
-\small
-\caption{\textbf{Category-Specific Top-1 Accuracy Breakdown ($N = 200$).}}
-\label{tab:category_results}
-\begin{tabularx}{\columnwidth}{@{}l r r r r@{}}
-\toprule
-\textbf{Specialty} & \textbf{Cases} & \textbf{DEMAT} & \textbf{Baseline} & \textbf{Delta} \\
-\midrule
-Cardiovascular & 28 & \textbf{85.7\%} & 71.4\% & \textbf{+14.3\%} \\
-Respiratory & 42 & \textbf{100.0\%} & 85.7\% & \textbf{+14.3\%} \\
-Gastrointestinal & 26 & \textbf{100.0\%} & 100.0\% & +0.0\% \\
-Musculoskeletal & 26 & \textbf{100.0\%} & 100.0\% & +0.0\% \\
-Neurological & 26 & \textbf{100.0\%} & 100.0\% & +0.0\% \\
-Dermatological & 13 & \textbf{100.0\%} & 100.0\% & +0.0\% \\
-Endocrine & 13 & \textbf{100.0\%} & 100.0\% & +0.0\% \\
-Psychiatric & 13 & \textbf{100.0\%} & 100.0\% & +0.0\% \\
-Urinary & 13 & \textbf{100.0\%} & 100.0\% & +0.0\% \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-The most significant performance improvements appeared in complex conditions where initial symptoms are notoriously ambiguous:
-\begin{itemize}
-    \item \textbf{Heart Disease vs. Acid Reflux (GERD):} In the single-pass baseline, Top-1 accuracy for coronary conditions was only 42.9\% because both heart issues and acid reflux present with burning chest discomfort. By asking targeted questions about whether the pain worsens with physical exertion or eases when sitting up, DEMAT raised accuracy for these coronary cases to \textbf{100.0\%} (+57.1\% improvement).
-    \item \textbf{Pneumonia vs. Bronchial Infection:} Baseline accuracy was 57.1\% due to overlapping complaints of cough and fever. Inquiring about sharp pain during deep inhalation and focal wheezing boosted pneumonia accuracy to \textbf{100.0\%} (+42.9\% improvement).
-\end{itemize}
+\subsection{Per-Category Behavior}
+Per-category outcome breakdowns exist in the evaluation artifact, but because they are computed on the same self-generated cases against the same self-derived oracle, we do not report them as accuracy results here. What the per-category runs establish is \emph{mechanism coverage}: the information-gain policy asks discriminative questions in every specialty (e.g., exertional-provocation and positional-relief questions in the cardiovascular category, deep-inhalation and focal-wheezing questions in the respiratory category) --- the behavior an ask-coverage evaluation on external vignettes will quantify.
 
 % --- SECTION 5: DISCUSSION ---
 \section{Discussion and Clinical Safety}
 
 \subsection{Execution Speed and Practical Deployment}
-In emergency rooms and triage kiosks, clinical software must respond instantly. In our experiments, the DEMAT active questioning optimization loop ran in an average of only \textbf{0.2 ms per session} (Table \ref{tab:main_results}). End-to-end execution across all specialist agents---including BioBERT text parsing, ResNet-50 chest X-ray inference, FAISS guideline retrieval, and Grad-CAM heatmap generation---averaged \textbf{203.4 ms} (Figure \ref{fig:results_evidence} Panel A). Because the entire pipeline executes in roughly one-fifth of a second, AegisMed can run smoothly on standard hospital tablets and telemedicine web interfaces without requiring expensive server hardware.
+In emergency rooms and triage kiosks, clinical software must respond instantly. In our experiments, the DEMAT active questioning optimization loop ran in an average of only \textbf{0.2 ms per session} (Table \ref{tab:main_results}). End-to-end execution across all specialist agents---including clinical entity extraction (deterministic patterns by default, optional BioBERT), ResNet-18 chest X-ray inference with Grad-CAM, and FAISS guideline retrieval---averaged \textbf{203.4 ms} (Figure \ref{fig:results_evidence} Panel A). Because the entire pipeline executes in roughly one-fifth of a second, AegisMed can run smoothly on standard hospital tablets and telemedicine web interfaces without requiring expensive server hardware.
 
 \subsection{Dual-Persona Explanations for Doctors and Patients}
 Medical AI tools often fail because they provide explanations that are either too complicated for patients or too simplistic for doctors. AegisMed addresses this by generating dual-persona summaries tailored to each audience:
@@ -303,11 +271,11 @@ Medical AI tools often fail because they provide explanations that are either to
 \end{itemize}
 
 \subsection{Current Limitations and Future Directions}
-While these benchmark results are promising, several areas remain open for future work: (1) expanding our condition universe beyond the 15 core benchmark categories to cover the entire ICD-10 catalog; (2) testing the system in live emergency department intake workflows under institutional review board oversight; and (3) adding native FHIR (Fast Healthcare Interoperability Resources) data connectors for seamless integration with electronic health record systems.
+The principal limitation of this paper is the epistemic status of its evaluation suite: the 200-case regression harness is generated from, and answered out of, the system's own knowledge base, so its oracle is the system under test. Every number in Section IV is an internal-consistency measurement of the mechanism, and none is an estimate of clinical accuracy. Establishing clinical accuracy requires external clinician--patient vignette benchmarks with bootstrap confidence intervals --- the immediate next step of this work --- alongside measuring \emph{red-flag ask-coverage} (the fraction of clinically indicated safety questions a system actually asks) as the field-relevant differentiator. Further open areas: (1) the conflict-arbitration and conformal-synthesis layers are designed but not yet implemented, and all current arbitration is deterministic agreement consensus; (2) expanding the condition universe beyond the 15 core categories to a coded, clinician-reviewed knowledge base; (3) testing the system in live emergency department intake workflows under institutional review board oversight; and (4) adding native FHIR data connectors for seamless integration with electronic health record systems.
 
 % --- SECTION 6: CONCLUSION ---
 \section{Conclusion}
-We developed AegisMed to make AI-assisted clinical triage more reliable, transparent, and safe. By replacing passive one-shot guessing with active information-seeking questions (DEMAT), arbitrating disagreements between images and text through medical knowledge graphs (EN-SCAF), and bounding diagnostic uncertainty with conformal prediction, AegisMed transforms clinical AI from an unpredictable chatbot into a rigorous, dependable clinical tool. Across 200 standardized patient cases, AegisMed achieved 98.0\% Top-1 diagnostic accuracy and 100.0\% Top-3 coverage while asking fewer than two questions per case, demonstrating that active clarification and evidence arbitration are essential for reliable AI in healthcare.
+We developed AegisMed to make AI-assisted clinical triage more reliable, transparent, and safe. Its implemented core replaces passive one-shot guessing with active information-seeking questions (DEMAT), embedded in a multi-agent pipeline with a structured, tiered red-flag safety layer; its knowledge-graph arbitration and conformal prediction layers are specified as proposed extensions. On a self-generated regression suite the mechanism behaves exactly as designed --- diagnostic entropy falls by 53.7\% in under two questions per case --- and we report those figures strictly as internal-consistency measurements: the suite's oracle is the system under test, and we make no clinical-accuracy claim from it. What this paper establishes is the premise the field's own evidence demands: that the scarce skill in AI-assisted triage is \emph{asking the right next question}, and that a system engineered around that skill --- soon with externally measured accuracy and ask-coverage --- is the right foundation to build on.
 
 % --- BIBLIOGRAPHY ---
 \bibliographystyle{IEEEtran}
