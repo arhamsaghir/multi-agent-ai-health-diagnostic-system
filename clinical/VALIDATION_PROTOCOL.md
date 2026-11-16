@@ -65,7 +65,7 @@ on paired concordance (`scripts/benchmark/metrics.py::compute_mcnemar_test`).
 
 | # | Endpoint | Metric (implemented in `scripts/benchmark/metrics.py`) | Estimand |
 |---|---|---|---|
-| E1 | Top-1 diagnostic accuracy | `compute_top_k(k=1)` | Proportion, both arms, paired difference |
+| E1 | Top-1 accuracy (hit rate) | `compute_top_k(k=1)` | Proportion, both arms, paired difference |
 | E2 | Top-3 diagnostic accuracy | `compute_top_k(k=3)` | Proportion, both arms |
 | E3 | Calibration | `compute_ece`, `compute_brier_score` | ECE with 10 equal-mass bins; Brier over the disease universe |
 | E4 | Triage efficiency | Entropy of the differential after each DEMAT question | Mean entropy reduction per question; questions-to-threshold |
@@ -80,7 +80,9 @@ hypothesis-generating endpoints and are labelled as such in any output.
 
 The paired primary comparison (E1, Arm A vs Arm B) is powered with
 McNemar's test. Phase 3 synthetic-benchmark evidence observed a 5-point
-paired difference (98.0% vs 93.0% top-1, n=200, p=0.0339) with a
+paired difference (98.0% vs 93.0% top-1, n=200, p=0.0339 — a retired
+self-generated measurement, not an accuracy result; see
+`data/benchmarks/RETIREMENT.md`) with a
 discordant-pair proportion near 9%. To detect a 5-point paired difference
 assuming a conservative 12% discordant rate at α=0.05 (two-sided) and
 80% power requires approximately 350 eligible paired encounters.

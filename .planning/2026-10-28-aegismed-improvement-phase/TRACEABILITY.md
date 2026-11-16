@@ -20,7 +20,7 @@ gap is closed only when its test passes and its evidence is linked.
 | 4 | `src/core/demat.py`, `question_bank.py` — no ask-coverage metric | `w2-ask-coverage` | `specs/SPEC-w2-ask-coverage.md` | `tests/unit/test_ask_coverage.py` | not started |
 | 5 | `src/api/routes/chat.py` — 12 keyword strings | `w0-red-flag-engine` | `specs/SPEC-w0-red-flag-engine.md` | `tests/safety/test_red_flag_adversarial.py` | not started |
 | 6 | `src/agents/confidence_scorer.py` — ECE 0.245, blend before calibration | `w1-conformal` | `specs/SPEC-w1-conformal.md` | `tests/unit/test_conformal.py` | not started |
-| 7 | `scripts/benchmark/` — circular, oracle = system under test | `w0-benchmark-honesty` + `w1-external-eval` | both specs | `tests/unit/test_demat_benchmark.py` (demoted) + `scripts/benchmark/external_eval.py` | not started |
+| 7 | `scripts/benchmark/` — circular, oracle = system under test | `w0-benchmark-honesty` + `w1-external-eval` | both specs | `tests/unit/test_demat_benchmark.py` (demoted) + `scripts/benchmark/external_eval.py` | w0-benchmark-honesty: retraction implemented, PR open · w1-external-eval: not started |
 | 8 | `src/agents/rag/agent.py` — dense-only FAISS, WHO NC text | `w2-hybrid-rag` | `specs/SPEC-w2-hybrid-rag.md` | `tests/unit/test_rag_agent.py` | not started |
 | 9 | `src/agents/synthesis/agent.py` — free-form JSON parse | `w2-schema-synthesis` | `specs/SPEC-w2-schema-synthesis.md` | `tests/unit/test_synthesis_fallback.py` | not started |
 | 10 | `src/agents/orchestrator/agent.py` — no verification node | `w2-orchestration` | `specs/SPEC-w2-orchestration.md` | `tests/unit/test_orchestrator_critic.py` | not started |
@@ -40,7 +40,7 @@ closure is the Wave 0 gate.
 |---|---|---|---|---|
 | Negation (gap 1) | `w0-assertion-nlp` | `W0-AL-01`…`W0-AL-05` | Golden harness ≥95%; live probe flips | _pending_ |
 | Red flags (gap 5) | `w0-red-flag-engine` | `W0-RF-01`…`W0-RF-06` | 100% emergency-flagging; refusal works | _pending_ |
-| Circular eval (gap 7) | `w0-benchmark-honesty` + `w1-external-eval` | `W0-BH-01`…`W0-BH-04`, `W1-EE-01`…`W1-EE-07` | No self-referential number in any doc; external numbers published with CIs | _pending_ |
+| Circular eval (gap 7) | `w0-benchmark-honesty` + `w1-external-eval` | `W0-BH-01`…`W0-BH-04`, `W1-EE-01`…`W1-EE-07` | No self-referential number in any doc; external numbers published with CIs | w0-benchmark-honesty half: `data/benchmarks/RETIREMENT.md` + guard `tests/unit/test_retired_claims_guard.py` (PR open) · external half: _pending_ |
 | Fabricated output (gap 11) | `w0-truthful-frontend` | `W0-TF-01`…`W0-TF-05` | No code path renders a diagnosis without a backend response | _pending_ |
 
 ## Advanced differentiators
@@ -87,3 +87,4 @@ These are the specific claims that must not survive anywhere in the project.
 | Date | Change | By |
 |---|---|---|
 | 2026-10-28 | Initial matrix created from `12_GAP_ANALYSIS.md` | planning |
+| 2026-10-29 | `w0-benchmark-honesty` implemented on `feat/w0-benchmark-honesty` (PR open): harness re-labeled as self-generated regression harness with banner, `data/benchmarks/RETIREMENT.md` written, provenance block added to `data/benchmark_cases.json`, tests renamed to regression framing, guard test `test_retired_claims_guard.py` added, retired figures labeled in `scripts/generate_viva_doc.py`, `scripts/run_benchmark.py` (relabeled non-runnable legacy), `scripts/patent/generate_patent_figures.py`, `clinical/VALIDATION_PROTOCOL.md`, `clinical/IRB_SUBMISSION_TEMPLATES.md`; README/docs verified clean. Paper/patent untouched (owned by `publication-truth`/`w3-patent`). | zcode |

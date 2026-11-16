@@ -1,8 +1,16 @@
-"""Phase 3: Generate 200 synthetic benchmark cases with ground truth labels.
+"""Generate 200 self-regression cases with self-referential ground truth.
 
-This script creates a comprehensive test dataset covering multiple disease
-categories, each with symptom text, patient demographics, and ground truth
-diagnoses for accuracy evaluation.
+This script builds cases from hand-authored DISEASE_TEMPLATES that mirror the
+same DISEASE_DATABASE the diagnosis system reasons over, and the benchmark's
+`simulate_patient_answer()` answers follow-up questions using those same
+likelihood tables. The oracle is therefore the system under test.
+
+The output is suitable ONLY for regression smoke testing and
+internal-consistency checks. It must never be cited as an accuracy
+evaluation — see `data/benchmarks/RETIREMENT.md` and
+`.planning/2026-10-28-aegismed-improvement-phase/specs/SPEC-w0-benchmark-honesty.md`.
+The wrapped output shape carries a `provenance` block stating this so any
+consumer of the JSON sees the restriction without reading this script.
 """
 
 import json
@@ -350,14 +358,25 @@ def generate_benchmark_cases(n_cases: int = 200) -> list[dict]:
 
 
 if __name__ == "__main__":
-    print("Generating 200 synthetic benchmark cases...")
+    print("Generating 200 self-generated regression cases (NOT an accuracy dataset)...")
     cases = generate_benchmark_cases(200)
-    
-    # Save to file
+
+    # Save with an explicit provenance block so consumers of the JSON cannot
+    # mistake the dataset for an accuracy evaluation corpus.
+    output = {
+        "provenance": {
+            "source": "self-generated from DISEASE_TEMPLATES in this script; the benchmark's simulate_patient_answer() answers follow-ups from the same DISEASE_DATABASE the system is scored against",
+            "generated_by": "scripts/generate_benchmark_cases.py",
+            "suitable_for": ["regression smoke testing", "internal-consistency checks"],
+            "not_suitable_for": ["accuracy claims", "clinical evaluation", "publication benchmarks"],
+            "see_also": "data/benchmarks/RETIREMENT.md",
+        },
+        "cases": cases,
+    }
     output_path = "data/benchmark_cases.json"
     with open(output_path, "w") as f:
-        json.dump(cases, f, indent=2)
-    
+        json.dump(output, f, indent=2)
+
     # Print statistics
     categories = {}
     severities = {}
@@ -366,8 +385,10 @@ if __name__ == "__main__":
         sev = case["ground_truth"]["severity"]
         categories[cat] = categories.get(cat, 0) + 1
         severities[sev] = severities.get(sev, 0) + 1
-    
+
     print(f"\nTotal cases: {len(cases)}")
+    print("These cases are self-generated from the system's own knowledge base;")
+    print("results on them are internal-consistency numbers, not accuracy.")
     print(f"\nCases by category:")
     for cat, count in sorted(categories.items()):
         print(f"  {cat}: {count}")

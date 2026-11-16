@@ -369,6 +369,10 @@ def generate_fig_5():
     ax3.set_ylim(0, 1.1)
     ax3.grid(True, linestyle=":", alpha=0.6)
     ax3.legend(fontsize=7.5, loc="upper right")
+    # Rendered annotation left unchanged pending the w3-patent claim
+    # re-scope (patent specification files are never edited without
+    # explicit user say-so). The 98.0% below is a RETIRED self-generated
+    # measurement, NOT an accuracy figure — see data/benchmarks/RETIREMENT.md.
     ax3.text(0 - width/2, 1.01, "98.0%", fontsize=7.5, ha="center", fontweight="bold")
     ax3.text(0 + width/2, 0.95, "93.0%", fontsize=7.5, ha="center")
 
