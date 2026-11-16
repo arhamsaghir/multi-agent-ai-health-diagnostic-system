@@ -8,6 +8,8 @@ structured reports from agent outputs.
 from typing import Dict, Any
 from loguru import logger
 
+from src.core.red_flags import RedFlagEngine
+
 
 class RuleBasedSynthesizer:
     """Generate diagnostic reports without LLM calls."""
@@ -191,6 +193,19 @@ class RuleBasedSynthesizer:
         else:
             severity = "low"
 
+        # Red flags + escalation from the structured engine (w0-red-flag-engine):
+        # tiered, negation-aware, sourced — never word overlap. The engine
+        # runs on the patient's own words; when none were passed in, use the
+        # original text the NLP preprocessor preserved.
+        engine_text = patient_context or (nlp.get("preprocessed") or {}).get("original", "")
+        assessment = RedFlagEngine().assess(engine_text)
+        escalation = assessment.escalation
+        red_flags = [
+            f"[{f.tier}] {f.reason} (evidence: '{f.evidence}'; source: {f.source})"
+            for f in escalation.findings
+            if f.tier != "informational"
+        ]
+
         # Build recommendations
         recommendations = self._build_recommendations(diagnoses, severity)
 
@@ -198,8 +213,10 @@ class RuleBasedSynthesizer:
         if vision_anomalies:
             recommendations.append("Follow up on imaging findings with appropriate specialist")
 
-        # Build red flags
-        red_flags = self._build_red_flags(diagnoses, symptom_texts)
+        # The escalation object is authoritative; doctor_alert is now a
+        # derived view of it (kept for backward compatibility with the
+        # frontend/report consumers until they move onto the object).
+        doctor_alert = severity in ("critical", "high") or escalation.level in ("urgent", "emergency")
 
         # Build explanation — the patient-facing text also consumes only the
         # filtered present/self symptom set (w0-assertion-nlp R9).
@@ -208,15 +225,14 @@ class RuleBasedSynthesizer:
         # Build differentials
         differentials = self._build_differentials(diagnoses)
 
-        # Determine doctor alert
-        doctor_alert = severity in ("critical", "high") or len(red_flags) > 0
-
         return {
             "diagnosis": diagnoses,
             "explanation": explanation,
             "recommendations": recommendations,
             "severity": severity,
             "doctor_alert": doctor_alert,
+            "escalation": escalation.model_dump(),
+            "refusal": assessment.refusal.model_dump() if assessment.refusal else None,
             "differential_diagnoses": differentials,
             "red_flags": red_flags,
             "disclaimer": "This is an AI-generated assessment and not a substitute for professional medical advice. Always consult a qualified healthcare provider for diagnosis and treatment.",
@@ -335,22 +351,9 @@ class RuleBasedSynthesizer:
 
         return unique_recs[:5]  # Limit to 5 recommendations
 
-    def _build_red_flags(self, diagnoses: list, symptoms: list) -> list:
-        """Build red flags based on diagnoses and symptoms."""
-        flags = []
-
-        for diag in diagnoses:
-            condition = diag["condition"].lower()
-            for disease_key, info in self.DISEASE_INFO.items():
-                if info["name"].lower() == condition:
-                    # Only include red flags that match patient symptoms
-                    for flag in info["red_flags"]:
-                        flag_lower = flag.lower()
-                        if any(s.lower() in flag_lower or flag_lower in s.lower() for s in symptoms):
-                            flags.append(flag)
-                    break
-
-        return flags[:3]  # Limit to 3 red flags
+    # _build_red_flags was removed with w0-red-flag-engine: red flags now
+    # come from the structured engine (tiered, negation-aware, sourced) in
+    # generate_report — the old word-overlap matcher is retired.
 
     def _build_explanation(self, diagnoses: list, symptoms: list, patient_context: str, vision_findings: list) -> str:
         """Build patient-friendly explanation."""

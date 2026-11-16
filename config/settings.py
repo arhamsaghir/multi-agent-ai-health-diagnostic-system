@@ -66,6 +66,15 @@ class Settings(BaseSettings):
     vision_model_name: str = "resnet50"
     num_disease_classes: int = 15
 
+    # Emergency escalation contacts (w0-red-flag-engine R8). Jurisdiction-
+    # correct numbers come from configuration, never hardcoded in the engine.
+    # Defaults are India: 112 unified emergency, 108 ambulance, 14416
+    # Tele-MANAS crisis line.
+    jurisdiction: str = "IN"
+    emergency_phone: str = "112"
+    ambulance_phone: str = "108"
+    crisis_phone: str = "14416"
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

@@ -148,6 +148,7 @@ Produce a JSON response with this exact structure:
   "recommendations": ["actionable recommendation 1", "recommendation 2", "recommendation 3"],
   "severity": "critical|high|moderate|low",
   "doctor_alert": true/false,
+  "escalation": {{"level": "none|caution|urgent|emergency", "findings": [{{"flag_id": "id", "tier": "emergency|urgent|caution|informational", "reason": "why", "evidence": "the triggering text"}}], "rationale": "why this level", "actions": ["action-first steps"]}},
   "differential_diagnoses": ["alternative condition 1", "alternative condition 2"],
   "red_flags": ["warning sign 1", "warning sign 2"],
   "disclaimer": "Always include: This is an AI-generated assessment and not a substitute for professional medical advice."
@@ -158,6 +159,9 @@ IMPORTANT:
 - Always recommend professional consultation for moderate+ severity
 - Base confidence on agreement between agents
 - Include red flags that warrant immediate attention
+- The "escalation" object is optional; if you include one it may only RAISE
+  the level determined by the deterministic red-flag engine — the engine's
+  level is a floor that synthesis enforces in code
 - Respond with valid JSON only."""
 
         system_message = """You are a cautious medical AI assistant. Your role is to:
