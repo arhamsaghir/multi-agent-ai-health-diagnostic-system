@@ -103,9 +103,21 @@ class RuleBasedSynthesizer:
         risk_scores = prediction.get("risk_scores", {})
         prediction_severity = prediction.get("severity", "unknown")
 
-        # Extract symptoms
+        # Extract symptoms — triage input is only present, self-reported
+        # findings (w0-assertion-nlp R9). Absent/hypothetical/family/other
+        # findings stay in the NLP output for context but never reach here.
         symptoms = nlp.get("symptoms", [])
-        symptom_texts = [s.get("symptom", s) if isinstance(s, dict) else s for s in symptoms]
+        symptom_texts = []
+        for s in symptoms:
+            if isinstance(s, dict):
+                if (
+                    s.get("polarity", "present") == "present"
+                    and s.get("subject", "self") == "self"
+                ):
+                    symptom_texts.append(s.get("symptom", ""))
+            else:
+                symptom_texts.append(s)
+        symptom_texts = [t for t in symptom_texts if t]
 
         # Extract vision findings
         vision_findings = vision.get("findings", [])
@@ -189,8 +201,9 @@ class RuleBasedSynthesizer:
         # Build red flags
         red_flags = self._build_red_flags(diagnoses, symptom_texts)
 
-        # Build explanation
-        explanation = self._build_explanation(diagnoses, symptoms, patient_context, vision_findings)
+        # Build explanation — the patient-facing text also consumes only the
+        # filtered present/self symptom set (w0-assertion-nlp R9).
+        explanation = self._build_explanation(diagnoses, symptom_texts, patient_context, vision_findings)
 
         # Build differentials
         differentials = self._build_differentials(diagnoses)

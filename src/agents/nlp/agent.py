@@ -12,6 +12,7 @@ from loguru import logger
 
 from config import settings
 from src.agents.base import BaseAgent
+from src.agents.nlp.assertion import AssertionResolver
 from src.data.preprocessing.text_preprocessor import TextPreprocessor
 
 
@@ -27,7 +28,7 @@ class NLPAgent(BaseAgent):
         "cardiovascular": r'\b(chest pain|chest pressure|heart palpitations|irregular heartbeat|rapid heartbeat|skipped beats|swollen ankles|swollen legs|leg swelling|edema|orthopnea|paroxysmal nocturnal dyspnea|angina|heart murmur)\b',
         "gastrointestinal": r'\b(nausea|vomiting|diarrhea|constipation|abdominal pain|stomach pain|belly pain|bloating|heartburn|acid reflux|indigestion|loss of appetite|decreased appetite|bloody stool|black stool|jaundice|yellow skin|yellow eyes)\b',
         "neurological": r'\b(headache|migraine|dizziness|vertigo|fainting|syncope|numbness|tingling|pins and needles|tremor|seizure|confusion|memory loss|difficulty concentrating|brain fog|slurred speech|weakness on one side|paralysis)\b',
-        "musculoskeletal": r'\b(back pain|joint pain|muscle pain|muscle ache|body ache|stiff joints|swollen joints|limited range of motion|muscle cramp|muscle spasm|neck pain|shoulder pain|hip pain|knee pain|lower back pain)\b',
+        "musculoskeletal": r'\b(back pain|joint pain|muscle pain|muscle ache|body ache|body pain|stiff joints|swollen joints|limited range of motion|muscle cramp|muscle spasm|neck pain|shoulder pain|hip pain|knee pain|lower back pain)\b',
         "dermatological": r'\b(rash|itching|hives|skin discoloration|bruising|dry skin|flaky skin|blister|boil|skin lesion|mole change|hair loss|nail changes|skin peeling|eczema|psoriasis)\b',
         "constitutional": r'\b(fever|chills|fatigue|tired|exhaustion|weight loss|weight gain|night sweats|swollen lymph nodes|swollen glands|malaise|cold intolerance|heat intolerance|excessive thirst|excessive hunger)\b',
         "urinary": r'\b(frequent urination|painful urination|burning when urinating|blood in urine|dark urine|incontinence|bed wetting|reduced urination|difficulty starting urine stream|foamy urine|flank pain|kidney pain)\b',
@@ -71,6 +72,10 @@ class NLPAgent(BaseAgent):
     def __init__(self):
         super().__init__()
         self.preprocessor = TextPreprocessor()
+        # Assertion layer: negation scope, subject attribution, polarity.
+        # Runs over the same text the symptom patterns see, so a finding's
+        # polarity reflects the clause it appeared in.
+        self.assertion = AssertionResolver(self.SYMPTOM_PATTERNS)
         self.model = None
         self.tokenizer = None
         self._model_loaded = False
@@ -200,22 +205,16 @@ class NLPAgent(BaseAgent):
         }
 
     def _extract_symptoms(self, text: str) -> list[dict]:
-        """Extract symptoms using pattern matching or BioBERT."""
-        found = []
-        for category, pattern in self.SYMPTOM_PATTERNS.items():
-            matches = re.findall(pattern, text)
-            for match in matches:
-                found.append({"symptom": match, "category": category})
+        """Extract symptoms with assertion resolution.
 
-        # Deduplicate
-        seen = set()
-        unique = []
-        for s in found:
-            if s["symptom"] not in seen:
-                seen.add(s["symptom"])
-                unique.append(s)
-
-        return unique
+        Every finding carries ``symptom`` and ``category`` (unchanged keys)
+        plus ``polarity`` ("present" | "absent" | "hypothetical"),
+        ``subject`` ("self" | "family" | "other" | "hypothetical"),
+        ``certainty`` ("explicit" | "hedged"), ``span``, and the ``rule``
+        that decided its polarity. Downstream triage consumers filter on
+        ``polarity == "present" and subject == "self"``.
+        """
+        return self.assertion.analyze(text)
 
     def _extract_entities(self, text: str) -> list[dict]:
         """Extract medical named entities."""

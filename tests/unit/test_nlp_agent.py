@@ -68,3 +68,45 @@ class TestNLPAgent:
     def test_run_empty_text(self, agent):
         result = asyncio.run(agent.run({"text": ""}))
         assert "error" in result
+
+
+class TestAssertionExtraction:
+    """Polarity, subject, and certainty on extracted findings (w0-assertion-nlp)."""
+
+    def test_live_probe_yields_zero_present(self, agent):
+        findings = agent._extract_symptoms("no fever, no cough, no chest pain")
+        assert findings, "all three symptoms must still be *found*"
+        assert all(f["polarity"] == "absent" for f in findings)
+
+    def test_findings_carry_the_r8_contract(self, agent):
+        findings = agent._extract_symptoms("I have a fever")
+        assert findings, "expected at least one finding"
+        for f in findings:
+            assert {"symptom", "category", "polarity", "subject", "certainty", "span"} <= set(f)
+            assert f["polarity"] in ("present", "absent", "hypothetical")
+            assert f["subject"] in ("self", "family", "other", "hypothetical")
+            assert f["certainty"] in ("explicit", "hedged")
+            start, end = f["span"]
+            assert 0 <= start < end
+
+    def test_negation_is_clause_local(self, agent):
+        findings = agent._extract_symptoms("no fever but I have a bad cough")
+        by_symptom = {f["symptom"]: f["polarity"] for f in findings}
+        assert by_symptom["fever"] == "absent"
+        assert by_symptom["cough"] == "present"
+
+    def test_family_subject_attribution(self, agent):
+        findings = agent._extract_symptoms("my mother has diabetes and I have a cough")
+        by_symptom = {(f["symptom"], f["subject"]) for f in findings}
+        assert ("diabetes", "family") in by_symptom
+        assert ("cough", "self") in by_symptom
+
+    def test_conditional_is_hypothetical(self, agent):
+        findings = agent._extract_symptoms("if I had a fever I would rest")
+        assert all(f["polarity"] == "hypothetical" for f in findings)
+
+    def test_double_negation_is_positive(self, agent):
+        findings = agent._extract_symptoms("not without a fever")
+        assert any(
+            f["symptom"] == "fever" and f["polarity"] == "present" for f in findings
+        )

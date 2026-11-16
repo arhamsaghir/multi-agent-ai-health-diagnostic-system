@@ -1,0 +1,3412 @@
+{
+  "provenance": {
+    "authored_by": "w0-assertion-nlp (hand-authored, not generated)",
+    "spec": ".planning/2026-10-28-aegismed-improvement-phase/specs/SPEC-w0-assertion-nlp.md",
+    "gate": ">=95% polarity+subject overall; 100% on no_negation_control and the live probe case",
+    "conventions": [
+      "odd pre-cue count => absent; even non-zero => present (double negation)",
+      "post-negation only for answer-fragment cues (no/negative/none/denied/denies)",
+      "conditionals => hypothetical; hedges => present with certainty=hedged",
+      "family/other attributions retained but excluded from triage"
+    ]
+  },
+  "cases": [
+    {
+      "id": "simple_negation-001",
+      "category": "simple_negation",
+      "text": "no fever",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-002",
+      "category": "simple_negation",
+      "text": "I don't have a headache",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-003",
+      "category": "simple_negation",
+      "text": "I do not have a cough",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-004",
+      "category": "simple_negation",
+      "text": "denies chest pain",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-005",
+      "category": "simple_negation",
+      "text": "denies any nausea",
+      "expected": [
+        {
+          "symptom": "nausea",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-006",
+      "category": "simple_negation",
+      "text": "no nausea",
+      "expected": [
+        {
+          "symptom": "nausea",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-007",
+      "category": "simple_negation",
+      "text": "no dizziness",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-008",
+      "category": "simple_negation",
+      "text": "without fever",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-009",
+      "category": "simple_negation",
+      "text": "no shortness of breath",
+      "expected": [
+        {
+          "symptom": "shortness of breath",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-010",
+      "category": "simple_negation",
+      "text": "I have no chest pain",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-011",
+      "category": "simple_negation",
+      "text": "never had a seizure",
+      "expected": [
+        {
+          "symptom": "seizure",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-012",
+      "category": "simple_negation",
+      "text": "no vomiting",
+      "expected": [
+        {
+          "symptom": "vomiting",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-013",
+      "category": "simple_negation",
+      "text": "no diarrhea",
+      "expected": [
+        {
+          "symptom": "diarrhea",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-014",
+      "category": "simple_negation",
+      "text": "negative for blood in urine",
+      "expected": [
+        {
+          "symptom": "blood in urine",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-015",
+      "category": "simple_negation",
+      "text": "no blood in urine",
+      "expected": [
+        {
+          "symptom": "blood in urine",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-016",
+      "category": "simple_negation",
+      "text": "I haven't had a cough",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-017",
+      "category": "simple_negation",
+      "text": "no rash on my arms",
+      "expected": [
+        {
+          "symptom": "rash",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-018",
+      "category": "simple_negation",
+      "text": "no headache today",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-019",
+      "category": "simple_negation",
+      "text": "denies fever, denies chills",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-020",
+      "category": "simple_negation",
+      "text": "no back pain",
+      "expected": [
+        {
+          "symptom": "back pain",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-021",
+      "category": "simple_negation",
+      "text": "I don't have any joint pain",
+      "expected": [
+        {
+          "symptom": "joint pain",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-022",
+      "category": "simple_negation",
+      "text": "no sore throat",
+      "expected": [
+        {
+          "symptom": "sore throat",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-023",
+      "category": "simple_negation",
+      "text": "no leg swelling",
+      "expected": [
+        {
+          "symptom": "leg swelling",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-024",
+      "category": "simple_negation",
+      "text": "I am not dizzy",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-025",
+      "category": "simple_negation",
+      "text": "no blurred vision",
+      "expected": [
+        {
+          "symptom": "blurred vision",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-026",
+      "category": "simple_negation",
+      "text": "free of chest pain",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-027",
+      "category": "simple_negation",
+      "text": "no history of a seizure",
+      "expected": [
+        {
+          "symptom": "seizure",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-028",
+      "category": "simple_negation",
+      "text": "no abdominal pain",
+      "expected": [
+        {
+          "symptom": "abdominal pain",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-029",
+      "category": "simple_negation",
+      "text": "I do not feel nausea",
+      "expected": [
+        {
+          "symptom": "nausea",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "simple_negation-030",
+      "category": "simple_negation",
+      "text": "no itching",
+      "expected": [
+        {
+          "symptom": "itching",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-001",
+      "category": "negation_conjunction",
+      "text": "no fever but a persistent cough",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "cough",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-002",
+      "category": "negation_conjunction",
+      "text": "no cough but I do have fever",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-003",
+      "category": "negation_conjunction",
+      "text": "no headache, but I feel nausea",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "nausea",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-004",
+      "category": "negation_conjunction",
+      "text": "no chest pain but a bad cough",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "cough",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-005",
+      "category": "negation_conjunction",
+      "text": "no fever but I have a bad cough",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "cough",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-006",
+      "category": "negation_conjunction",
+      "text": "no dizziness but severe headache",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-007",
+      "category": "negation_conjunction",
+      "text": "no vomiting but I have diarrhea",
+      "expected": [
+        {
+          "symptom": "vomiting",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "diarrhea",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-008",
+      "category": "negation_conjunction",
+      "text": "no fever but chills",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "chills",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-009",
+      "category": "negation_conjunction",
+      "text": "no rash but the itching is unbearable",
+      "expected": [
+        {
+          "symptom": "rash",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "itching",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-010",
+      "category": "negation_conjunction",
+      "text": "no cough but shortness of breath",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "shortness of breath",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-011",
+      "category": "negation_conjunction",
+      "text": "no back pain but knee pain",
+      "expected": [
+        {
+          "symptom": "back pain",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "knee pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-012",
+      "category": "negation_conjunction",
+      "text": "no nausea but I have diarrhea",
+      "expected": [
+        {
+          "symptom": "nausea",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "diarrhea",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-013",
+      "category": "negation_conjunction",
+      "text": "no fever and no cough but chest tightness",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "chest tightness",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-014",
+      "category": "negation_conjunction",
+      "text": "no sore throat but ear pain",
+      "expected": [
+        {
+          "symptom": "sore throat",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "ear pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-015",
+      "category": "negation_conjunction",
+      "text": "no numbness but tingling in my fingers",
+      "expected": [
+        {
+          "symptom": "numbness",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "tingling",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-016",
+      "category": "negation_conjunction",
+      "text": "no fatigue but night sweats",
+      "expected": [
+        {
+          "symptom": "fatigue",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "night sweats",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-017",
+      "category": "negation_conjunction",
+      "text": "no joint pain but muscle ache",
+      "expected": [
+        {
+          "symptom": "joint pain",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "muscle ache",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-018",
+      "category": "negation_conjunction",
+      "text": "no blurred vision but eye pain",
+      "expected": [
+        {
+          "symptom": "blurred vision",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "eye pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-019",
+      "category": "negation_conjunction",
+      "text": "no heartburn but abdominal pain",
+      "expected": [
+        {
+          "symptom": "heartburn",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "abdominal pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_conjunction-020",
+      "category": "negation_conjunction",
+      "text": "no anxiety but a panic attack came on",
+      "expected": [
+        {
+          "symptom": "anxiety",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "panic attack",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "pre-negation"
+    },
+    {
+      "id": "negation_scope_boundary-001",
+      "category": "negation_scope_boundary",
+      "text": "no fever, I do have chest pain",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "chest pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-002",
+      "category": "negation_scope_boundary",
+      "text": "no cough, I do have a sore throat",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "throat pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-003",
+      "category": "negation_scope_boundary",
+      "text": "no headache. severe dizziness though",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "dizziness",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-004",
+      "category": "negation_scope_boundary",
+      "text": "no nausea, I am vomiting though",
+      "expected": [
+        {
+          "symptom": "nausea",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "vomiting",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-005",
+      "category": "negation_scope_boundary",
+      "text": "no chest pain. I have shortness of breath",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "shortness of breath",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-006",
+      "category": "negation_scope_boundary",
+      "text": "no fever! but I have chills",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "chills",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-007",
+      "category": "negation_scope_boundary",
+      "text": "no rash. I do have dry skin",
+      "expected": [
+        {
+          "symptom": "rash",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "dry skin",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-008",
+      "category": "negation_scope_boundary",
+      "text": "no back pain, however my neck hurts",
+      "expected": [
+        {
+          "symptom": "back pain",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "neck pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-009",
+      "category": "negation_scope_boundary",
+      "text": "no vomiting, although I have nausea",
+      "expected": [
+        {
+          "symptom": "vomiting",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "nausea",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-010",
+      "category": "negation_scope_boundary",
+      "text": "no cough. wheezing at night",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "wheezing",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-011",
+      "category": "negation_scope_boundary",
+      "text": "no dizziness, but I do have blurred vision",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "blurred vision",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-012",
+      "category": "negation_scope_boundary",
+      "text": "no headache, though my neck hurts",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "neck pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-013",
+      "category": "negation_scope_boundary",
+      "text": "no blood in urine, but frequent urination",
+      "expected": [
+        {
+          "symptom": "blood in urine",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "frequent urination",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-014",
+      "category": "negation_scope_boundary",
+      "text": "no diarrhea. I am constipated instead",
+      "expected": [
+        {
+          "symptom": "diarrhea",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "constipation",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-015",
+      "category": "negation_scope_boundary",
+      "text": "no itching, however there is a rash",
+      "expected": [
+        {
+          "symptom": "itching",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "rash",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-016",
+      "category": "negation_scope_boundary",
+      "text": "no anxiety. I do have mood swings",
+      "expected": [
+        {
+          "symptom": "anxiety",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "mood swings",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-017",
+      "category": "negation_scope_boundary",
+      "text": "no fever, I actually have chills",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "chills",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-018",
+      "category": "negation_scope_boundary",
+      "text": "no chest pain, I do have heartburn",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "heartburn",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-019",
+      "category": "negation_scope_boundary",
+      "text": "no fever, but my temperature is 102",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "negation_scope_boundary-020",
+      "category": "negation_scope_boundary",
+      "text": "no fatigue. I am tired only in the evenings",
+      "expected": [
+        {
+          "symptom": "fatigue",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "tired",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "post_negation-001",
+      "category": "post_negation",
+      "text": "fever, no",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-002",
+      "category": "post_negation",
+      "text": "cough, no",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-003",
+      "category": "post_negation",
+      "text": "chest pain - negative",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-004",
+      "category": "post_negation",
+      "text": "headache: no",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-005",
+      "category": "post_negation",
+      "text": "nausea, none",
+      "expected": [
+        {
+          "symptom": "nausea",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-006",
+      "category": "post_negation",
+      "text": "dizziness, no",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-007",
+      "category": "post_negation",
+      "text": "vomiting - denied",
+      "expected": [
+        {
+          "symptom": "vomiting",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-008",
+      "category": "post_negation",
+      "text": "diarrhea, no",
+      "expected": [
+        {
+          "symptom": "diarrhea",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-009",
+      "category": "post_negation",
+      "text": "rash, negative",
+      "expected": [
+        {
+          "symptom": "rash",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-010",
+      "category": "post_negation",
+      "text": "back pain - no",
+      "expected": [
+        {
+          "symptom": "back pain",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-011",
+      "category": "post_negation",
+      "text": "sore throat, none",
+      "expected": [
+        {
+          "symptom": "sore throat",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-012",
+      "category": "post_negation",
+      "text": "shortness of breath - negative",
+      "expected": [
+        {
+          "symptom": "shortness of breath",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-013",
+      "category": "post_negation",
+      "text": "numbness, no",
+      "expected": [
+        {
+          "symptom": "numbness",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-014",
+      "category": "post_negation",
+      "text": "fatigue, no",
+      "expected": [
+        {
+          "symptom": "fatigue",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "post_negation-015",
+      "category": "post_negation",
+      "text": "blurred vision, negative",
+      "expected": [
+        {
+          "symptom": "blurred vision",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "post-negation"
+    },
+    {
+      "id": "hedged-001",
+      "category": "hedged",
+      "text": "maybe a slight fever",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-002",
+      "category": "hedged",
+      "text": "I think I have a fever",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-003",
+      "category": "hedged",
+      "text": "possibly a mild cough",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-004",
+      "category": "hedged",
+      "text": "I might have a headache",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-005",
+      "category": "hedged",
+      "text": "perhaps some nausea",
+      "expected": [
+        {
+          "symptom": "nausea",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-006",
+      "category": "hedged",
+      "text": "I guess I feel a bit dizzy",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-007",
+      "category": "hedged",
+      "text": "it seems like a rash is starting",
+      "expected": [
+        {
+          "symptom": "rash",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-008",
+      "category": "hedged",
+      "text": "there might be some swollen ankles",
+      "expected": [
+        {
+          "symptom": "swollen ankles",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-009",
+      "category": "hedged",
+      "text": "I think I'm running a temperature",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-010",
+      "category": "hedged",
+      "text": "maybe heartburn after meals",
+      "expected": [
+        {
+          "symptom": "heartburn",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-011",
+      "category": "hedged",
+      "text": "if I had a fever I would rest",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "hypothetical",
+          "subject": "hypothetical"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-012",
+      "category": "hedged",
+      "text": "what if the chest pain gets worse",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "hypothetical",
+          "subject": "hypothetical"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-013",
+      "category": "hedged",
+      "text": "if I were to get a cough should I worry",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "hypothetical",
+          "subject": "hypothetical"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-014",
+      "category": "hedged",
+      "text": "suppose I develop a rash",
+      "expected": [
+        {
+          "symptom": "rash",
+          "polarity": "hypothetical",
+          "subject": "hypothetical"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-015",
+      "category": "hedged",
+      "text": "if I get a headache should I take something",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "hypothetical",
+          "subject": "hypothetical"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-016",
+      "category": "hedged",
+      "text": "not sure if I have a fever",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "hypothetical",
+          "subject": "hypothetical"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-017",
+      "category": "hedged",
+      "text": "hypothetically, if I had shortness of breath",
+      "expected": [
+        {
+          "symptom": "shortness of breath",
+          "polarity": "hypothetical",
+          "subject": "hypothetical"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-018",
+      "category": "hedged",
+      "text": "if I develop numbness in my hands",
+      "expected": [
+        {
+          "symptom": "numbness",
+          "polarity": "hypothetical",
+          "subject": "hypothetical"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-019",
+      "category": "hedged",
+      "text": "what if I get dizzy standing up",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "hypothetical",
+          "subject": "hypothetical"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "hedged-020",
+      "category": "hedged",
+      "text": "let's say I had a fever for three days",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "hypothetical",
+          "subject": "hypothetical"
+        }
+      ],
+      "rule": "hedging-or-conditional"
+    },
+    {
+      "id": "family_attribution-001",
+      "category": "family_attribution",
+      "text": "my mother has diabetes",
+      "expected": [
+        {
+          "symptom": "diabetes",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-002",
+      "category": "family_attribution",
+      "text": "my father has hypertension",
+      "expected": [
+        {
+          "symptom": "hypertension",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-003",
+      "category": "family_attribution",
+      "text": "my mother has asthma",
+      "expected": [
+        {
+          "symptom": "asthma",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-004",
+      "category": "family_attribution",
+      "text": "my dad has heart disease",
+      "expected": [
+        {
+          "symptom": "heart disease",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-005",
+      "category": "family_attribution",
+      "text": "my brother has epilepsy",
+      "expected": [
+        {
+          "symptom": "epilepsy",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-006",
+      "category": "family_attribution",
+      "text": "my sister has arthritis",
+      "expected": [
+        {
+          "symptom": "arthritis",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-007",
+      "category": "family_attribution",
+      "text": "my grandmother had cancer",
+      "expected": [
+        {
+          "symptom": "cancer",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-008",
+      "category": "family_attribution",
+      "text": "my grandfather had a stroke",
+      "expected": [
+        {
+          "symptom": "stroke",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-009",
+      "category": "family_attribution",
+      "text": "my uncle has diabetes",
+      "expected": [
+        {
+          "symptom": "diabetes",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-010",
+      "category": "family_attribution",
+      "text": "my aunt has a thyroid problem",
+      "expected": [
+        {
+          "symptom": "thyroid problem",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-011",
+      "category": "family_attribution",
+      "text": "my cousin has asthma",
+      "expected": [
+        {
+          "symptom": "asthma",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-012",
+      "category": "family_attribution",
+      "text": "my wife has migraine headaches",
+      "expected": [
+        {
+          "symptom": "migraine",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-013",
+      "category": "family_attribution",
+      "text": "my husband has high blood pressure",
+      "expected": [
+        {
+          "symptom": "high blood pressure",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-014",
+      "category": "family_attribution",
+      "text": "my son has eczema",
+      "expected": [
+        {
+          "symptom": "eczema",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-015",
+      "category": "family_attribution",
+      "text": "my daughter has asthma",
+      "expected": [
+        {
+          "symptom": "asthma",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-016",
+      "category": "family_attribution",
+      "text": "my mom has kidney disease",
+      "expected": [
+        {
+          "symptom": "kidney disease",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-017",
+      "category": "family_attribution",
+      "text": "my parents both have diabetes",
+      "expected": [
+        {
+          "symptom": "diabetes",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-018",
+      "category": "family_attribution",
+      "text": "family history of diabetes",
+      "expected": [
+        {
+          "symptom": "diabetes",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-019",
+      "category": "family_attribution",
+      "text": "family history of heart disease",
+      "expected": [
+        {
+          "symptom": "heart disease",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-020",
+      "category": "family_attribution",
+      "text": "diabetes runs in my family",
+      "expected": [
+        {
+          "symptom": "diabetes",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-021",
+      "category": "family_attribution",
+      "text": "a heart problem runs in the family",
+      "expected": [
+        {
+          "symptom": "heart problem",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-022",
+      "category": "family_attribution",
+      "text": "my mother has diabetes and my father has asthma",
+      "expected": [
+        {
+          "symptom": "diabetes",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-023",
+      "category": "family_attribution",
+      "text": "my grandmother has tuberculosis",
+      "expected": [
+        {
+          "symptom": "tuberculosis",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-024",
+      "category": "family_attribution",
+      "text": "my father had a heart problem",
+      "expected": [
+        {
+          "symptom": "heart problem",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "family_attribution-025",
+      "category": "family_attribution",
+      "text": "my brother has high blood pressure",
+      "expected": [
+        {
+          "symptom": "high blood pressure",
+          "polarity": "present",
+          "subject": "family"
+        }
+      ],
+      "rule": "subject-family"
+    },
+    {
+      "id": "third_party-001",
+      "category": "third_party",
+      "text": "my friend has asthma",
+      "expected": [
+        {
+          "symptom": "asthma",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-002",
+      "category": "third_party",
+      "text": "my coworker has diabetes",
+      "expected": [
+        {
+          "symptom": "diabetes",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-003",
+      "category": "third_party",
+      "text": "my colleague was diagnosed with hypertension",
+      "expected": [
+        {
+          "symptom": "hypertension",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-004",
+      "category": "third_party",
+      "text": "my neighbor has cancer",
+      "expected": [
+        {
+          "symptom": "cancer",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-005",
+      "category": "third_party",
+      "text": "my roommate has a cough",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-006",
+      "category": "third_party",
+      "text": "a friend of mine has epilepsy",
+      "expected": [
+        {
+          "symptom": "epilepsy",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-007",
+      "category": "third_party",
+      "text": "someone I know has a fever",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-008",
+      "category": "third_party",
+      "text": "my boss had a stroke",
+      "expected": [
+        {
+          "symptom": "stroke",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-009",
+      "category": "third_party",
+      "text": "my teacher has arthritis",
+      "expected": [
+        {
+          "symptom": "arthritis",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-010",
+      "category": "third_party",
+      "text": "my coworker has a persistent headache",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-011",
+      "category": "third_party",
+      "text": "my neighbor was vomiting all night",
+      "expected": [
+        {
+          "symptom": "vomiting",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-012",
+      "category": "third_party",
+      "text": "my neighbor has a rash",
+      "expected": [
+        {
+          "symptom": "rash",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-013",
+      "category": "third_party",
+      "text": "someone else I know has dizziness",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-014",
+      "category": "third_party",
+      "text": "my colleague has a sore throat",
+      "expected": [
+        {
+          "symptom": "throat pain",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "third_party-015",
+      "category": "third_party",
+      "text": "a friend of mine was hospitalized for a heart problem",
+      "expected": [
+        {
+          "symptom": "heart problem",
+          "polarity": "present",
+          "subject": "other"
+        }
+      ],
+      "rule": "subject-other"
+    },
+    {
+      "id": "lay_language-001",
+      "category": "lay_language",
+      "text": "I am not running a temperature",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-002",
+      "category": "lay_language",
+      "text": "I don't think I have a fever",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-003",
+      "category": "lay_language",
+      "text": "no high temperature",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-004",
+      "category": "lay_language",
+      "text": "my head hurts really badly",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-005",
+      "category": "lay_language",
+      "text": "my head is pounding",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-006",
+      "category": "lay_language",
+      "text": "I keep throwing up",
+      "expected": [
+        {
+          "symptom": "vomiting",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-007",
+      "category": "lay_language",
+      "text": "I have been throwing up since morning",
+      "expected": [
+        {
+          "symptom": "vomiting",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-008",
+      "category": "lay_language",
+      "text": "my stomach hurts",
+      "expected": [
+        {
+          "symptom": "abdominal pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-009",
+      "category": "lay_language",
+      "text": "my belly pain will not go away",
+      "expected": [
+        {
+          "symptom": "abdominal pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-010",
+      "category": "lay_language",
+      "text": "I feel dizzy when I stand up",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-011",
+      "category": "lay_language",
+      "text": "I get dizzy spells",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-012",
+      "category": "lay_language",
+      "text": "I am exhausted all the time",
+      "expected": [
+        {
+          "symptom": "fatigue",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-013",
+      "category": "lay_language",
+      "text": "feeling feverish since last night",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-014",
+      "category": "lay_language",
+      "text": "my throat hurts when I swallow",
+      "expected": [
+        {
+          "symptom": "throat pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-015",
+      "category": "lay_language",
+      "text": "aching joints in the morning",
+      "expected": [
+        {
+          "symptom": "joint pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-016",
+      "category": "lay_language",
+      "text": "my nose is blocked",
+      "expected": [
+        {
+          "symptom": "nasal congestion",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-017",
+      "category": "lay_language",
+      "text": "my nose is running",
+      "expected": [
+        {
+          "symptom": "runny nose",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-018",
+      "category": "lay_language",
+      "text": "I can't sleep at night",
+      "expected": [
+        {
+          "symptom": "insomnia",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-019",
+      "category": "lay_language",
+      "text": "trouble sleeping for a week",
+      "expected": [
+        {
+          "symptom": "insomnia",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-020",
+      "category": "lay_language",
+      "text": "I have no energy at all",
+      "expected": [
+        {
+          "symptom": "fatigue",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-021",
+      "category": "lay_language",
+      "text": "my chest feels tight",
+      "expected": [
+        {
+          "symptom": "chest tightness",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-022",
+      "category": "lay_language",
+      "text": "I am wheezing at night",
+      "expected": [
+        {
+          "symptom": "wheezing",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-023",
+      "category": "lay_language",
+      "text": "my skin is itchy",
+      "expected": [
+        {
+          "symptom": "itching",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-024",
+      "category": "lay_language",
+      "text": "I feel weak in my legs",
+      "expected": [
+        {
+          "symptom": "weakness",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-025",
+      "category": "lay_language",
+      "text": "I can't breathe properly when I walk",
+      "expected": [
+        {
+          "symptom": "shortness of breath",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-026",
+      "category": "lay_language",
+      "text": "I am not able to sleep",
+      "expected": [
+        {
+          "symptom": "insomnia",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-027",
+      "category": "lay_language",
+      "text": "my ears hurt",
+      "expected": [
+        {
+          "symptom": "ear pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-028",
+      "category": "lay_language",
+      "text": "knee pain when I climb stairs",
+      "expected": [
+        {
+          "symptom": "knee pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "lay-canonicalization"
+    },
+    {
+      "id": "lay_language-029",
+      "category": "lay_language",
+      "text": "no energy and my head hurts",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "fatigue",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "negative-construction"
+    },
+    {
+      "id": "multi_symptom_mixed-001",
+      "category": "multi_symptom_mixed",
+      "text": "no cough but shortness of breath and fever",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "shortness of breath",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-002",
+      "category": "multi_symptom_mixed",
+      "text": "I have a headache, fever, and nausea",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "nausea",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-003",
+      "category": "multi_symptom_mixed",
+      "text": "no fever, no cough, no chest pain",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "cough",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "chest pain",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-004",
+      "category": "multi_symptom_mixed",
+      "text": "severe headache with dizziness but no fever",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "dizziness",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-005",
+      "category": "multi_symptom_mixed",
+      "text": "cough and sore throat, no fever",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "throat pain",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-006",
+      "category": "multi_symptom_mixed",
+      "text": "vomiting and diarrhea but no bloody stool",
+      "expected": [
+        {
+          "symptom": "vomiting",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "diarrhea",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "bloody stool",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-007",
+      "category": "multi_symptom_mixed",
+      "text": "no rash, no itching, but dry skin on my hands",
+      "expected": [
+        {
+          "symptom": "rash",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "itching",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "dry skin",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-008",
+      "category": "multi_symptom_mixed",
+      "text": "chest pain and shortness of breath, no dizziness",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "shortness of breath",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "dizziness",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-009",
+      "category": "multi_symptom_mixed",
+      "text": "no numbness or tingling, just weakness on one side",
+      "expected": [
+        {
+          "symptom": "numbness",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "tingling",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "weakness on one side",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-010",
+      "category": "multi_symptom_mixed",
+      "text": "back pain, muscle ache, and low-grade fever",
+      "expected": [
+        {
+          "symptom": "back pain",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "muscle ache",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-011",
+      "category": "multi_symptom_mixed",
+      "text": "no headache but blurred vision and eye pain",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "blurred vision",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "eye pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-012",
+      "category": "multi_symptom_mixed",
+      "text": "frequent urination and excessive thirst, no abdominal pain",
+      "expected": [
+        {
+          "symptom": "frequent urination",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "excessive thirst",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "abdominal pain",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-013",
+      "category": "multi_symptom_mixed",
+      "text": "no fever or chills, only fatigue",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "chills",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "fatigue",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-014",
+      "category": "multi_symptom_mixed",
+      "text": "heartburn, bloating, no vomiting",
+      "expected": [
+        {
+          "symptom": "heartburn",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "bloating",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "vomiting",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-015",
+      "category": "multi_symptom_mixed",
+      "text": "no anxiety, no depression, but I have a panic attack",
+      "expected": [
+        {
+          "symptom": "anxiety",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "depression",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "panic attack",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-016",
+      "category": "multi_symptom_mixed",
+      "text": "sore throat and ear pain with slight fever",
+      "expected": [
+        {
+          "symptom": "throat pain",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "ear pain",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-017",
+      "category": "multi_symptom_mixed",
+      "text": "no dizziness, no fainting, but memory loss",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "fainting",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "memory loss",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-018",
+      "category": "multi_symptom_mixed",
+      "text": "I have hives and itching but no fever",
+      "expected": [
+        {
+          "symptom": "hives",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "itching",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "fever",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-019",
+      "category": "multi_symptom_mixed",
+      "text": "swollen ankles, no chest pain, no shortness of breath",
+      "expected": [
+        {
+          "symptom": "swollen ankles",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "chest pain",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "shortness of breath",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-020",
+      "category": "multi_symptom_mixed",
+      "text": "no blood in urine but painful urination and flank pain",
+      "expected": [
+        {
+          "symptom": "blood in urine",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "painful urination",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "flank pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-021",
+      "category": "multi_symptom_mixed",
+      "text": "headache, no nausea, no sensitivity to light",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "nausea",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "sensitivity to light",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-022",
+      "category": "multi_symptom_mixed",
+      "text": "no constipation, I have diarrhea with cramping",
+      "expected": [
+        {
+          "symptom": "constipation",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "diarrhea",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-023",
+      "category": "multi_symptom_mixed",
+      "text": "neck pain and shoulder pain, no numbness",
+      "expected": [
+        {
+          "symptom": "neck pain",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "shoulder pain",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "numbness",
+          "polarity": "absent",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-024",
+      "category": "multi_symptom_mixed",
+      "text": "no hearing loss, but ringing in ears and sinus pain",
+      "expected": [
+        {
+          "symptom": "hearing loss",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "ringing in ears",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "sinus pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "multi_symptom_mixed-025",
+      "category": "multi_symptom_mixed",
+      "text": "no night sweats, no weight loss, just fatigue and chills",
+      "expected": [
+        {
+          "symptom": "night sweats",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "weight loss",
+          "polarity": "absent",
+          "subject": "self"
+        },
+        {
+          "symptom": "fatigue",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "chills",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "clause-scope"
+    },
+    {
+      "id": "double_negation-001",
+      "category": "double_negation",
+      "text": "not without a fever",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "double-negation-even-cue-count"
+    },
+    {
+      "id": "double_negation-002",
+      "category": "double_negation",
+      "text": "I am not without a cough",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "double-negation-even-cue-count"
+    },
+    {
+      "id": "double_negation-003",
+      "category": "double_negation",
+      "text": "never without chest pain these days",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "double-negation-even-cue-count"
+    },
+    {
+      "id": "double_negation-004",
+      "category": "double_negation",
+      "text": "not no headache",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "double-negation-even-cue-count"
+    },
+    {
+      "id": "double_negation-005",
+      "category": "double_negation",
+      "text": "it is not without dizziness",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "double-negation-even-cue-count"
+    },
+    {
+      "id": "no_negation_control-001",
+      "category": "no_negation_control",
+      "text": "I have a fever",
+      "expected": [
+        {
+          "symptom": "fever",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-002",
+      "category": "no_negation_control",
+      "text": "I have a severe headache",
+      "expected": [
+        {
+          "symptom": "headache",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-003",
+      "category": "no_negation_control",
+      "text": "I have a cough and a sore throat",
+      "expected": [
+        {
+          "symptom": "cough",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "throat pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-004",
+      "category": "no_negation_control",
+      "text": "chest pain for two days",
+      "expected": [
+        {
+          "symptom": "chest pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-005",
+      "category": "no_negation_control",
+      "text": "I feel nauseous and I am vomiting",
+      "expected": [
+        {
+          "symptom": "nausea",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "vomiting",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-006",
+      "category": "no_negation_control",
+      "text": "shortness of breath when climbing stairs",
+      "expected": [
+        {
+          "symptom": "shortness of breath",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-007",
+      "category": "no_negation_control",
+      "text": "I have diarrhea since yesterday",
+      "expected": [
+        {
+          "symptom": "diarrhea",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-008",
+      "category": "no_negation_control",
+      "text": "there is a red rash on my arm",
+      "expected": [
+        {
+          "symptom": "rash",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-009",
+      "category": "no_negation_control",
+      "text": "my lower back pain is severe",
+      "expected": [
+        {
+          "symptom": "lower back pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-010",
+      "category": "no_negation_control",
+      "text": "I have blurred vision in the morning",
+      "expected": [
+        {
+          "symptom": "blurred vision",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-011",
+      "category": "no_negation_control",
+      "text": "frequent urination at night",
+      "expected": [
+        {
+          "symptom": "frequent urination",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-012",
+      "category": "no_negation_control",
+      "text": "I have anxiety before exams",
+      "expected": [
+        {
+          "symptom": "anxiety",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-013",
+      "category": "no_negation_control",
+      "text": "numbness in my fingers",
+      "expected": [
+        {
+          "symptom": "numbness",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-014",
+      "category": "no_negation_control",
+      "text": "joint pain in my knees",
+      "expected": [
+        {
+          "symptom": "joint pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-015",
+      "category": "no_negation_control",
+      "text": "I have heartburn after meals",
+      "expected": [
+        {
+          "symptom": "heartburn",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-016",
+      "category": "no_negation_control",
+      "text": "chills and body aches",
+      "expected": [
+        {
+          "symptom": "chills",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "body pain",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-017",
+      "category": "no_negation_control",
+      "text": "I have ear pain and hearing loss",
+      "expected": [
+        {
+          "symptom": "ear pain",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "hearing loss",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-018",
+      "category": "no_negation_control",
+      "text": "dizziness and fainting episodes",
+      "expected": [
+        {
+          "symptom": "dizziness",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "fainting",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-019",
+      "category": "no_negation_control",
+      "text": "I have abdominal pain and bloating",
+      "expected": [
+        {
+          "symptom": "abdominal pain",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "bloating",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    },
+    {
+      "id": "no_negation_control-020",
+      "category": "no_negation_control",
+      "text": "itching and hives appeared yesterday",
+      "expected": [
+        {
+          "symptom": "itching",
+          "polarity": "present",
+          "subject": "self"
+        },
+        {
+          "symptom": "hives",
+          "polarity": "present",
+          "subject": "self"
+        }
+      ],
+      "rule": "affirmative"
+    }
+  ]
+}

@@ -6,10 +6,12 @@ Shannon diagnostic entropy minimization and expected mutual information gain.
 
 from typing import Dict, List, Optional, Any, Tuple
 import math
+import re
 import time
 import uuid
 from loguru import logger
 
+from src.agents.nlp.assertion import exclusion_spans
 from src.core.disease_kb import DISEASE_DATABASE, find_disease_in_kb
 from src.core.question_bank import CLINICAL_QUESTION_BANK
 
@@ -96,16 +98,35 @@ class DEMATEngine:
         text_lower = text.lower()
         scores: Dict[str, float] = {d: 0.10 for d in self.diseases}  # Uniform baseline prior with smoothing
 
+        # Clause spans whose symptom mentions must not score: negated
+        # regions, family/third-party attributions, hypotheticals
+        # (w0-assertion-nlp R9).
+        excluded = exclusion_spans(text_lower)
+
+        def _is_excluded(pos: int) -> bool:
+            return any(s <= pos < e for s, e in excluded)
+
         # 1. Symptom matching against disease knowledge base
         for d_key, info in DISEASE_DATABASE.items():
             for symptom in info.get("symptoms", []):
                 s_lower = symptom.lower()
-                # Check direct or word overlap
+                # Check direct or word overlap, skipping matches that fall
+                # inside an excluded (negated / not-self) span.
                 s_words = [w for w in s_lower.split() if len(w) > 3]
-                if s_lower in text_lower:
+                phrase_positions = [
+                    m.start() for m in re.finditer(re.escape(s_lower), text_lower)
+                ]
+                phrase_hit = any(not _is_excluded(p) for p in phrase_positions)
+                if phrase_hit:
                     scores[d_key] += 1.5
-                elif any(w in text_lower for w in s_words):
-                    scores[d_key] += 0.6
+                    continue
+                for w in s_words:
+                    start = text_lower.find(w)
+                    while start != -1:
+                        if not _is_excluded(start):
+                            scores[d_key] += 0.6
+                            break
+                        start = text_lower.find(w, start + 1)
 
         # 2. Integrate patient history priors (fixing underscore vs space bug)
         if patient_history:
