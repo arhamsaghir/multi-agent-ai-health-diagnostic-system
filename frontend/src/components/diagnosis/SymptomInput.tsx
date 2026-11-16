@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 interface SymptomInputProps {
-  onSubmit: (text: string, history: PatientHistory) => void;
+  onSubmit: (text: string, history: PatientHistory, demoMode: boolean) => void;
   isLoading?: boolean;
 }
 
@@ -35,12 +35,14 @@ export function SymptomInput({ onSubmit, isLoading }: SymptomInputProps) {
   const [symptoms, setSymptoms] = useState("");
   const [showHistoryForm, setShowHistoryForm] = useState(false);
   const [history, setHistory] = useState<PatientHistory>(demoHistory);
-  const [useDemoMode, setUseDemoMode] = useState(true);
+  // Live analysis is the default; demo mode is an explicit opt-in whose
+  // synthetic output is rendered with an unmistakable marker downstream.
+  const [useDemoMode, setUseDemoMode] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (symptoms.trim()) {
-      onSubmit(symptoms, history);
+      onSubmit(symptoms, history, useDemoMode);
     }
   };
 

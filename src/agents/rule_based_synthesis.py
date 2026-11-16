@@ -337,7 +337,9 @@ class RuleBasedSynthesizer:
                             flags.append(flag)
                     break
 
-        return flags[:3]  # Limit to 3 red flags
+        # Every matched red flag is returned — truncating here would hide
+        # escalation-relevant findings from the clinician and the patient.
+        return flags
 
     def _build_explanation(self, diagnoses: list, symptoms: list, patient_context: str, vision_findings: list) -> str:
         """Build patient-friendly explanation."""
