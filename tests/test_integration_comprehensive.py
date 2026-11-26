@@ -414,6 +414,10 @@ class TestOpenRouterClient:
         assert sig.parameters["timeout"].default == 30
 
 
+@pytest.mark.skipif(
+    not os.path.exists("./models/vision_resnet50.pth"),
+    reason="vision checkpoint not available in this environment",
+)
 class TestVisionModelDirect:
     """Test vision model directly without agent wrapper."""
 

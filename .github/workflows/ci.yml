@@ -49,6 +49,9 @@ jobs:
           pip install ruff
           ruff check src tests scripts
 
+      - name: Generate guideline corpus (gitignored artifact)
+        run: python scripts/curate_guidelines.py
+
       - name: Tests (/test)
         run: python -m pytest -q
 

@@ -3,7 +3,7 @@
 # Mirrors requirements.txt, minus the packages listed below, so the on-prem
 # backend image stays small, auditable, and free of GPU/CUDA payloads.
 #
-# Excluded from requirements.txt: pytest, pytest-asyncio, pytest-cov, ruff, black
+# Excluded from requirements.txt: pytest, pytest-asyncio, pytest-cov, ruff, black, onnx, onnxruntime
 #
 # The only exclusions are developer tooling. The legacy Streamlit-era
 # dependencies (streamlit, crewai, chromadb, llama-index, spacy, opencv,
