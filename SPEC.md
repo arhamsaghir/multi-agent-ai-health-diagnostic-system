@@ -18,8 +18,8 @@ Evidence base (frozen, citation source for every claim):
 
 ## 1. Objective
 
-AegisMed is a multi-agent symptom-assessment system whose published headline
-number (98% top-1) is circular — benchmark cases are generated from the same
+AegisMed is a multi-agent symptom-assessment system whose retired headline
+number (98% top-1, self-generated) is circular — benchmark cases are generated from the same
 `DISEASE_DATABASE` likelihoods the system is scored against. It cannot
 comprehend negation, fabricates demo diagnoses on API failure, and matches red
 flags with 12 keyword strings. This phase builds the system the research says

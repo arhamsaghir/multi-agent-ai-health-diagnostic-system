@@ -73,9 +73,10 @@ def _retirement_violations() -> list:
         # This file contains the pattern literal by design.
         if path.name == "test_retired_claims_guard.py":
             continue
-        if any(part in SKIP_DIRS for part in path.parts):
+        rel_path = path.relative_to(PROJECT_ROOT)
+        if any(part in SKIP_DIRS for part in rel_path.parts):
             continue
-        rel = path.relative_to(PROJECT_ROOT).as_posix()
+        rel = rel_path.as_posix()
         if any(rel == p or rel.startswith(p) for p in ALLOWED_PREFIXES):
             continue
         try:
